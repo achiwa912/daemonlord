@@ -1,13 +1,14 @@
+import re
+import textwrap
+import time
+import random
+import os
+import sys
+import struct
+import tty
+from enum import Enum
 import termios
 import fcntl
-import tty
-import struct
-import sys
-import os
-import random
-import time
-import textwrap
-import re
 
 config = {
     'floor_xmin': 76,  # 40,
@@ -15,12 +16,50 @@ config = {
     'max_depth': 16,
 }
 
-status = {
-    'fd': None,
-    'oattr': None,
-    'nattr': None,
-    'oflags': None,
+
+class Job(Enum):
+    UNEMPLOYED, FIGHTER, MAGE, PRIEST, THIEF, BISHOP, SAMURAI, NINJA, LORD = range(
+        9)
+
+
+class Race(Enum):
+    HUMAN, ELF, DWARF, GNOME, HOBBIT = range(5)
+
+
+class State(Enum):
+    OK, ASLEEP, PARALYZED, POISONED, STONED, DEAD, ASHED, LOST = range(8)
+
+
+class Align(Enum):
+    GOOD, NEUTRAL, EVIL = range(3)
+
+
+race_status = {
+    Race.HUMAN: (8, 8, 5, 8, 8, 9),
+    Race.ELF: (7, 10, 10, 6, 9, 6),
+    Race.DWARF: (10, 7, 10, 10, 5, 6),
+    Race.GNOME: (7, 7, 10, 8, 19, 7),
+    Race.HOBBIT: (5, 7, 7, 6, 10, 15),
 }
+
+
+class Member:
+    def __init__(self, name, align, race, age):
+        self.name = name
+        self.align = align
+        self.race = race
+        self.age = age
+        self.level = 1
+        self.ac = 10
+        self.job = Job.UNEMPLOYED
+        self.state = State.OK
+        self.gold = random.randrange(100, 200)
+        self.exp = 0
+        self.items = []
+        self.strength, self.iq, self.piety, self.vitality, self.agility, \
+            self.luck = race_status[race]
+        self.maxhp = 0
+        self.hp = self.maxhp
 
 
 class Vscr:
@@ -82,12 +121,28 @@ class Vscr:
             vscr_left = (mw.y+y)*self.width + mw.x
             self.cur_vscr_view[vscr_left:vscr_left+len(line)] = line
 
+    def show_partywin(self, party):
+        for y in range(7):
+            line = " # name       class  ac   hp status       "
+            width = len(line)
+            if y != 0:
+                if len(party.members) >= y:
+                    m = party.members[y-1]
+                    alcls = ''.join([m.align.name[0], '-', m.job.name[:3]])
+                    line = f" {y} {m.name[:10].ljust(10)} {alcls} {m.ac:3d} {m.hp:4d} {m.state.name[:13].ljust(13)}"
+                else:
+                    line = f" {y}" + ' '*(width-2)
+            line = line.encode()
+            vscr_left = (self.height-7+y)*self.width
+            self.cur_vscr_view[vscr_left:vscr_left+len(line)] = line
+
     def disp_scrwin(self, party, floor_obj):
         """
         Display scroll window main
         """
         start = time.time()
         self.draw_map(party, floor_obj)
+        self.show_partywin(party)
         self.show_meswin()
         self.display()
         self.cur_vscr_view, self.prev_vscr_view \
@@ -164,9 +219,25 @@ class Meswin:
             pass
         return value
 
-    def yn(self, *msg):
-        # return True(y/Y) or False(other)
-        pass
+    def input_char(self, msg, values=[]):
+        """
+        Input a character in the message window.
+        """
+        ch = ''
+        while ch not in values:
+            self.print(msg+' >')
+            self.vscr.show_meswin()
+            self.vscr.display()
+            print(f"\033[{self.y+self.cur_y+1};{self.x+len(msg)+8}H",
+                  end='', flush=True)
+            ch = getch()
+            l = self.mes_lines.pop()
+            self.print(''.join([l, ' ', ch])[2:])
+            self.vscr.show_meswin()
+            self.vscr.display()
+            if not values:
+                break
+        return ch
 
 
 class Party:
@@ -363,6 +434,12 @@ def getch():
 def main():
     floor_obj = generate_floor(1)
     party = Party(0, 0, 1)
+    mem = Member("Alex", Align.GOOD, Race.HUMAN, 24)
+    party.members.append(mem)
+    mem = Member("Sean", Align.GOOD, Race.ELF, 136)
+    party.members.append(mem)
+    mem = Member("Son Goku", Align.NEUTRAL, Race.HOBBIT, 36)
+    party.members.append(mem)
     w, h = terminal_size()
     # vscr = Vscr(w, h)
     vscr = Vscr(80, 25)  # +++++++++++++++
@@ -389,8 +466,9 @@ def main():
                 party.x += 1
                 meswin.print("east")
             elif c == '.':
-                heydo = meswin.input("How?")
-                meswin.print("Input: "+heydo)
+                ch = meswin.input_char("Do you? (y/n)", values=['n', 'y'])
+                meswin.print("Input char: "+ch)
+                vscr.show_meswin()
                 vscr.display()
             else:
                 pass  # draw = False
