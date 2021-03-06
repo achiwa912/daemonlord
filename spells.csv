@@ -1,0 +1,54 @@
+﻿wid,categ,level,name,wizname,battle,camp,type,target,value,attribute,misc
+0,mage,1,onibi,halito,TRUE,FALSE,attack,enemy,1D8,fire,
+1,mage,1,tate,mogref,TRUE,FALSE,ac,self,-2,,
+2,mage,1,shunmin,katino,TRUE,FALSE,etc,group,,,slept monster will get twice the damage
+3,mage,1,gps,dumapic,FALSE,TRUE,etc,,,,misc
+4,mage,2,kurayami,dilto,TRUE,FALSE,ac,group,2,,
+5,mage,2,tomei,sopic,TRUE,FALSE,ac,self,-4,,
+6,mage,3,taika,mahalito,TRUE,FALSE,attack,group,4D6,fire,
+7,mage,3,kamaitachi,molito,TRUE,FALSE,attack,group,3D6,friendly,
+8,mage,4,kanashibari,morlis,TRUE,FALSE,ac,group,4,,
+9,mage,4,toketsu,dalto,TRUE,FALSE,attack,group,6D6,cold,
+10,mage,4,gouka,lahalito,TRUE,FALSE,attack,group,6D6,fire,
+11,mage,5,kyofu,mamorlis,TRUE,FALSE,ac,all,4,,
+12,mage,5,zakoisso,makanito,TRUE,FALSE,etc,all,,,eliminate lv7 or lower
+13,mage,5,zettaireido,madalto,TRUE,FALSE,attack,group,8D8,cold,
+14,mage,6,chissoku,lakanito,TRUE,FALSE,etc,group,,,
+15,mage,6,butsumetsu,zilwan,TRUE,FALSE,etc,enemy,10D200,,undead only
+16,mage,6,zentomei,masopic,TRUE,FALSE,ac,party,-4,,
+17,mage,6,tasuke,haman,TRUE,FALSE,etc,,,,misc
+,mage,7,jigokunohonou,,TRUE,FALSE,attack,enemy,20D20,fire,
+18,mage,7,tenso,malor,TRUE,TRUE,etc,,,,teleport
+19,mage,7,tennotasuke,mahaman,TRUE,FALSE,etc,,,,haman + raise the dead!
+20,mage,7,kakubaku,tiltowait,TRUE,FALSE,attack,all,10D15,,
+21,priest,1,shukufuku,kalki,TRUE,FALSE,ac,party,-1,,
+22,priest,1,jiai,dios,TRUE,TRUE,heal,member,1D8,,
+23,priest,1,ikari,badios,TRUE,FALSE,attack,enemy,1D8,friendly,
+24,priest,1,akari,milwa,TRUE,TRUE,etc,,,,
+25,priest,1,mamori,porfic,TRUE,FALSE,ac,self,-4,,
+26,priest,2,kabe,matu,TRUE,TRUE,ac,party,-2,,
+27,priest,2,kantei,calfo,FALSE,FALSE,etc,,,,identify trap
+28,priest,2,nero,manifo,TRUE,FALSE,etc,group,,,
+29,priest,2,damare,monitino,TRUE,FALSE,etc,group,1D4+1,,59 + 5*level_diff %
+30,priest,3,hikarinotama,lomilwa,TRUE,TRUE,etc,,,,misc
+31,priest,3,okiro,dialko,TRUE,TRUE,etc,member,,,cure paraly + sleep
+32,priest,3,shikibetsu,latumapic,TRUE,TRUE,etc,,,,identify enemy
+33,priest,3,kaminohogo,bamatu,TRUE,FALSE,ac,party,-4,,
+34,priest,3,iyashi,dial,TRUE,TRUE,heal,member,4D4,,
+35,priest,4,gekido,badial,TRUE,FALSE,attack,enemy,2D8,friendly,
+36,priest,4,gedoku,latumofis,TRUE,TRUE,etc,,,,cure poison
+37,priest,4,hogo,maporfic,TRUE,TRUE,etc,,,,party AC -2 while in dungeon
+,priest,4,zenjiai,,TRUE,TRUE,heal,party,1D8,,
+38,priest,5,daikaifuku,dialma,TRUE,TRUE,heal,member,8D3,,
+39,priest,5,chogekido,badialma,TRUE,FALSE,attack,enemy,3D8,friendly,
+40,priest,5,kaminoikari,litokan,TRUE,FALSE,attack,group,3D8,fire,
+41,priest,5,nakamadoko,kandi,FALSE,TRUE,etc,,,,search character
+42,priest,5,sosei,di,FALSE,TRUE,etc,member,,,misc
+43,priest,5,shine,badi,TRUE,FALSE,etc,,,,"misc, max(74, 49 + 5*level_diff) %"
+44,priest,6,tenchu,lorto,TRUE,FALSE,attack,group,6D6,friendly,
+45,priest,6,kanzen,madi,TRUE,TRUE,etc,member,,,misc
+46,priest,6,hinshi,mabadi,TRUE,FALSE,etc,enemy,,,almost kill
+47,priest,6,tonzura,loktofeit,TRUE,FALSE,etc,party,,,"back to castle, lost almost everything"
+48,priest,7,tenchihokai,malikto,TRUE,FALSE,attack,all,12D6,,
+49,priest,7,fukkatsu,kadorto,FALSE,TRUE,etc,member,,,misc
+,priest,7,zenkai,,TRUE,TRUE,heal,party,8D3,,
