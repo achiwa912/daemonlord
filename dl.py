@@ -1,21 +1,22 @@
-import re
-import textwrap
-import time
-import random
-import os
-import sys
-import struct
-import tty
-from enum import Enum
-import termios
-import fcntl
-import json
 import csv
+import json
+import fcntl
+import termios
+from enum import Enum
+import tty
+import struct
+import sys
+import os
+import random
+import time
+import textwrap
+import re
 
 config = {
     'floor_xmin': 76,  # 40,
     'floor_ymin': 32,  # 16,
     'max_depth': 16,
+    'debug': True,
 }
 
 
@@ -37,8 +38,8 @@ class Align(Enum):
 
 
 class Place(Enum):
-    MAZE, EDGE_OF_TOWN, TRAINING_GROUNDS, CASTLE, MOHAWK_TAVERN = range(
-        5)
+    MAZE, EDGE_OF_TOWN, TRAINING_GROUNDS, CASTLE, HAWTHORNE_TAVERN, LAKEHOUSE_INN, LEAVE_GAME = range(
+        7)
 
 
 race_status = {
@@ -110,6 +111,7 @@ class Vscr:
         self.vscr1 = bytearray(b'Q'*width*height)
         self.prev_vscr_view = memoryview(self.vscr0)
         self.cur_vscr_view = memoryview(self.vscr1)
+        self.meswins = []
 
     def draw_map(self, party, floor_obj):
         """
@@ -127,7 +129,7 @@ class Vscr:
                 map_left = my*floor_obj.x_size + party.x - w//2 + l_left
                 map_right = map_left + l_right - l_left
                 cv[cy*w+l_left:cy*w+l_right] = floor_view[map_left:map_right]
-            if cy == self.height//2:
+            if cy == (self.height-7)//2:
                 cv[cy*w+w//2:cy*w+w//2+1] = b'@'
 
     def cls(self):
@@ -152,22 +154,19 @@ class Vscr:
         self.cur_vscr_view, self.prev_vscr_view \
             = self.prev_vscr_view, self.cur_vscr_view
 
-    def draw_meswin(self):
+    def draw_meswins(self):
         """
         Display the message window
         """
-        mw = self.meswin
-        for y in range(mw.height):
-            if y == 0 or y == mw.height-1:
-                line = '-'*mw.width
-            elif len(mw.mes_lines) <= y-1:
-                line = ''.join(['| ', ' '*(mw.mes_width+2), '|'])
-            else:
-                line = ''.join(
-                    ['| ', mw.mes_lines[y-1].ljust(mw.mes_width+2), '|'])
-            line = line.encode()
-            vscr_left = (mw.y+y)*self.width + mw.x
-            self.cur_vscr_view[vscr_left:vscr_left+len(line)] = line
+        for mw in self.meswins:
+            for y in range(mw.height):
+                if len(mw.mes_lines) <= y:
+                    line = ' '*(mw.width-2)
+                else:
+                    line = mw.mes_lines[y].ljust(mw.width-2)
+                line = line.encode()
+                vscr_left = (mw.y+y)*self.width + mw.x
+                self.cur_vscr_view[vscr_left:vscr_left+len(line)] = line
 
     def draw_partywin(self, party):
         """
@@ -194,24 +193,16 @@ class Vscr:
         line = f" daemon lord - dl - [{party.place.name.lower()}] floor:{party.floor:2d} ({party.x}/{party.y}) "
         self.cur_vscr_view[:len(line)] = line.encode()
 
-    def disp_edgetown(self, party):
-        self.draw_partywin(party)
-        self.draw_header(party)
-        self.draw_meswin()
-        self.display()  # force=True)
-        print(f"\033[{self.height+1};0H", end='')
-        print(f"{party.x:03d}/{party.y:03d}, {self.meswin.height}",
-              end='', flush=True)
-
-    def disp_scrwin(self, party, floor_obj):
+    def disp_scrwin(self, party, floor_obj=None):
         """
         Display scroll window main
         """
         start = time.time()
-        self.draw_map(party, floor_obj)
+        if party.place == Place.MAZE:
+            self.draw_map(party, floor_obj)
         self.draw_partywin(party)
         self.draw_header(party)
-        self.draw_meswin()
+        self.draw_meswins()
         self.display()
         delta = time.time() - start
         try:
@@ -224,18 +215,15 @@ class Vscr:
 
 class Meswin:
     """
-    Message window.  Max 40x8 at the upper center of the scroll window.
-    The message area is max 36x6 and a message starts with " * ".
+    Message window.  A message line starts with "* ".
     """
 
-    def __init__(self, vscr):
+    def __init__(self, vscr, x, y, width, height):
         self.vscr = vscr
-        self.width = min(40, vscr.width)
-        self.height = min(8, vscr.height)
-        self.x = max(0, (vscr.width-self.width)//2)  # center
-        self.y = 1
-        self.mes_width = self.width - 4  # Message area width
-        self.mes_height = self.height - 2  # Message area height
+        self.width = min(width, vscr.width)
+        self.height = min(height, vscr.height)
+        self.x = max(x, (vscr.width-self.width)//2)  # center
+        self.y = y
         self.cur_x = 0  # cursor position in message area
         self.cur_y = 0
         self.show = False
@@ -250,8 +238,6 @@ class Meswin:
         self.y = y
         self.width = min(width, self.vscr.width)
         self.height = min(height, self.vscr.height)
-        self.mes_width = self.width - 4  # Message area width
-        self.mes_height = self.height - 2  # Message area height
 
     def cls(self):
         # clear message area
@@ -267,16 +253,16 @@ class Meswin:
             header = '  '
             if idx == 0:
                 header = start + ' '
-            ssls = textwrap.wrap(sl, width=self.mes_width)
+            ssls = textwrap.wrap(sl, width=self.width-2)
             if len(ssls) == 0:
                 self.mes_lines.append(header)
             else:
                 for ssl in ssls:
                     self.mes_lines.append(''.join([header, ssl]))
                     header = '  '
-        if len(self.mes_lines) > self.mes_height:
+        if len(self.mes_lines) > self.height:
             self.mes_lines = self.mes_lines[len(
-                self.mes_lines)-self.mes_height:]
+                self.mes_lines)-self.height:]
         self.cur_y = len(self.mes_lines)-1
         self.show = True
 
@@ -286,9 +272,9 @@ class Meswin:
         """
         self.print(msg)
         self.print('', start='>')
-        self.vscr.draw_meswin()
+        self.vscr.draw_meswins()
         self.vscr.display()
-        print(f"\033[{self.y+self.cur_y+2};{self.x+5}H", end='', flush=True)
+        print(f"\033[{self.y+self.cur_y+1};{self.x+3}H", end='', flush=True)
         try:
             value = input()
             self.mes_lines[self.cur_y] = "> " + value
@@ -303,14 +289,14 @@ class Meswin:
         ch = ''
         while ch not in values:
             self.print(msg+' >', start=' ')
-            self.vscr.draw_meswin()
+            self.vscr.draw_meswins()
             self.vscr.display()
-            print(f"\033[{self.y+self.cur_y+2};{self.x+len(msg)+8}H",
+            print(f"\033[{self.y+self.cur_y+1};{self.x+len(msg)+6}H",
                   end='', flush=True)
             ch = getch()
             l = self.mes_lines.pop()
             self.print(''.join([l, ' ', ch])[2:], start=' ')
-            self.vscr.draw_meswin()
+            self.vscr.draw_meswins()
             self.vscr.display()
             if not values:
                 break
@@ -516,6 +502,8 @@ def getch(wait=False):
                 break
     finally:
         termios.tcsetattr(fd, termios.TCSADRAIN, oattr)
+    if ch == 'Q' and config['debug'] == True:
+        sys.exit()
     return ch
 
 
@@ -537,10 +525,10 @@ def bonus_disp(game, ch, bonus, y, sp):
     Display bonus assignment screen
     """
     vscr = game.vscr
-    mw = vscr.meswin
+    mw = vscr.meswins[-1]
     mw.cls()
     mw.print("Distribute bonus points")
-    mw.print("  h)minus j)down k)up l)plus .)change bonus x)done", start=' ')
+    mw.print("  h)minus j)down k)up l)plus .)change bonus x)done\n", start=' ')
     mw.print(f"strength  {sp[0]+ch.stat[0]:2d}", start=' ')
     mw.print(f"iq        {sp[1]+ch.stat[1]:2d}", start=' ')
     mw.print(f"piety     {sp[2]+ch.stat[2]:2d}", start=' ')
@@ -549,7 +537,7 @@ def bonus_disp(game, ch, bonus, y, sp):
     mw.print(f"luck      {sp[5]+ch.stat[5]:2d}", start=' ')
     mw.print(f"\nbonus     {bonus:2d}", start=' ')
     mw.print
-    mw.mes_lines[y+2] = mw.mes_lines[y+2][:11] + '>' + mw.mes_lines[y+2][12:]
+    mw.mes_lines[y+3] = mw.mes_lines[y+3][:11] + '>' + mw.mes_lines[y+3][12:]
     line = ''
     job = False
     for jobnum in range(5):
@@ -557,7 +545,7 @@ def bonus_disp(game, ch, bonus, y, sp):
             job = True
             line = ''.join([line, Job(jobnum).name[:].lower(), ' '])
     mw.print(line)
-    vscr.disp_edgetown(game.party)
+    vscr.disp_scrwin(game.party)
     return job
 
 
@@ -604,7 +592,7 @@ def distribute_bonus(game, ch):
             line = ''.join([line, Job(jobnum).name[:1].lower(), '/'])
             jobs.append(Job(jobnum).name[:1].lower())
     line = ''.join([line[:-1], ')'])
-    mw = game.vscr.meswin
+    mw = game.vscr.meswins[-1]
     c = mw.input_char(line, values=jobs)
     for jobnum in range(8):
         if c == Job(jobnum).name[:1].lower():
@@ -633,7 +621,7 @@ def distribute_bonus(game, ch):
         ch.stat[i] += statplus[i]
     game.characters.append(ch)
     mw.print("Character created")
-    game.vscr.disp_edgetown(game.party)
+    game.vscr.disp_scrwin(game.party)
 
 
 def create_character(game):
@@ -641,15 +629,15 @@ def create_character(game):
     Create a character (a training grounds menu item)
     """
     vscr = game.vscr
-    mw = vscr.meswin
+    mw = vscr.meswins[-1]
     while True:
         if (name := mw.input("Enter new name")):
             if name in [char.name for char in game.characters]:
                 mw.print("The name is already used")
-                vscr.disp_edgetown(game.party)
+                vscr.disp_scrwin(game.party)
             else:
                 break
-    vscr.disp_edgetown(game.party)
+    vscr.disp_scrwin(game.party)
 
     c = mw.input_char("Choose race - h)uman e)lf d)warf g)nome o)hobbit",
                       values=['h', 'e', 'd', 'g', 'o'])
@@ -664,7 +652,7 @@ def create_character(game):
     else:
         race = Race.HOBBIT
     mw.print(f"{race.name.lower()}")
-    vscr.disp_edgetown(game.party)
+    vscr.disp_scrwin(game.party)
 
     c = mw.input_char(
         "Choose alignment - g)ood n)eutral e)vil", values=['g', 'n', 'e'])
@@ -675,7 +663,7 @@ def create_character(game):
     else:
         align = Align.EVIL
     mw.print(f"Alignment: {align.name.lower()}")
-    vscr.disp_edgetown(game.party)
+    vscr.disp_scrwin(game.party)
 
     while True:
         age = mw.input("How old is he/she? (13-199)")
@@ -685,9 +673,9 @@ def create_character(game):
                 break
         except:
             pass
-        vscr.disp_edgetown(game.party)
+        vscr.disp_scrwin(game.party)
     mw.print(f"{age} years old.")
-    vscr.disp_edgetown(game.party)
+    vscr.disp_scrwin(game.party)
 
     ch = Member(name, align, race, age)
     distribute_bonus(game, ch)
@@ -698,7 +686,7 @@ def disp_character(game, ch):
     Display a character information in the message window
     """
     vscr = game.vscr
-    mw = game.vscr.meswin
+    mw = vscr.meswins[-1]
     mw.mes_lines = []
     mw.print(
         f"{ch.name.ljust(16)} L{ch.level:3d} {ch.align.name[:1].lower()}-{ch.job.name[:3].lower()} {ch.race.name.lower()}", start=' ')
@@ -718,7 +706,7 @@ def disp_character(game, ch):
     mw.print(f"", start=' ')
     mw.print(
         f"1) {'*long sword'.ljust(16)}  2) {'*plate mail'.ljust(16)}", start=' ')
-    vscr.disp_edgetown(game.party)
+    vscr.disp_scrwin(game.party)
     getch(wait=True)
 
 
@@ -727,9 +715,9 @@ def inspect_characters(game):
     Inspect characters (a training grounds menu item)
     """
     vscr = game.vscr
-    mw = game.vscr.meswin
+    mw = vscr.meswins[-1]
     mw.mes_lines = []
-    vscr.disp_edgetown(game.party)
+    vscr.disp_scrwin(game.party)
     cnum = 0
     while True:
         mw.mes_lines = []
@@ -740,7 +728,7 @@ def inspect_characters(game):
             else:
                 cur = '  '
             mw.print(''.join([cur, str(i+1), ' ', str(mem)]), start=' ')
-        vscr.disp_edgetown(game.party)
+        vscr.disp_scrwin(game.party)
         c = getch()
         if c == 'l':
             break
@@ -758,13 +746,13 @@ def training(game):
     """
     vscr = game.vscr
     game.party.place = Place.TRAINING_GROUNDS
-    mw = vscr.meswin
+    mw = vscr.meswins[-1]
     vscr.cls()
-    vscr.disp_edgetown(game.party)
+    vscr.disp_scrwin(game.party)
     while True:
         mw.print(
             "*** training grounds ***\nc)reate a character\ni)nspect a character\nl)eave")
-        vscr.disp_edgetown(game.party)
+        vscr.disp_scrwin(game.party)
         c = mw.input_char("Command?")
         if c == 'l':
             break
@@ -787,30 +775,134 @@ def load_spelldef():
         return spell_def
 
 
-def main():
-    game = Game()
-    party = Party(0, 0, 1)
-    game.party = party
-    game.spelldef = load_spelldef()
-    party.place = Place.EDGE_OF_TOWN
-    floor_obj = generate_floor(1)
-    w, h = terminal_size()
-    # vscr = Vscr(w, h)
-    vscr = Vscr(80, 25)  # +++++++++++++++
-    game.vscr = vscr
-    meswin = Meswin(vscr)
-    vscr.meswin = meswin
-    meswin.change(10, 1, 60, 18)
-    training(game)
-    party.place = Place.MAZE
-    # vscr.disp_scrwin(party, floor_obj)
+def tavern_add(game):
+    vscr = game.vscr
+    mw = vscr.meswins[-1]
+    if len(game.party.members) >= 6:
+        mw.print("Party full.")
+        vscr.disp_scrwin(game.party)
+        return
 
+    vscr.disp_scrwin(game.party)
+    chwin = Meswin(vscr, 16, 1, 40, 8)
+    vscr.meswins.append(chwin)
+    chwin.print("Add who to the party?")
+    chwin.print(" - j)down k)up x)choose l)eave")
+    top = idx = 0
+    while True:
+        chlines = []
+        i = 0
+        charlist = [
+            ch for ch in game.characters if ch not in game.party.members]
+        for i, ch in enumerate(charlist):
+            cur = ' '
+            if i == idx:
+                cur = '>'
+                cur_ch = ch
+            chline = f"| {cur}{i+1:2} {ch.name.ljust(16)} Lv{ch.level:3d} {ch.race.name[:3]}-{ch.align.name[:1]}-{ch.job.name[:3]}"
+            chlines.append(chline)
+        chwin.mes_lines = []
+        chwin.mes_lines.append(
+            "| Add who to the party?".ljust(chwin.width-1)+'|')
+        chwin.mes_lines.append(
+            "|  - j)down k)up x)choose l)eave".ljust(chwin.width-1)+'|')
+        for chl in chlines[top:top+chwin.height-2]:
+            chwin.mes_lines.append(chl.ljust(chwin.width-1)+'|')
+        vscr.disp_scrwin(game.party)
+        c = getch(wait=True)
+        if c == 'l':
+            break
+        elif c == 'j' and idx < len(charlist)-1:
+            idx += 1
+            top = max(0, idx-chwin.height+3)
+        elif c == 'k' and idx > 0:
+            idx -= 1
+            top = min(top, idx)
+        elif c == 'x':
+            game.party.members.append(cur_ch)
+            if idx >= len(charlist)-2:
+                idx -= 1
+            if len(game.party.members) >= 6:
+                break
+    vscr.meswins.pop()
+    vscr.disp_scrwin(game.party)
+
+
+def tavern(game):
+    game.party.place = Place.HAWTHORNE_TAVERN
+    vscr = game.vscr
+    mw = vscr.meswins[-1]
+    ch = ''
+    while True:
+        mw.print("*** The Hawthorne Tavern ***")
+        vscr.disp_scrwin(game.party)
+        ch = mw.input_char("Command? - a)dd r)emove i)nspect d)ivvy gold l)eave",
+                           values=['a', 'r', 'i', 'd', 'l'])
+        if ch == 'l':
+            game.party.place = Place.CASTLE
+            break
+        elif ch == 'a':
+            tavern_add(game)
+
+
+def castle(game):
+    game.party.place = Place.CASTLE
+    vscr = game.vscr
+    mw = vscr.meswins[-1]
+    vscr.cls()
+    vscr.disp_scrwin(game.party)
+    ch = ''
+    while True:
+        mw.print("*** Castle ***")
+        mw.print("h)awthorne tavern\ne)dge or town", start=' ')
+        vscr.disp_scrwin(game.party)
+        ch = mw.input_char("Command?", values=['h', 'e'])
+        if ch == 'h':
+            tavern(game)
+        elif ch == 'e':
+            game.party.place = Place.EDGE_OF_TOWN
+            break
+
+
+def edge_town(game):
+    game.party.place = Place.EDGE_OF_TOWN
+    vscr = game.vscr
+    mw = vscr.meswins[-1]
+    vscr.cls()
+    vscr.disp_scrwin(game.party)
+    ch = ''
+    while ch != 'c':
+        mw.print("*** Edge of Town ***")
+        mw.print("m)aze\nt)raining grounds\nl)eave game\nc)astle", start=' ')
+        vscr.disp_scrwin(game.party)
+        ch = mw.input_char("Command? ", values=['t', 'm', 'c', 'l'])
+        if ch == 't':
+            training(game)
+        elif ch == 'c':
+            castle(game)
+        elif ch == 'm':
+            mw.print("Entering dungeon...")
+            maze(game)
+        elif ch == 'l':
+            sys.exit()  # save and exit ++++++++++++++++++++++++++++++++++
+
+
+def maze(game):
+    party = game.party
+    party.place = Place.MAZE
+    vscr = game.vscr
+
+    floor_obj = generate_floor(1)
+
+    meswin = vscr.meswin[0]
     mem = Member("Alex", Align.GOOD, Race.HUMAN, 24)
     party.members.append(mem)
     mem = Member("Sean", Align.GOOD, Race.ELF, 136)
     party.members.append(mem)
     mem = Member("Son Goku", Align.NEUTRAL, Race.HOBBIT, 36)
     party.members.append(mem)
+
+    vscr.disp_scrwin(party, floor_obj)
 
     while True:
         c = getch()
@@ -833,7 +925,7 @@ def main():
             elif c == '.':
                 ch = meswin.input_char("Do you? (y/n)", values=['n', 'y'])
                 meswin.print("Input char: "+ch)
-                vscr.draw_meswin()
+                vscr.draw_meswins()
                 vscr.display()
             else:
                 pass  # draw = False
@@ -841,6 +933,36 @@ def main():
             draw = False
         if draw:
             vscr.disp_scrwin(party, floor_obj)
+
+
+def dispatch(game):
+    while game.party.place != Place.LEAVE_GAME:
+        pl = game.party.place
+        if pl == Place.EDGE_OF_TOWN:
+            edge_town(game)
+        elif pl == Place.TRAINING_GROUNDS:
+            training(game)
+        elif pl == Place.CASTLE:
+            castle(game)
+        elif pl == Place.MAZE:
+            maze(game)
+
+
+def main():
+    game = Game()
+    party = Party(0, 0, 1)
+    game.party = party
+    game.spelldef = load_spelldef()
+    party.place = Place.CASTLE
+    # floor_obj = generate_floor(1)
+    w, h = terminal_size()
+    # vscr = Vscr(w, h)
+    vscr = Vscr(80, 25)  # +++++++++++++++
+    game.vscr = vscr
+    vscr.meswins.append(Meswin(vscr, 42, 18, 40, 7))  # meswin for scrollwin
+    # meswin for castle/edge of town
+    vscr.meswins.append(Meswin(vscr, 10, 1, 60, 17))
+    dispatch(game)
 
 
 if __name__ == "__main__":
