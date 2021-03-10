@@ -38,8 +38,8 @@ class Align(Enum):
 
 
 class Place(Enum):
-    MAZE, EDGE_OF_TOWN, TRAINING_GROUNDS, CASTLE, HAWTHORNE_TAVERN, LAKEHOUSE_INN, LEAVE_GAME = range(
-        7)
+    MAZE, EDGE_OF_TOWN, TRAINING_GROUNDS, CASTLE, HAWTHORNE_TAVERN, TRADER_JAYS, LAKEHOUSE_INN, LEAVE_GAME = range(
+        8)
 
 
 race_status = {
@@ -122,7 +122,7 @@ class Vscr:
         w = self.width
         for cy in range(self.height):
             cv[cy*w:(cy+1)*w] = b'^'*w  # fill with rocks
-            my = party.y - self.height//2 + cy  # convert cy to floor_y
+            my = party.y - (self.height-7)//2 + cy  # convert cy to floor_y
             if 0 <= my < floor_obj.y_size:
                 l_left = min(0, party.x-w//2) * -1
                 l_right = min(w, floor_obj.x_size - party.x + w//2)
@@ -222,7 +222,7 @@ class Meswin:
         self.vscr = vscr
         self.width = min(width, vscr.width)
         self.height = min(height, vscr.height)
-        self.x = max(x, (vscr.width-self.width)//2)  # center
+        self.x = x
         self.y = y
         self.cur_x = 0  # cursor position in message area
         self.cur_y = 0
@@ -736,7 +736,7 @@ def inspect_characters(game):
             cnum += 1
         elif c == 'k' and cnum > 0:
             cnum -= 1
-        elif c == 'i':
+        elif c == 'i' and len(game.characters) > 0:
             disp_character(game, game.characters[cnum])
 
 
@@ -763,6 +763,9 @@ def training(game):
 
 
 def load_spelldef():
+    """
+    load spell definition file and return spell_def dictionary
+    """
     with open('spells.csv') as csvfile:
         rdr = csv.reader(csvfile)
         spell_def = {}
@@ -775,6 +778,59 @@ def load_spelldef():
         return spell_def
 
 
+def load_itemdef():
+    """
+    load item definition file and return item_def dictionary
+    """
+    with open('items.csv') as csvfile:
+        rdr = csv.reader(csvfile)
+        item_def = {}
+        for i, row in enumerate(rdr):
+            if i == 0 or not row:
+                continue
+            if not (name := row[2]):
+                name = row[4]
+            if not (unident := row[3]):
+                unident = row[5]
+            try:
+                ac = int(row[9])
+            except:
+                ac = 0
+            try:
+                st = int(row[10])
+            except:
+                st = 0
+            try:
+                at = int(row[11])
+            except:
+                at = 0
+            try:
+                shop = int(row[13])
+            except:
+                shop = 0
+            try:
+                price = int(row[14])
+            except:
+                price = 0
+            if row[15] == 'TRUE':
+                curse = True
+            else:
+                curse = False
+            try:
+                hp = int(row[16])
+            except:
+                hp = 0
+            try:
+                brk = int(row[18])
+            except:
+                brk = 0
+            line = (row[1], unident, row[6], row[7], row[8], ac,
+                    st, at, row[12], shop, price,
+                    curse, hp, brk, row[19])
+            item_def[name] = line
+        return item_def
+
+
 def tavern_add(game):
     vscr = game.vscr
     mw = vscr.meswins[-1]
@@ -784,10 +840,8 @@ def tavern_add(game):
         return
 
     vscr.disp_scrwin(game.party)
-    chwin = Meswin(vscr, 16, 1, 40, 8)
+    chwin = Meswin(vscr, 10, 2, 40, 16)
     vscr.meswins.append(chwin)
-    chwin.print("Add who to the party?")
-    chwin.print(" - j)down k)up x)choose l)eave")
     top = idx = 0
     while True:
         chlines = []
@@ -820,9 +874,9 @@ def tavern_add(game):
             top = min(top, idx)
         elif c == 'x':
             game.party.members.append(cur_ch)
-            if idx >= len(charlist)-2:
+            if idx >= len(charlist)-1:
                 idx -= 1
-            if len(game.party.members) >= 6:
+            if len(game.party.members) >= 6 or len(charlist) <= 1:
                 break
     vscr.meswins.pop()
     vscr.disp_scrwin(game.party)
@@ -842,7 +896,120 @@ def tavern(game):
             game.party.place = Place.CASTLE
             break
         elif ch == 'a':
-            tavern_add(game)
+            if len(game.party.members) < len(game.characters):
+                tavern_add(game)
+            else:
+                mw.print("No characters to add")
+
+
+def trader_buy(game, mem):
+    vscr = game.vscr
+    iw = Meswin(vscr, 10, 1, 41, 12)
+    vscr.meswins.append(iw)
+    top = idx = page = 0
+    pages = ('weapon', 'armor', 'shield', 'helm', 'gloves',
+             'ring', 'item')
+    while True:
+        items = [item for item in game.shopitems if game.shopitems[item] > 0
+                 and game.itemdef[item][2] == pages[page]]
+        ilines = []
+        for i, item in enumerate(items):
+            cur = ' '
+            if i == idx:
+                cur = '>'
+                cur_item = i
+            afford = canequip = ' '
+            if mem.job.name[:1].lower() not in game.itemdef[item][4].lower():
+                canequip = '#'
+            if mem.gold >= game.itemdef[item][10]:
+                afford = '$'
+            iline = f"| {cur}{i+1:2} {item.ljust(21)[:21]} {game.itemdef[item][10]:10d}{canequip}{afford}|"
+            ilines.append(iline)
+        iw.mes_lines = []
+        iw.mes_lines.append(
+            f"| {mem.name} has {mem.gold} gold".ljust(40)+'|')
+        iw.mes_lines.append("|  jk)cursor x)choose hl)page ;)leave   |")
+        for il in ilines[top:top+iw.height-2]:
+            iw.mes_lines.append(il.ljust(iw.width-1))
+        for _ in range(iw.width - len(iw.mes_lines)):
+            iw.mes_lines.append(''.join(['|', ' '*(iw.width-2), '|']))
+        vscr.disp_scrwin(game.party)
+        c = getch(wait=True)
+        if c == ';':
+            break
+        elif c == 'j' and idx < len(items)-1:
+            idx += 1
+            top = max(0, idx-iw.height+3)
+        elif c == 'k' and idx > 0:
+            idx -= 1
+            top = min(top, idx)
+        elif c == 'h':
+            idx = top = 0
+            page -= 1
+            if page < 0:
+                page = len(pages)-1
+        elif c == 'l':
+            idx = top = 0
+            page += 1
+            if page >= len(pages):
+                page = 0
+        elif c == 'x':
+            if len(mem.items) >= 8:
+                iw.mes_lines[0] = "| Looks like, your bag is full.".ljust(
+                    iw.width-1)+'|'
+                vscr.disp_scrwin(game.party)
+                getch()
+            elif mem.gold < game.itemdef[items[idx]][10]:
+                iw.mes_lines[0] = "| Sorry, you can't afford it.".ljust(
+                    iw.width-1)+'|'
+                #iw.mes_lines[1] = f"{mem.gold} < {game.itemdef[items[idx]][10]}"
+                vscr.disp_scrwin(game.party)
+                getch()
+            else:
+                iw.mes_lines[0] = "| Anything else, noble sir?".ljust(
+                    iw.width-1)+'|'
+                mem.gold -= game.itemdef[items[idx]][10]
+                bought = [game.itemdef[items[idx]], False, False]
+                mem.items.append(bought)
+                vscr.disp_scrwin(game.party)
+                getch()
+    vscr.meswins.pop()
+
+
+def trader(game):
+    game.party.place = Place.TRADER_JAYS
+    vscr = game.vscr
+    mw = vscr.meswins[-1]
+    while True:
+        mw.print("*** Trader Jay's ***")
+        vscr.disp_scrwin(game.party)
+        while True:
+            ch = mw.input_char(f"Who will enter? - # or l)eave")
+            if ch == 'l':
+                break
+            try:
+                if 0 <= (chid := int(ch)-1) < len(game.party.members):
+                    break
+            except:
+                pass
+        if ch == 'l':
+            break
+        mem = game.party.members[chid]
+        while True:
+            mw.print(f"Welcome, {mem.name}.")
+            mw.print(f"  You have {mem.gold} gold.")
+            ch = mw.input_char(f"b)uy s)ell u)ncurse i)dentify p)ool gold l)eave",
+                               values=['b', 'p', 'l'])
+            if ch == 'l':
+                break
+            elif ch == 'b':
+                trader_buy(game, mem)
+            elif ch == 'p':
+                gold = 0
+                for c in game.party.members:
+                    gold += c.gold
+                    c.gold = 0
+                mem.gold = gold
 
 
 def castle(game):
@@ -853,25 +1020,28 @@ def castle(game):
     vscr.disp_scrwin(game.party)
     ch = ''
     while True:
+        mw.cls()
         mw.print("*** Castle ***")
-        mw.print("h)awthorne tavern\ne)dge or town", start=' ')
+        mw.print("h)awthorne tavern\ne)dge of town", start=' ')
+        mw.print("t)rader jay's", start=' ')
         vscr.disp_scrwin(game.party)
-        ch = mw.input_char("Command?", values=['h', 'e'])
+        ch = mw.input_char("Command?", values=['h', 'e', 't'])
         if ch == 'h':
             tavern(game)
         elif ch == 'e':
             game.party.place = Place.EDGE_OF_TOWN
             break
+        elif ch == 't':
+            trader(game)
 
 
 def edge_town(game):
-    game.party.place = Place.EDGE_OF_TOWN
     vscr = game.vscr
     mw = vscr.meswins[-1]
-    vscr.cls()
-    vscr.disp_scrwin(game.party)
     ch = ''
     while ch != 'c':
+        mw.cls()
+        game.party.place = Place.EDGE_OF_TOWN
         mw.print("*** Edge of Town ***")
         mw.print("m)aze\nt)raining grounds\nl)eave game\nc)astle", start=' ')
         vscr.disp_scrwin(game.party)
@@ -879,12 +1049,15 @@ def edge_town(game):
         if ch == 't':
             training(game)
         elif ch == 'c':
-            castle(game)
+            game.party.place = Place.CASTLE
+            break
         elif ch == 'm':
-            mw.print("Entering dungeon...")
-            maze(game)
+            game.party.place = Place.MAZE
+            break
         elif ch == 'l':
-            sys.exit()  # save and exit ++++++++++++++++++++++++++++++++++
+            mw.print("type Q to quit for now...")
+            vscr.disp_scrwin(game.party)
+            getch()
 
 
 def maze(game):
@@ -894,14 +1067,8 @@ def maze(game):
 
     floor_obj = generate_floor(1)
 
-    meswin = vscr.meswin[0]
-    mem = Member("Alex", Align.GOOD, Race.HUMAN, 24)
-    party.members.append(mem)
-    mem = Member("Sean", Align.GOOD, Race.ELF, 136)
-    party.members.append(mem)
-    mem = Member("Son Goku", Align.NEUTRAL, Race.HOBBIT, 36)
-    party.members.append(mem)
-
+    meswin = vscr.meswins[0]
+    vscr.meswins = [meswin]
     vscr.disp_scrwin(party, floor_obj)
 
     while True:
@@ -953,6 +1120,10 @@ def main():
     party = Party(0, 0, 1)
     game.party = party
     game.spelldef = load_spelldef()
+    game.itemdef = load_itemdef()
+    game.shopitems = {}
+    for name in game.itemdef:
+        game.shopitems[name] = game.itemdef[name][9]
     party.place = Place.CASTLE
     # floor_obj = generate_floor(1)
     w, h = terminal_size()
