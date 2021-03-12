@@ -93,10 +93,292 @@ class Member:
     def __str__(self):
         return f"{self.name[:16].ljust(16)} Lv{self.level:3d} {self.race.name[:3].lower()}-{self.align.name[:1].lower()}-{self.job.name[:3].lower()}"
 
+    def disp_character(self, game):
+        """
+        Display a character information in the message window
+        """
+        vscr = game.vscr
+        mw = vscr.meswins[-1]
+        mw.mes_lines = []
+        mw.print(
+            f"{self.name.ljust(16)} L{self.level:3d} {self.align.name[:1].lower()}-{self.job.name[:3].lower()} {self.race.name.lower()}", start=' ')
+        mw.print(f"", start=' ')
+        mw.print(
+            f"strength {self.stat[0]:2d}  gold {self.gold:16d} lvl {self.level:5d}", start=' ')
+        mw.print(
+            f"    i.q. {self.stat[1]:2d}  e.p. {self.exp:16d} age {self.age:5d}", start=' ')
+        mw.print(
+            f"   piety {self.stat[2]:2d}  h.p.  {self.hp:7d}/{self.maxhp:7d} a.c.{self.ac:5d}", start=' ')
+        mw.print(
+            f"vitality {self.stat[3]:2d}  rip  {self.rip:7d}     marks {self.marks:8d}", start=' ')
+        mw.print(f" agility {self.stat[4]:2d}", start=' ')
+        mw.print(
+            f"    luck {self.stat[5]:2d}  status {self.state.name}", start=' ')
+        mw.print(f"", start=' ')
+        mw.print(f"mage  {self.mspell_cnt[0]}/{self.mspell_cnt[1]}/{self.mspell_cnt[2]}/{self.mspell_cnt[3]}/{self.mspell_cnt[4]}/{self.mspell_cnt[5]}/{self.mspell_cnt[6]}   priest  {self.pspell_cnt[0]}/{self.pspell_cnt[1]}/{self.pspell_cnt[2]}/{self.pspell_cnt[3]}/{self.pspell_cnt[4]}/{self.pspell_cnt[5]}/{self.pspell_cnt[6]}/", start=' ')
+        for idx in range(8):
+            try:
+                item = self.items[idx]
+                m = ' '
+                if self.job.name[:1].lower() not in game.itemdef[item[0]][4].lower():
+                    m = '#'  # can't equip
+                if item[1]:
+                    m = '*'  # equipped
+                if item[2]:
+                    m = '&'  # cursed
+                l = f"{m}{item[0]}"
+            except:
+                l = ''
+            if idx % 2:
+                mw.print(f"{idx}) {ol.ljust(18)} {idx+1}) {l.ljust(18)}",
+                         start=' ')
+            ol = l
+
+    def inspect_character(self, game):
+        mw = game.vscr.meswins[-1]
+        while True:
+            self.disp_character(game)
+            mw.print(f"", start=' ')
+            c1 = mw.input_char("i)tems s)pells l)eave",
+                               values=['i', 's', 'l'])
+            if c1 == 'l':
+                mw.cls()
+                break
+            elif c1 == 'i':
+                self.item_menu(game)
+            elif c1 == 's':
+                self.spell_menu(game)
+
+    def item_menu(self, game):
+        vscr = game.vscr
+        iw = Meswin(vscr, 14, 2, 44, 8, frame=True)
+        vscr.meswins.append(iw)
+        while True:
+            iw.print("which item?  # or l)leave")
+            vscr.disp_scrwin(game.party)
+            c = getch()
+            if c == 'l':
+                vscr.meswins.pop()
+                return
+            try:
+                if (inum := int(c)-1) > len(self.items)-1:
+                    continue
+            except:
+                continue
+            iw.print(f"{inum+1}) {self.items[inum][0]}", start=' ')
+            c = iw.input_char("u)se e)quip t)rade d)rop l)eave",
+                              values=['u', 'e', 't', 'd', 'l'])
+            if c == 'l':
+                continue
+            elif c == 'e':
+                if self.job.name[:1] not in game.itemdef[self.items[inum][0]][4]:
+                    iw.print("Can't equip the item.")
+                    continue
+                for item in self.items:
+                    if game.itemdef[self.items[inum][0]][2] \
+                       == game.itemdef[item[0]][2]:
+                        if item[2]:  # already cursed
+                            iw.print("Already equipped a cursed item.")
+                            break
+                        elif item[1]:  # equipped
+                            item[1] = False
+                if game.itemdef[self.items[inum][0]][11]:
+                    iw.print("Cursed!")
+                    self.items[inum][2] = True  # cursed
+                self.items[inum][1] = True  # equipped
+                vscr.meswins.pop()
+                return
+
+    def job_applicable(self, sp, jobnum):
+        """
+        Utility function to check if the character is applicable for the job
+        """
+        for i in range(6):
+            if sp[i]+self.stat[i] < job_requirements[Job(jobnum)][i]:
+                return False
+        if job_requirements[Job(jobnum)][6][self.align.value]:
+            return True
+        else:
+            return False
+
+    def calc_bonus(self):
+        """
+        Calculate bonus points
+        """
+        bonus = random.randrange(5, 9)
+        for _ in range(3):
+            if random.randrange(6) == 0:
+                bonus += 10
+        return bonus
+
+    def bonus_disp(self, game, bonus, y, sp):
+        """
+        Display bonus assignment screen
+        """
+        vscr = game.vscr
+        mw = vscr.meswins[-1]
+        mw.cls()
+        mw.print("Distribute bonus points")
+        mw.print("  h)minus j)down k)up l)plus .)change bonus x)done\n", start=' ')
+        mw.print(f"strength  {sp[0]+self.stat[0]:2d}", start=' ')
+        mw.print(f"iq        {sp[1]+self.stat[1]:2d}", start=' ')
+        mw.print(f"piety     {sp[2]+self.stat[2]:2d}", start=' ')
+        mw.print(f"vitality  {sp[3]+self.stat[3]:2d}", start=' ')
+        mw.print(f"agility   {sp[4]+self.stat[4]:2d}", start=' ')
+        mw.print(f"luck      {sp[5]+self.stat[5]:2d}", start=' ')
+        mw.print(f"\nbonus     {bonus:2d}", start=' ')
+        mw.print
+        mw.mes_lines[y+3] = mw.mes_lines[y+3][:11] + \
+            '>' + mw.mes_lines[y+3][12:]
+        line = ''
+        job = False
+        for jobnum in range(5):
+            if self.job_applicable(sp, jobnum):
+                job = True
+                line = ''.join([line, Job(jobnum).name[:].lower(), ' '])
+        mw.print(line)
+        vscr.disp_scrwin(game.party)
+        return job
+
+    def distribute_bonus(self, game):
+        """
+        Bonus assignment and deciding class main routine
+        """
+        bonus = self.calc_bonus()
+        y = 0
+        statplus = [0, 0, 0, 0, 0, 0]
+        while True:
+            job = bonus_disp(game, self, bonus, y, statplus)
+            c = getch()
+            if c == 'x' and bonus == 0 and job:
+                break
+            elif c == 'j' and y < 5:
+                y += 1
+            elif c == 'k' and y > 0:
+                y -= 1
+            elif c == 'h' and statplus[y] > 0:
+                statplus[y] -= 1
+                bonus += 1
+            elif c == 'l' and statplus[y]+self.stat[y] < 18 and bonus > 0:
+                statplus[y] += 1
+                bonus -= 1
+            elif c == '.':
+                statplus = [0, 0, 0, 0, 0, 0]
+                bonus = self.calc_bonus()
+        jobs = []
+        line = "Choose class ("
+        for jobnum in range(8):
+            if self.job_applicable(statplus, jobnum):
+                line = ''.join([line, Job(jobnum).name[:1].lower(), '/'])
+                jobs.append(Job(jobnum).name[:1].lower())
+        line = ''.join([line[:-1], ')'])
+        mw = game.vscr.meswins[-1]
+        c = mw.input_char(line, values=jobs)
+        for jobnum in range(8):
+            if c == Job(jobnum).name[:1].lower():
+                break
+        self.job = Job(jobnum)
+        if self.job == Job.FIGHTER:
+            self.maxhp = self.hp = random.randint(8, 15)
+        elif ch.job == Job.MAGE:
+            self.maxhp = self.hp = random.randint(2, 7)
+            self.mspells = ['onibi', 'shunmin']
+            self.mspell_cnt = [2, 0, 0, 0, 0, 0, 0]
+        elif ch.job == Job.PRIEST:
+            self.maxhp = self.hp = random.randint(6, 13)
+            self.pspells = ['jiai', 'ikari']
+            self.pspell_cnt = [2, 0, 0, 0, 0, 0, 0]
+        elif self.job == Job.THIEF or Job.BISHOP:
+            self.maxhp = self.hp = random.randint(4, 9)
+        elif self.job == Job.SAMURAI:
+            self.maxhp = self.hp = random.randint(12, 19)
+        elif self.job == Job.LORD:
+            self.maxhp = self.hp = random.randint(12, 19)
+        else:  # ninja
+            self.maxhp = self.jp = random.randint(8, 17)
+
+        for i in range(6):
+            self.stat[i] += statplus[i]
+        game.characters.append(self)
+        mw.print("Character created")
+        game.vscr.disp_scrwin(game.party)
+
 
 class Game:
     def __init__(self):
         self.characters = []  # registerd characters
+
+    def load_spelldef(self):
+        """
+        load spell definition file and return spell_def dictionary
+        """
+        with open('spells.csv') as csvfile:
+            rdr = csv.reader(csvfile)
+            spell_def = {}
+            for i, row in enumerate(rdr):
+                if i == 0:
+                    continue
+                line = (row[1], int(row[2]), json.loads(row[5].lower()),
+                        json.loads(row[6].lower()), row[7], row[8], row[9], row[10])
+                spell_def[row[3]] = line
+            self.spelldef = spell_def
+
+    def load_itemdef(self):
+        """
+        load item definition file and return item_def dictionary
+        """
+        with open('items.csv') as csvfile:
+            rdr = csv.reader(csvfile)
+            item_def = {}
+            for i, row in enumerate(rdr):
+                if i == 0 or not row:
+                    continue
+                if not (name := row[2]):
+                    name = row[4]
+                if not (unident := row[3]):
+                    unident = row[5]
+                try:
+                    ac = int(row[9])
+                except:
+                    ac = 0
+                try:
+                    st = int(row[10])
+                except:
+                    st = 0
+                try:
+                    at = int(row[11])
+                except:
+                    at = 0
+                try:
+                    shop = int(row[13])
+                except:
+                    shop = 0
+                try:
+                    price = int(row[14])
+                except:
+                    price = 0
+                if row[15] == 'TRUE':
+                    curse = True
+                else:
+                    curse = False
+                try:
+                    hp = int(row[16])
+                except:
+                    hp = 0
+                try:
+                    brk = int(row[18])
+                except:
+                    brk = 0
+                # (0lvl, 1unident, 2type, 3range, 4jobs, 5ac, 6st, 7at,
+                #  8dice, 9shop, 10price, 11curse, 12hp, 13brk, 14regist)
+                line = (row[1], unident, row[6], row[7], row[8], ac,
+                        st, at, row[12], shop, price,
+                        curse, hp, brk, row[19])
+                item_def[name] = line
+            self.itemdef = item_def
+            self.shopitems = {}
+            for name in self.itemdef:
+                self.shopitems[name] = self.itemdef[name][9]
 
 
 class Vscr:
@@ -159,11 +441,16 @@ class Vscr:
         Display the message window
         """
         for mw in self.meswins:
+            meswidth = mw.width - 2
+            if mw.frame:
+                meswidth -= 4
             for y in range(mw.height):
                 if len(mw.mes_lines) <= y:
-                    line = ' '*(mw.width-2)
+                    line = ' '*(meswidth)
                 else:
-                    line = mw.mes_lines[y].ljust(mw.width-2)
+                    line = mw.mes_lines[y].ljust(meswidth)
+                if mw.frame:
+                    line = ''.join(['| ', line, ' |'])
                 line = line.encode()
                 vscr_left = (mw.y+y)*self.width + mw.x
                 self.cur_vscr_view[vscr_left:vscr_left+len(line)] = line
@@ -218,7 +505,7 @@ class Meswin:
     Message window.  A message line starts with "* ".
     """
 
-    def __init__(self, vscr, x, y, width, height):
+    def __init__(self, vscr, x, y, width, height, frame=False):
         self.vscr = vscr
         self.width = min(width, vscr.width)
         self.height = min(height, vscr.height)
@@ -226,6 +513,7 @@ class Meswin:
         self.y = y
         self.cur_x = 0  # cursor position in message area
         self.cur_y = 0
+        self.frame = frame
         self.show = False
         self.mes_lines = []
         self.cls()
@@ -248,12 +536,16 @@ class Meswin:
         Print a message in the message window.  Long text wraps
         to the next line.  Process '\n' in texts.
         """
+        meswidth = self.width - 2
+        if self.frame:
+            meswidth = self.width - 6
+
         sublines = re.split('\n', msg)
         for idx, sl in enumerate(sublines):  # subline
             header = '  '
             if idx == 0:
                 header = start + ' '
-            ssls = textwrap.wrap(sl, width=self.width-2)
+            ssls = textwrap.wrap(sl, width=meswidth)
             if len(ssls) == 0:
                 self.mes_lines.append(header)
             else:
@@ -310,6 +602,24 @@ class Party:
         self.y = y
         self.floor = floor
         self.members = []
+
+    def choose_character(self, game):
+        """
+        Choose and return a party member
+        """
+        mw = game.vscr.meswins[-1]
+        while True:
+            ch = mw.input_char(f"Who? - # or l)eave")
+            if ch == 'l':
+                break
+            try:
+                if 0 <= (chid := int(ch)-1) < len(game.party.members):
+                    break
+            except:
+                pass
+        if ch == 'l':
+            return False
+        return game.party.members[chid]
 
 
 class Floor:
@@ -507,123 +817,6 @@ def getch(wait=False):
     return ch
 
 
-def job_applicable(sp, ch, jobnum):
-    """
-    Utility function to check if the character is applicable for the job
-    """
-    for i in range(6):
-        if sp[i]+ch.stat[i] < job_requirements[Job(jobnum)][i]:
-            return False
-    if job_requirements[Job(jobnum)][6][ch.align.value]:
-        return True
-    else:
-        return False
-
-
-def bonus_disp(game, ch, bonus, y, sp):
-    """
-    Display bonus assignment screen
-    """
-    vscr = game.vscr
-    mw = vscr.meswins[-1]
-    mw.cls()
-    mw.print("Distribute bonus points")
-    mw.print("  h)minus j)down k)up l)plus .)change bonus x)done\n", start=' ')
-    mw.print(f"strength  {sp[0]+ch.stat[0]:2d}", start=' ')
-    mw.print(f"iq        {sp[1]+ch.stat[1]:2d}", start=' ')
-    mw.print(f"piety     {sp[2]+ch.stat[2]:2d}", start=' ')
-    mw.print(f"vitality  {sp[3]+ch.stat[3]:2d}", start=' ')
-    mw.print(f"agility   {sp[4]+ch.stat[4]:2d}", start=' ')
-    mw.print(f"luck      {sp[5]+ch.stat[5]:2d}", start=' ')
-    mw.print(f"\nbonus     {bonus:2d}", start=' ')
-    mw.print
-    mw.mes_lines[y+3] = mw.mes_lines[y+3][:11] + '>' + mw.mes_lines[y+3][12:]
-    line = ''
-    job = False
-    for jobnum in range(5):
-        if job_applicable(sp, ch, jobnum):
-            job = True
-            line = ''.join([line, Job(jobnum).name[:].lower(), ' '])
-    mw.print(line)
-    vscr.disp_scrwin(game.party)
-    return job
-
-
-def calc_bonus():
-    """
-    Calculate bonus points
-    """
-    bonus = random.randrange(5, 9)
-    for _ in range(3):
-        if random.randrange(6) == 0:
-            bonus += 10
-    return bonus
-
-
-def distribute_bonus(game, ch):
-    """
-    Bonus assignment and deciding class main routine
-    """
-    bonus = calc_bonus()
-    y = 0
-    statplus = [0, 0, 0, 0, 0, 0]
-    while True:
-        job = bonus_disp(game, ch, bonus, y, statplus)
-        c = getch()
-        if c == 'x' and bonus == 0 and job:
-            break
-        elif c == 'j' and y < 5:
-            y += 1
-        elif c == 'k' and y > 0:
-            y -= 1
-        elif c == 'h' and statplus[y] > 0:
-            statplus[y] -= 1
-            bonus += 1
-        elif c == 'l' and statplus[y]+ch.stat[y] < 18 and bonus > 0:
-            statplus[y] += 1
-            bonus -= 1
-        elif c == '.':
-            statplus = [0, 0, 0, 0, 0, 0]
-            bonus = calc_bonus()
-    jobs = []
-    line = "Choose class ("
-    for jobnum in range(8):
-        if job_applicable(statplus, ch, jobnum):
-            line = ''.join([line, Job(jobnum).name[:1].lower(), '/'])
-            jobs.append(Job(jobnum).name[:1].lower())
-    line = ''.join([line[:-1], ')'])
-    mw = game.vscr.meswins[-1]
-    c = mw.input_char(line, values=jobs)
-    for jobnum in range(8):
-        if c == Job(jobnum).name[:1].lower():
-            break
-    ch.job = Job(jobnum)
-    if ch.job == Job.FIGHTER:
-        ch.maxhp = ch.hp = random.randint(8, 15)
-    elif ch.job == Job.MAGE:
-        ch.maxhp = ch.hp = random.randint(2, 7)
-        ch.mspells = ['onibi', 'shunmin']
-        ch.mspell_cnt = [2, 0, 0, 0, 0, 0, 0]
-    elif ch.job == Job.PRIEST:
-        ch.maxhp = ch.hp = random.randint(6, 13)
-        ch.pspells = ['jiai', 'ikari']
-        ch.pspell_cnt = [2, 0, 0, 0, 0, 0, 0]
-    elif ch.job == Job.THIEF or Job.BISHOP:
-        ch.maxhp = ch.hp = random.randint(4, 9)
-    elif ch.job == Job.SAMURAI:
-        ch.maxhp = ch.hp = random.randint(12, 19)
-    elif ch.job == Job.LORD:
-        ch.maxhp = ch.hp = random.randint(12, 19)
-    else:  # ninja
-        ch.maxhp = ch.jp = random.randint(8, 17)
-
-    for i in range(6):
-        ch.stat[i] += statplus[i]
-    game.characters.append(ch)
-    mw.print("Character created")
-    game.vscr.disp_scrwin(game.party)
-
-
 def create_character(game):
     """
     Create a character (a training grounds menu item)
@@ -678,36 +871,7 @@ def create_character(game):
     vscr.disp_scrwin(game.party)
 
     ch = Member(name, align, race, age)
-    distribute_bonus(game, ch)
-
-
-def disp_character(game, ch):
-    """
-    Display a character information in the message window
-    """
-    vscr = game.vscr
-    mw = vscr.meswins[-1]
-    mw.mes_lines = []
-    mw.print(
-        f"{ch.name.ljust(16)} L{ch.level:3d} {ch.align.name[:1].lower()}-{ch.job.name[:3].lower()} {ch.race.name.lower()}", start=' ')
-    mw.print(f"", start=' ')
-    mw.print(
-        f"strength {ch.stat[0]:2d}  gold {ch.gold:16d} lvl {ch.level:5d}", start=' ')
-    mw.print(
-        f"    i.q. {ch.stat[1]:2d}  e.p. {ch.exp:16d} age {ch.age:5d}", start=' ')
-    mw.print(
-        f"   piety {ch.stat[2]:2d}  h.p.  {ch.hp:7d}/{ch.maxhp:7d} a.c.{ch.ac:5d}", start=' ')
-    mw.print(
-        f"vitality {ch.stat[3]:2d}  rip  {ch.rip:7d}     marks {ch.marks:8d}", start=' ')
-    mw.print(f" agility {ch.stat[4]:2d}", start=' ')
-    mw.print(f"    luck {ch.stat[5]:2d}  status {ch.state.name}", start=' ')
-    mw.print(f"", start=' ')
-    mw.print(f"mage  {ch.mspell_cnt[0]}/{ch.mspell_cnt[1]}/{ch.mspell_cnt[2]}/{ch.mspell_cnt[3]}/{ch.mspell_cnt[4]}/{ch.mspell_cnt[5]}/{ch.mspell_cnt[6]}   priest  {ch.pspell_cnt[0]}/{ch.pspell_cnt[1]}/{ch.pspell_cnt[2]}/{ch.pspell_cnt[3]}/{ch.pspell_cnt[4]}/{ch.pspell_cnt[5]}/{ch.pspell_cnt[6]}/", start=' ')
-    mw.print(f"", start=' ')
-    mw.print(
-        f"1) {'*long sword'.ljust(16)}  2) {'*plate mail'.ljust(16)}", start=' ')
-    vscr.disp_scrwin(game.party)
-    getch(wait=True)
+    ch.distribute_bonus(game)
 
 
 def inspect_characters(game):
@@ -719,10 +883,13 @@ def inspect_characters(game):
     mw.mes_lines = []
     vscr.disp_scrwin(game.party)
     cnum = 0
+    chlist = game.party.members
+    if game.party.place == Place.TRAINING_GROUNDS:
+        chlist = game.characters
     while True:
         mw.mes_lines = []
         mw.print("Inspect characters -  j)down k)up i)nspect l)eave]")
-        for i, mem in enumerate(game.characters):
+        for i, mem in enumerate(chlist):
             if i == cnum:
                 cur = ' >'
             else:
@@ -732,12 +899,12 @@ def inspect_characters(game):
         c = getch()
         if c == 'l':
             break
-        elif c == 'j' and cnum < len(game.characters)-1:
+        elif c == 'j' and cnum < len(chlist)-1:
             cnum += 1
         elif c == 'k' and cnum > 0:
             cnum -= 1
-        elif c == 'i' and len(game.characters) > 0:
-            disp_character(game, game.characters[cnum])
+        elif c == 'i' and len(chlist) > 0:
+            chlist[cnum].inspect_character(game)
 
 
 def training(game):
@@ -762,76 +929,10 @@ def training(game):
             inspect_characters(game)
 
 
-def load_spelldef():
-    """
-    load spell definition file and return spell_def dictionary
-    """
-    with open('spells.csv') as csvfile:
-        rdr = csv.reader(csvfile)
-        spell_def = {}
-        for i, row in enumerate(rdr):
-            if i == 0:
-                continue
-            line = (row[1], int(row[2]), json.loads(row[5].lower()),
-                    json.loads(row[6].lower()), row[7], row[8], row[9], row[10])
-            spell_def[row[3]] = line
-        return spell_def
-
-
-def load_itemdef():
-    """
-    load item definition file and return item_def dictionary
-    """
-    with open('items.csv') as csvfile:
-        rdr = csv.reader(csvfile)
-        item_def = {}
-        for i, row in enumerate(rdr):
-            if i == 0 or not row:
-                continue
-            if not (name := row[2]):
-                name = row[4]
-            if not (unident := row[3]):
-                unident = row[5]
-            try:
-                ac = int(row[9])
-            except:
-                ac = 0
-            try:
-                st = int(row[10])
-            except:
-                st = 0
-            try:
-                at = int(row[11])
-            except:
-                at = 0
-            try:
-                shop = int(row[13])
-            except:
-                shop = 0
-            try:
-                price = int(row[14])
-            except:
-                price = 0
-            if row[15] == 'TRUE':
-                curse = True
-            else:
-                curse = False
-            try:
-                hp = int(row[16])
-            except:
-                hp = 0
-            try:
-                brk = int(row[18])
-            except:
-                brk = 0
-            line = (row[1], unident, row[6], row[7], row[8], ac,
-                    st, at, row[12], shop, price,
-                    curse, hp, brk, row[19])
-            item_def[name] = line
-        return item_def
-
-
 def tavern_add(game):
+    """
+    add members to the party
+    """
     vscr = game.vscr
     mw = vscr.meswins[-1]
     if len(game.party.members) >= 6:
@@ -840,7 +941,7 @@ def tavern_add(game):
         return
 
     vscr.disp_scrwin(game.party)
-    chwin = Meswin(vscr, 10, 2, 40, 16)
+    chwin = Meswin(vscr, 12, 2, 40, 16)
     vscr.meswins.append(chwin)
     top = idx = 0
     while True:
@@ -883,6 +984,10 @@ def tavern_add(game):
 
 
 def tavern(game):
+    """
+    tavern (a castle item)
+    add/remove members to the party, inspect, divide golds, etc.
+    """
     game.party.place = Place.HAWTHORNE_TAVERN
     vscr = game.vscr
     mw = vscr.meswins[-1]
@@ -900,11 +1005,17 @@ def tavern(game):
                 tavern_add(game)
             else:
                 mw.print("No characters to add")
+        elif ch == 'i':
+            if (mem := game.party.choose_character(game)):
+                mem.inspect_character(game)
 
 
 def trader_buy(game, mem):
+    """
+    a member chooses and buys items from shop inventory
+    """
     vscr = game.vscr
-    iw = Meswin(vscr, 10, 1, 41, 12)
+    iw = Meswin(vscr, 12, 1, 41, 12)
     vscr.meswins.append(iw)
     top = idx = page = 0
     pages = ('weapon', 'armor', 'shield', 'helm', 'gloves',
@@ -969,7 +1080,7 @@ def trader_buy(game, mem):
                 iw.mes_lines[0] = "| Anything else, noble sir?".ljust(
                     iw.width-1)+'|'
                 mem.gold -= game.itemdef[items[idx]][10]
-                bought = [game.itemdef[items[idx]], False, False]
+                bought = [items[idx], False, False]
                 mem.items.append(bought)
                 vscr.disp_scrwin(game.party)
                 getch()
@@ -977,24 +1088,19 @@ def trader_buy(game, mem):
 
 
 def trader(game):
+    """
+    shop (a castle item)
+    choose a member and he/she buys, sells items, etc.
+    """
     game.party.place = Place.TRADER_JAYS
     vscr = game.vscr
     mw = vscr.meswins[-1]
     while True:
         mw.print("*** Trader Jay's ***")
         vscr.disp_scrwin(game.party)
-        while True:
-            ch = mw.input_char(f"Who will enter? - # or l)eave")
-            if ch == 'l':
-                break
-            try:
-                if 0 <= (chid := int(ch)-1) < len(game.party.members):
-                    break
-            except:
-                pass
-        if ch == 'l':
+        mem = game.party.choose_character(game)
+        if not mem:
             break
-        mem = game.party.members[chid]
         while True:
             mw.print(f"Welcome, {mem.name}.")
             mw.print(f"  You have {mem.gold} gold.")
@@ -1013,6 +1119,10 @@ def trader(game):
 
 
 def castle(game):
+    """
+    castle main
+    dispatch to tavern, shop, inn or temple
+    """
     game.party.place = Place.CASTLE
     vscr = game.vscr
     mw = vscr.meswins[-1]
@@ -1022,8 +1132,8 @@ def castle(game):
     while True:
         mw.cls()
         mw.print("*** Castle ***")
-        mw.print("h)awthorne tavern\ne)dge of town", start=' ')
-        mw.print("t)rader jay's", start=' ')
+        mw.print("h)awthorne tavern\nt)rader jay's\nl)akehouse inn", start=' ')
+        mw.print("k)makura shrine\ne)dge of town", start=' ')
         vscr.disp_scrwin(game.party)
         ch = mw.input_char("Command?", values=['h', 'e', 't'])
         if ch == 'h':
@@ -1036,6 +1146,10 @@ def castle(game):
 
 
 def edge_town(game):
+    """
+    edge of town main
+    dispatch to training grounds
+    """
     vscr = game.vscr
     mw = vscr.meswins[-1]
     ch = ''
@@ -1103,12 +1217,13 @@ def maze(game):
 
 
 def dispatch(game):
+    """
+    dispatch either to edge of town, castle or maze
+    """
     while game.party.place != Place.LEAVE_GAME:
         pl = game.party.place
         if pl == Place.EDGE_OF_TOWN:
             edge_town(game)
-        elif pl == Place.TRAINING_GROUNDS:
-            training(game)
         elif pl == Place.CASTLE:
             castle(game)
         elif pl == Place.MAZE:
@@ -1119,11 +1234,8 @@ def main():
     game = Game()
     party = Party(0, 0, 1)
     game.party = party
-    game.spelldef = load_spelldef()
-    game.itemdef = load_itemdef()
-    game.shopitems = {}
-    for name in game.itemdef:
-        game.shopitems[name] = game.itemdef[name][9]
+    game.load_spelldef()
+    game.load_itemdef()
     party.place = Place.CASTLE
     # floor_obj = generate_floor(1)
     w, h = terminal_size()
@@ -1132,7 +1244,32 @@ def main():
     game.vscr = vscr
     vscr.meswins.append(Meswin(vscr, 42, 18, 40, 7))  # meswin for scrollwin
     # meswin for castle/edge of town
-    vscr.meswins.append(Meswin(vscr, 10, 1, 60, 17))
+    vscr.meswins.append(Meswin(vscr, 10, 1, 64, 17, frame=True))
+
+    m = Member("Alex", Align.GOOD, Race.DWARF, 32)
+    m.job = Job.FIGHTER
+    m.stat = (18, 10, 5, 11, 13, 11)
+    game.characters.append(m)
+    m = Member("Betty", Align.GOOD, Race.HUMAN, 28)
+    m.job = Job.FIGHTER
+    m.stat = (16, 9, 5, 15, 12, 11)
+    game.characters.append(m)
+    m = Member("Cal", Align.GOOD, Race.HUMAN, 48)
+    m.job = Job.SAMURAI
+    m.stat = (16, 10, 5, 16, 13, 13)
+    game.characters.append(m)
+    m = Member("Debora", Align.NEUTRAL, Race.HOBBIT, 36)
+    m.job = Job.THIEF
+    m.stat = (12, 10, 5, 18, 13, 18)
+    game.characters.append(m)
+    m = Member("Emily", Align.GOOD, Race.ELF, 29)
+    m.job = Job.PRIEST
+    m.stat = (12, 15, 18, 15, 12, 9)
+    game.characters.append(m)
+    m = Member("Fast", Align.GOOD, Race.ELF, 36)
+    m.job = Job.MAGE
+    m.stat = (8, 18, 10, 14, 16, 14)
+    game.characters.append(m)
     dispatch(game)
 
 
