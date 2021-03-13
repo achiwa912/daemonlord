@@ -126,7 +126,10 @@ class Member:
                     m = '*'  # equipped
                 if item[2]:
                     m = '&'  # cursed
-                l = f"{m}{item[0]}"
+                if self.items[idx][3]:  # unidentified
+                    l = f"{m}?{game.itemdef[item[0]][1]}"
+                else:
+                    l = f"{m}{item[0]}"
             except:
                 l = ''
             if idx % 2:
@@ -165,7 +168,10 @@ class Member:
                     continue
             except:
                 continue
-            iw.print(f"{inum+1}) {self.items[inum][0]}", start=' ')
+            dispname = self.items[inum][0]
+            if self.items[inum][3]:  # unidentified
+                dispname = ''.join(['?', game.itemdef[dispname][1]])
+            iw.print(f"{inum+1}) {dispname}", start=' ')
             c = iw.input_char("u)se e)quip t)rade d)rop l)eave",
                               values=['u', 'e', 't', 'd', 'l'])
             if c == 'l':
@@ -183,11 +189,22 @@ class Member:
                         elif item[1]:  # equipped
                             item[1] = False
                 if game.itemdef[self.items[inum][0]][11]:
-                    iw.print("Cursed!")
                     self.items[inum][2] = True  # cursed
+                    iw.print("Cursed!")
+                    vscr.disp_scrwin(game.party)
+                    getch()
                 self.items[inum][1] = True  # equipped
+                self.calc_ac(game)
                 vscr.meswins.pop()
+                vscr.disp_scrwin(game.party)
+                vscr.disp_scrwin(game.party)
                 return
+
+    def calc_ac(self, game):
+        self.ac = 10
+        for item in self.items:
+            if item[1] or item[2]:
+                self.ac += game.itemdef[item[0]][5]
 
     def job_applicable(self, sp, jobnum):
         """
@@ -619,7 +636,24 @@ class Party:
                 pass
         if ch == 'l':
             return False
-        return game.party.members[chid]
+        return self.members[chid]
+
+    def remove_character(self, game):
+        """
+        Choose and remove a party member
+        """
+        mw = game.vscr.meswins[-1]
+        while True:
+            ch = mw.input_char(f"Remove who? - # or l)eave")
+            if ch == 'l':
+                break
+            try:
+                if 0 <= (chid := int(ch)-1) < len(game.party.members):
+                    del self.members[chid]
+                    game.vscr.disp_scrwin(self)
+                    game.vscr.disp_scrwin(self)
+            except:
+                pass
 
 
 class Floor:
@@ -1008,6 +1042,8 @@ def tavern(game):
         elif ch == 'i':
             if (mem := game.party.choose_character(game)):
                 mem.inspect_character(game)
+        elif ch == 'r':
+            game.party.remove_character(game)
 
 
 def trader_buy(game, mem):
@@ -1080,11 +1116,79 @@ def trader_buy(game, mem):
                 iw.mes_lines[0] = "| Anything else, noble sir?".ljust(
                     iw.width-1)+'|'
                 mem.gold -= game.itemdef[items[idx]][10]
-                bought = [items[idx], False, False]
+                bought = [items[idx], False, False, False]
                 mem.items.append(bought)
+                game.shopitems[items[idx]] -= 1
                 vscr.disp_scrwin(game.party)
                 getch()
     vscr.meswins.pop()
+
+
+def trader_sell(game, mem, op):
+    """
+    sell, uncurse or identify items
+    """
+    vscr = game.vscr
+    mw = vscr.meswins[-1]
+    if op == 's':
+        opword = 'sell'
+    elif op == 'u':
+        opword = 'uncurse'
+    else:
+        opword = 'identify'
+
+    mw.print(f"Which item to {opword}? -  # or leave")
+    idic = {}
+    for i, item in enumerate(mem.items, 1):
+        dispname = item[0]
+        mark = ' '
+        if op == 'u':  # uncurse
+            if not item[2]:
+                continue
+            mark = '&'
+            if item[3]:
+                dispname = ''.join(['?', game.itemdef[item[0]][1]])
+        elif op == 'i':  # identify
+            if (not item[3]) or item[2]:
+                continue
+            dispname = ''.join(['?', game.itemdef[item[0]][1]])
+        else:  # sell
+            if item[2] or item[3]:
+                continue
+            if item[1]:  # equipped
+                mark = '*'
+        price = game.itemdef[item[0]][10]//2
+        mw.print(
+            f"{i}){mark}{dispname.ljust(16)}{price}",
+            start=' ')
+        idic[i] = (item[0], dispname, price)
+
+    while True:
+        c = mw.input_char("# or l)eave")
+        if c == 'l':
+            return
+        try:
+            if int(c) in idic:
+                break
+        except:
+            continue
+    game.shopitems[idic[int(c)][0]] += 1
+    price = idic[int(c)][2]
+    if op == 's':
+        mem.gold += price
+        del mem.items[int(c)-1]
+        mw.print("I'm sure fellows'll want it.")
+    elif op == 'i':
+        mem.gold -= price
+        mem.items[int(c)-1][3] = False  # identified
+        mw.print(f"Identified as {mem.items[int(c)-1][0]}.")
+    else:
+        mem.gold -= price
+        mw.print(f"Uncursed {mem.items[int(c)-1][0]}.")
+        del mem.items[int(c)-1]
+
+    game.vscr.disp_scrwin(game.party)
+    getch()
 
 
 def trader(game):
@@ -1105,11 +1209,13 @@ def trader(game):
             mw.print(f"Welcome, {mem.name}.")
             mw.print(f"  You have {mem.gold} gold.")
             ch = mw.input_char(f"b)uy s)ell u)ncurse i)dentify p)ool gold l)eave",
-                               values=['b', 'p', 'l'])
+                               values=['b', 's', 'u', 'i', 'p', 'l'])
             if ch == 'l':
                 break
             elif ch == 'b':
                 trader_buy(game, mem)
+            elif ch in 'sui':
+                trader_sell(game, mem, ch)
             elif ch == 'p':
                 gold = 0
                 for c in game.party.members:
@@ -1123,7 +1229,6 @@ def castle(game):
     castle main
     dispatch to tavern, shop, inn or temple
     """
-    game.party.place = Place.CASTLE
     vscr = game.vscr
     mw = vscr.meswins[-1]
     vscr.cls()
@@ -1131,6 +1236,7 @@ def castle(game):
     ch = ''
     while True:
         mw.cls()
+        game.party.place = Place.CASTLE
         mw.print("*** Castle ***")
         mw.print("h)awthorne tavern\nt)rader jay's\nl)akehouse inn", start=' ')
         mw.print("k)makura shrine\ne)dge of town", start=' ')
@@ -1249,26 +1355,34 @@ def main():
     m = Member("Alex", Align.GOOD, Race.DWARF, 32)
     m.job = Job.FIGHTER
     m.stat = (18, 10, 5, 11, 13, 11)
+    m.maxhp = m.hp = 13
+    m.gold = 50000
+    m.items.append(['shield -3', False, False, True])
     game.characters.append(m)
     m = Member("Betty", Align.GOOD, Race.HUMAN, 28)
     m.job = Job.FIGHTER
     m.stat = (16, 9, 5, 15, 12, 11)
+    m.maxhp = m.hp = 15
     game.characters.append(m)
     m = Member("Cal", Align.GOOD, Race.HUMAN, 48)
     m.job = Job.SAMURAI
     m.stat = (16, 10, 5, 16, 13, 13)
+    m.maxhp = m.hp = 16
     game.characters.append(m)
     m = Member("Debora", Align.NEUTRAL, Race.HOBBIT, 36)
     m.job = Job.THIEF
     m.stat = (12, 10, 5, 18, 13, 18)
+    m.maxhp = m.hp = 11
     game.characters.append(m)
     m = Member("Emily", Align.GOOD, Race.ELF, 29)
     m.job = Job.PRIEST
     m.stat = (12, 15, 18, 15, 12, 9)
+    m.maxhp = m.hp = 12
     game.characters.append(m)
     m = Member("Fast", Align.GOOD, Race.ELF, 36)
     m.job = Job.MAGE
     m.stat = (8, 18, 10, 14, 16, 14)
+    m.maxhp = m.hp = 7
     game.characters.append(m)
     dispatch(game)
 
