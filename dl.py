@@ -86,6 +86,8 @@ class Member:
         self.pspells = []
         self.mspell_cnt = [0, 0, 0, 0, 0, 0, 0]
         self.pspell_cnt = [0, 0, 0, 0, 0, 0, 0]
+        self.mspell_max = [0, 0, 0, 0, 0, 0, 0]
+        self.pspell_max = [0, 0, 0, 0, 0, 0, 0]
 
     def __repr__(self):
         return f"<{self.name}, {self.align.name[:1]}-{self.race.name[:3]}-{self.job.name[:3]} {self.stat[0]}/{self.stat[1]}/{self.stat[2]}/{self.stat[3]}/{self.stat[4]}>"
@@ -300,10 +302,12 @@ class Member:
         elif ch.job == Job.MAGE:
             self.maxhp = self.hp = random.randint(2, 7)
             self.mspells = ['onibi', 'shunmin']
+            self.mspell_max = [2, 0, 0, 0, 0, 0, 0]
             self.mspell_cnt = [2, 0, 0, 0, 0, 0, 0]
         elif ch.job == Job.PRIEST:
             self.maxhp = self.hp = random.randint(6, 13)
             self.pspells = ['jiai', 'ikari']
+            self.pspell_max = [2, 0, 0, 0, 0, 0, 0]
             self.pspell_cnt = [2, 0, 0, 0, 0, 0, 0]
         elif self.job == Job.THIEF or Job.BISHOP:
             self.maxhp = self.hp = random.randint(4, 9)
@@ -503,6 +507,10 @@ class Vscr:
         """
         start = time.time()
         if party.place == Place.MAZE:
+            for y in range(party.y-1, party.y+2):
+                for x in range(party.x-1, party.x+2):
+                    floor_obj.put_tile(
+                        x, y, floor_obj.get_tile(x, y), orig=False)
             self.draw_map(party, floor_obj)
         self.draw_partywin(party)
         self.draw_header(party)
@@ -620,6 +628,9 @@ class Party:
         self.floor = floor
         self.members = []
 
+    def can_open(self, game):
+        return True  # ++++++++++++++++++++++++++++++
+
     def choose_character(self, game):
         """
         Choose and return a party member
@@ -668,6 +679,55 @@ class Floor:
     def __repr__(self):
         s = self.floor_data.decode()
         return f"Floor(size: {self.x_size}x{self.y_size}, floor: {self.floor} - {s})"
+
+    def get_tile(self, x, y):
+        if x >= self.x_size or x < 0:
+            return b'^'
+        if y >= self.y_size or y < 0:
+            return b'^'
+        pos = y * self.x_size + x
+        return self.floor_orig[pos:pos+1]
+
+    def put_tile(self, x, y, bc, orig=True):
+        if 0 <= x < self.x_size and 0 <= y < self.y_size:
+            pos = y * self.x_size + x
+            if orig:
+                self.floor_orig[pos:pos+1] = bc
+            else:
+                self.floor_data[pos:pos+1] = bc
+
+    def can_move(self, x, y):
+        bc = self.get_tile(x, y)
+        if bc in b"*+#^":
+            return False
+        return True
+
+    def open_door(self, game, mw):
+        x = game.party.x
+        y = game.party.y
+        c = mw.input_char("Which direction? - ;)leave",
+                          values=['h', 'j', 'k', 'l', ';'])
+        if c == ';':
+            return
+        elif c == 'h':
+            x -= 1
+        elif c == 'l':
+            x += 1
+        elif c == 'j':
+            y += 1
+        elif c == 'k':
+            y -= 1
+        tile = self.get_tile(x, y)
+        if tile == b'+':
+            mw.print("Opened.")
+            self.put_tile(x, y, b'.')
+        elif tile == b'*':
+            if game.party.can_open(game):
+                mw.print("Unlocked.")
+                self.put_tile(x, y, b'.')
+        else:
+            mw.print("Not a door.")
+            # game.vscr.disp_scrwin(game.party)
 
     def draw_line(self, x1, y1, x2, y2):
         """
@@ -732,6 +792,7 @@ class Floor:
         rooms.sort(key=lambda room: room.x+room.x_size//2)
         rs = rooms[:]
         r_src = rs.pop()
+        newrooms = [r_src]
         while rs:
             idx_near = 0
             len_rs = len(rs)
@@ -741,6 +802,8 @@ class Floor:
             r_near = rs.pop(idx_near)
             self.connect_rooms(r_src, r_near)
             r_src = r_near
+            newrooms.append(r_src)
+        rooms = newrooms
 
     def place_door(self, x, y, dc):
         """
@@ -767,6 +830,18 @@ class Floor:
             for y in range(r.y_size):  # left and right edges
                 self.place_door(r.x-1, r.y+y, dc)
                 self.place_door(r.x+r.x_size, r.y+y, dc)
+
+            if r == rooms[0]:
+                pos = r.center_y*self.x_size + r.center_x
+                self.floor_view[pos:pos+1] = b'<'  # up stair
+                self.up_x = r.center_x
+                self.up_y = r.center_y
+
+            if r == rooms[-1]:
+                pos = r.center_y*self.x_size + r.center_x
+                self.floor_view[pos:pos+1] = b'>'  # down stair
+                self.down_x = r.center_x
+                self.down_y = r.center_y
 
 
 class Room:
@@ -827,6 +902,8 @@ def generate_floor(floor):
             floor_obj.floor_view[start:start+r.x_size] = b'.'*r.x_size
     floor_obj.connect_all_rooms(rooms)
     floor_obj.place_doors(rooms)
+    floor_obj.floor_orig = floor_obj.floor_data
+    floor_obj.floor_data = bytearray(b'^' * floor_x_size * floor_y_size)
     return floor_obj
 
 
@@ -1286,6 +1363,8 @@ def maze(game):
     vscr = game.vscr
 
     floor_obj = generate_floor(1)
+    party.x = floor_obj.up_x
+    party.y = floor_obj.up_y
 
     meswin = vscr.meswins[0]
     vscr.meswins = [meswin]
@@ -1298,17 +1377,24 @@ def maze(game):
             if c == 'Q':
                 sys.exit()
             if c == 'h' and party.x > 0:
-                party.x -= 1
-                meswin.print("west")
+                if floor_obj.can_move(party.x-1, party.y):
+                    party.x -= 1
+                    meswin.print("west")
             elif c == 'k' and party.y > 0:
-                party.y -= 1
-                meswin.print("north")
+                if floor_obj.can_move(party.x, party.y-1):
+                    party.y -= 1
+                    meswin.print("north")
             elif c == 'j' and party.y < floor_obj.y_size-1:
-                party.y += 1
-                meswin.print("south")
+                if floor_obj.can_move(party.x, party.y+1):
+                    party.y += 1
+                    meswin.print("south")
             elif c == 'l' and party.x < floor_obj.x_size-1:
-                party.x += 1
-                meswin.print("east")
+                if floor_obj.can_move(party.x+1, party.y):
+                    party.x += 1
+                    meswin.print("east")
+            elif c == 'o':
+                vscr.display()
+                floor_obj.open_door(game, meswin)
             elif c == '.':
                 ch = meswin.input_char("Do you? (y/n)", values=['n', 'y'])
                 meswin.print("Input char: "+ch)
