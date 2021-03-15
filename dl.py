@@ -1,3 +1,4 @@
+import collections
 import csv
 import json
 import fcntl
@@ -122,14 +123,15 @@ class Member:
             try:
                 item = self.items[idx]
                 m = ' '
-                if self.job.name[:1].lower() not in game.itemdef[item[0]][4].lower():
+                if self.job.name[:1].lower() not in \
+                   game.itemdef[item[0]].jobs.lower():
                     m = '#'  # can't equip
                 if item[1]:
                     m = '*'  # equipped
                 if item[2]:
                     m = '&'  # cursed
                 if self.items[idx][3]:  # unidentified
-                    l = f"{m}?{game.itemdef[item[0]][1]}"
+                    l = f"{m}?{game.itemdef[item[0]].unident}"
                 else:
                     l = f"{m}{item[0]}"
             except:
@@ -172,25 +174,25 @@ class Member:
                 continue
             dispname = self.items[inum][0]
             if self.items[inum][3]:  # unidentified
-                dispname = ''.join(['?', game.itemdef[dispname][1]])
+                dispname = ''.join(['?', game.itemdef[dispname].unident])
             iw.print(f"{inum+1}) {dispname}", start=' ')
             c = iw.input_char("u)se e)quip t)rade d)rop l)eave",
                               values=['u', 'e', 't', 'd', 'l'])
             if c == 'l':
                 continue
             elif c == 'e':
-                if self.job.name[:1] not in game.itemdef[self.items[inum][0]][4]:
+                if self.job.name[:1] not in game.itemdef[self.items[inum][0]].jpbs:
                     iw.print("Can't equip the item.")
                     continue
                 for item in self.items:
-                    if game.itemdef[self.items[inum][0]][2] \
-                       == game.itemdef[item[0]][2]:
+                    if game.itemdef[self.items[inum][0]].type \
+                       == game.itemdef[item[0]].type:
                         if item[2]:  # already cursed
                             iw.print("Already equipped a cursed item.")
                             break
                         elif item[1]:  # equipped
                             item[1] = False
-                if game.itemdef[self.items[inum][0]][11]:
+                if game.itemdef[self.items[inum][0]].curse:
                     self.items[inum][2] = True  # cursed
                     iw.print("Cursed!")
                     vscr.disp_scrwin(game.party)
@@ -206,7 +208,7 @@ class Member:
         self.ac = 10
         for item in self.items:
             if item[1] or item[2]:
-                self.ac += game.itemdef[item[0]][5]
+                self.ac += game.itemdef[item[0]].ac
 
     def job_applicable(self, sp, jobnum):
         """
@@ -328,26 +330,151 @@ class Member:
 class Game:
     def __init__(self):
         self.characters = []  # registerd characters
+        self.floors = []  # dungeon floors
+
+    def load_monsterdef(self):
+        """
+        load monster definition file
+        As fellow monster in csv is wizname, convert to dl name
+        """
+        Monster = collections.namedtuple(
+            'Monster', ['names', 'unident', 'unidents', 'type',
+                        'level', 'hp', 'ac', 'attack', 'count', 'act1',
+                        'act2', 'act3', 'act4', 'act5', 'poison', 'paraly',
+                        'stone', 'critical', 'drain', 'breathsp', 'heal',
+                        'regdeathp', 'regfire', 'regcold', 'regpoison',
+                        'regspellp', 'weakmaka', 'weaksleep', 'friendly',
+                        'exp', 'number', 'floors', 'fellow', 'fellowp'])
+        Tmpmonster = collections.namedtuple(
+            'Tmpmonster', ['name', 'names', 'unident', 'unidents', 'type',
+                           'level', 'hp', 'ac', 'attack', 'count', 'act1',
+                           'act2', 'act3', 'act4', 'act5', 'poison', 'paraly',
+                           'stone', 'critical', 'drain', 'breathsp', 'heal',
+                           'regdeathp', 'regfire', 'regcold', 'regpoison',
+                           'regspellp', 'weakmaka', 'weaksleep', 'friendly',
+                           'exp', 'number', 'floors', 'fellowwiz', 'fellowp'])
+        with open('monsters.csv') as csvfile:
+            rdr = csv.reader(csvfile)
+            tmp_dic = {}
+            for i, row in enumerate(rdr):
+                if i == 0:
+                    continue
+                try:
+                    level = int(row[7])
+                except:
+                    level = 1
+                try:
+                    ac = int(row[9])
+                except:
+                    ac = 10
+                try:
+                    count = int(row[11])
+                except:
+                    count = 1
+                poison = False
+                if row[17].lower() == 'true':
+                    poison = True
+                paraly = False
+                if row[18].lower() == 'true':
+                    paraly = True
+                stone = False
+                if row[19].lower() == 'true':
+                    stone = True
+                critical = False
+                if row[20].lower() == 'true':
+                    critical = True
+                try:
+                    drain = int(row[21])
+                except:
+                    drain = 0
+                try:
+                    heal = int(row[23])
+                except:
+                    heal = 0
+                try:
+                    regdeathp = int(row[24])
+                except:
+                    regdeathp = 0
+                regfire = False
+                if row[25].lower() == 'true':
+                    regfire = True
+                regcold = False
+                if row[26].lower() == 'true':
+                    regcold = True
+                regpoison = False
+                if row[27].lower() == 'true':
+                    regpoison = True
+                try:
+                    regspellp = int(row[28])
+                except:
+                    regspellp = 0
+                weakmaka = False
+                if row[29].lower() == 'true':
+                    weakmaka = True
+                weaksleep = False
+                if row[30].lower() == 'true':
+                    weaksleep = True
+                friendly = False
+                if row[31].lower() == 'true':
+                    friendly = True
+                try:
+                    exp = int(row[32])
+                except:
+                    exp = 0
+                try:
+                    fellowp = int(row[36])
+                except:
+                    fwllowp = 0
+                tmp_monster \
+                    = Tmpmonster(row[2], row[3], row[4], row[5], row[6],
+                                 level, row[8], ac, row[10], count, row[12],
+                                 row[13], row[14], row[15], row[16], poison, paraly,
+                                 stone, critical, drain, row[22], heal,
+                                 regdeathp, regfire, regcold, regpoison,
+                                 regspellp, weakmaka, weaksleep, friendly,
+                                 exp, row[33], row[34], row[35], fellowp)
+                tmp_dic[row[1]] = tmp_monster
+
+        monster_def = {}
+        for wizname, m in tmp_dic.items():
+            if m.fellowwiz == '':
+                fellow = ''
+            else:
+                fellow = tmp_dic[m.fellowwiz].name
+            monster = Monster(m[1], m[2], m[3], m[4], m[5], m[6], m[7], m[8],
+                              m[9], m[10], m[11], m[12], m[13], m[14], m[15],
+                              m[16], m[17], m[18], m[19], m[20], m[21], m[22],
+                              m[23], m[24], m[25], m[26], m[27], m[28], m[29],
+                              m[30], m[31], m[32], fellow, m[34])
+            monster_def[m.name] = monster
+        self.mondef = monster_def
 
     def load_spelldef(self):
         """
-        load spell definition file and return spell_def dictionary
+        load spell definition file
         """
+        Spell = collections.namedtuple(
+            'Spell', ['categ', 'level', 'battle', 'camp', 'target', 'value', 'attr', 'desc'])
         with open('spells.csv') as csvfile:
             rdr = csv.reader(csvfile)
             spell_def = {}
             for i, row in enumerate(rdr):
                 if i == 0:
                     continue
-                line = (row[1], int(row[2]), json.loads(row[5].lower()),
-                        json.loads(row[6].lower()), row[7], row[8], row[9], row[10])
-                spell_def[row[3]] = line
+                spell = Spell(row[1], int(row[2]), json.loads(row[5].lower()),
+                              json.loads(row[6].lower()), row[7], row[8], row[9], row[10])
+                spell_def[row[3]] = spell
             self.spelldef = spell_def
 
     def load_itemdef(self):
         """
-        load item definition file and return item_def dictionary
+        load item definition file
         """
+        Item = collections.namedtuple(
+            'Item', ['level', 'unident', 'type', 'range', 'jobs', 'ac',
+                     'st', 'at', 'dice', 'shop', 'price', 'curse',
+                     'hp', 'brk', 'regist'])
+
         with open('items.csv') as csvfile:
             rdr = csv.reader(csvfile)
             item_def = {}
@@ -390,16 +517,16 @@ class Game:
                     brk = int(row[18])
                 except:
                     brk = 0
-                # (0lvl, 1unident, 2type, 3range, 4jobs, 5ac, 6st, 7at,
+                # (0level, 1unident, 2type, 3range, 4jobs, 5ac, 6st, 7at,
                 #  8dice, 9shop, 10price, 11curse, 12hp, 13brk, 14regist)
-                line = (row[1], unident, row[6], row[7], row[8], ac,
-                        st, at, row[12], shop, price,
-                        curse, hp, brk, row[19])
-                item_def[name] = line
+                item = Item(row[1], unident, row[6], row[7], row[8], ac,
+                            st, at, row[12], shop, price,
+                            curse, hp, brk, row[19])
+                item_def[name] = item
             self.itemdef = item_def
             self.shopitems = {}
             for name in self.itemdef:
-                self.shopitems[name] = self.itemdef[name][9]
+                self.shopitems[name] = self.itemdef[name].shop
 
 
 class Vscr:
@@ -1135,7 +1262,7 @@ def trader_buy(game, mem):
              'ring', 'item')
     while True:
         items = [item for item in game.shopitems if game.shopitems[item] > 0
-                 and game.itemdef[item][2] == pages[page]]
+                 and game.itemdef[item].type == pages[page]]
         ilines = []
         for i, item in enumerate(items):
             cur = ' '
@@ -1143,11 +1270,11 @@ def trader_buy(game, mem):
                 cur = '>'
                 cur_item = i
             afford = canequip = ' '
-            if mem.job.name[:1].lower() not in game.itemdef[item][4].lower():
+            if mem.job.name[:1].lower() not in game.itemdef[item].jobs.lower():
                 canequip = '#'
-            if mem.gold >= game.itemdef[item][10]:
+            if mem.gold >= game.itemdef[item].price:
                 afford = '$'
-            iline = f"| {cur}{i+1:2} {item.ljust(21)[:21]} {game.itemdef[item][10]:10d}{canequip}{afford}|"
+            iline = f"| {cur}{i+1:2} {item.ljust(21)[:21]} {game.itemdef[item].price:10d}{canequip}{afford}|"
             ilines.append(iline)
         iw.mes_lines = []
         iw.mes_lines.append(
@@ -1183,7 +1310,7 @@ def trader_buy(game, mem):
                     iw.width-1)+'|'
                 vscr.disp_scrwin(game.party)
                 getch()
-            elif mem.gold < game.itemdef[items[idx]][10]:
+            elif mem.gold < game.itemdef[items[idx]].price:
                 iw.mes_lines[0] = "| Sorry, you can't afford it.".ljust(
                     iw.width-1)+'|'
                 #iw.mes_lines[1] = f"{mem.gold} < {game.itemdef[items[idx]][10]}"
@@ -1192,7 +1319,7 @@ def trader_buy(game, mem):
             else:
                 iw.mes_lines[0] = "| Anything else, noble sir?".ljust(
                     iw.width-1)+'|'
-                mem.gold -= game.itemdef[items[idx]][10]
+                mem.gold -= game.itemdef[items[idx]].price
                 bought = [items[idx], False, False, False]
                 mem.items.append(bought)
                 game.shopitems[items[idx]] -= 1
@@ -1224,17 +1351,17 @@ def trader_sell(game, mem, op):
                 continue
             mark = '&'
             if item[3]:
-                dispname = ''.join(['?', game.itemdef[item[0]][1]])
+                dispname = ''.join(['?', game.itemdef[item[0]].unident])
         elif op == 'i':  # identify
             if (not item[3]) or item[2]:
                 continue
-            dispname = ''.join(['?', game.itemdef[item[0]][1]])
+            dispname = ''.join(['?', game.itemdef[item[0]].unident])
         else:  # sell
             if item[2] or item[3]:
                 continue
             if item[1]:  # equipped
                 mark = '*'
-        price = game.itemdef[item[0]][10]//2
+        price = game.itemdef[item[0]].price//2
         mw.print(
             f"{i}){mark}{dispname.ljust(16)}{price}",
             start=' ')
@@ -1349,7 +1476,10 @@ def edge_town(game):
             game.party.place = Place.CASTLE
             break
         elif ch == 'm':
-            game.party.place = Place.MAZE
+            if game.party.members:
+                game.party.place = Place.MAZE
+            else:
+                mw.print("No party members.")
             break
         elif ch == 'l':
             mw.print("type Q to quit for now...")
@@ -1360,36 +1490,82 @@ def edge_town(game):
 def maze(game):
     party = game.party
     party.place = Place.MAZE
+    party.floor = 1
+    party.floor_move = 1  # 0: no, 1: down, 2: up
     vscr = game.vscr
 
-    floor_obj = generate_floor(1)
-    party.x = floor_obj.up_x
-    party.y = floor_obj.up_y
-
+    meswins_save = vscr.meswins
     meswin = vscr.meswins[0]
     vscr.meswins = [meswin]
-    vscr.disp_scrwin(party, floor_obj)
 
     while True:
+        if party.floor_move:
+            if party.floor <= 0:  # exit from dungeon
+                party.place = Place.EDGE_OF_TOWN
+                break
+            floor_obj = None
+            for f in game.floors:
+                if f.floor == party.floor:
+                    floor_obj = f
+            if not floor_obj:
+                floor_obj = generate_floor(party.floor)
+                game.floors.append(floor_obj)
+            if party.floor_move == 1:
+                party.x = floor_obj.up_x
+                party.y = floor_obj.up_y
+            elif party.floor_move == 2:
+                party.x = floor_obj.down_x
+                party.y = floor_obj.down_y
+            party.floor_move = 0
+            vscr.disp_scrwin(party, floor_obj)
+
+        if floor_obj.get_tile(party.x, party.y) == b'<':
+            vscr.disp_scrwin(party, floor_obj)
+            if party.floor == 1:
+                c = meswin.input_char("Exit from dungeon? (y/n)",
+                                      values=['y', 'n'])
+            else:
+                c = meswin.input_char(
+                    "Stairs.  Go up? (y/n)", values=['y', 'n'])
+            if c == 'y':
+                party.floor -= 1
+                party.floor_move = 2  # go up
+                if party.floor > 0:
+                    vscr.disp_scrwin(party, floor_obj)
+                continue
+        if floor_obj.get_tile(party.x, party.y) == b'>':
+            vscr.disp_scrwin(party, floor_obj)
+            c = meswin.input_char("Stairs.  Go down? (y/n)", values=['y', 'n'])
+            if c == 'y':
+                party.floor += 1
+                party.floor_move = 1  # go down
+                vscr.disp_scrwin(party, floor_obj)
+                continue
+        vscr.disp_scrwin(party, floor_obj)
+
         c = getch()
         draw = True
         if c:
             if c == 'Q':
                 sys.exit()
-            if c == 'h' and party.x > 0:
-                if floor_obj.can_move(party.x-1, party.y):
+            elif c in 'hH' and party.x > 0:
+                if (c == 'H' and config['debug']) or \
+                   floor_obj.can_move(party.x-1, party.y):
                     party.x -= 1
                     meswin.print("west")
-            elif c == 'k' and party.y > 0:
-                if floor_obj.can_move(party.x, party.y-1):
+            elif c in 'kK' and party.y > 0:
+                if (c == 'K' and config['debug']) or \
+                   floor_obj.can_move(party.x, party.y-1):
                     party.y -= 1
                     meswin.print("north")
-            elif c == 'j' and party.y < floor_obj.y_size-1:
-                if floor_obj.can_move(party.x, party.y+1):
+            elif c in 'jJ' and party.y < floor_obj.y_size-1:
+                if (c == 'J' and config['debug']) or \
+                   floor_obj.can_move(party.x, party.y+1):
                     party.y += 1
                     meswin.print("south")
-            elif c == 'l' and party.x < floor_obj.x_size-1:
-                if floor_obj.can_move(party.x+1, party.y):
+            elif c in 'lL' and party.x < floor_obj.x_size-1:
+                if (c == 'L' and config['debug']) or \
+                   floor_obj.can_move(party.x+1, party.y):
                     party.x += 1
                     meswin.print("east")
             elif c == 'o':
@@ -1400,12 +1576,21 @@ def maze(game):
                 meswin.print("Input char: "+ch)
                 vscr.draw_meswins()
                 vscr.display()
+            elif c == '#' and config['debug']:
+                for y in range(party.y-10, party.y+10+1):
+                    for x in range(party.x-32, party.x+32+1):
+                        floor_obj.put_tile(
+                            x, y, floor_obj.get_tile(x, y), orig=False)
             else:
                 pass  # draw = False
         else:
             draw = False
         if draw:
             vscr.disp_scrwin(party, floor_obj)
+    vscr.meswins = meswins_save
+    vscr.cls()
+    party.place = Place.EDGE_OF_TOWN
+    vscr.disp_scrwin(party)
 
 
 def dispatch(game):
@@ -1428,6 +1613,7 @@ def main():
     game.party = party
     game.load_spelldef()
     game.load_itemdef()
+    game.load_monsterdef()
     party.place = Place.CASTLE
     # floor_obj = generate_floor(1)
     w, h = terminal_size()
