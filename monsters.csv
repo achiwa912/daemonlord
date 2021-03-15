@@ -1,0 +1,102 @@
+﻿id,wizname,name,names,unundentified,unundentifieds,type,lvl,HP,AC,atk,cnt,act1,act2,act3,act4,act5,poison,paraly,stone,critical,drain,breath sp,heal,regist death %,regist fire,regist cold,regist poison,regist spell %,weak makanito,weak sleep,friendly,exp,num,floor,後続,後続%
+0,bubbly slime,green slime,green slimes,slime,slimes,animal,1,1D3+1,12,1D1,1,atk,atk,atk,atk,atk,,,,,0,,0,6,FALSE,FALSE,FALSE,0,TRUE,FALSE,FALSE,55,2D2,1,,0
+1,orc,orc,orcs,small humanoid,small humanoids,fighter,1,1D4,10,1D4,1,atk,atk,run,run,atk,,,,,0,,0,0,TRUE,FALSE,FALSE,0,TRUE,TRUE,TRUE,235,3D2,1,,0
+2,kobold,kobold,kobolds,small humanoid,small humanoids,fighter,2,2D3+1,8,2D3,1,atk,atk,atk,run,atk,,,,,0,,0,12,FALSE,TRUE,FALSE,0,TRUE,TRUE,FALSE,415,2D2+1,1,,0
+3,undead kobold,orc skeleton,orc sleletons,skeleton,skeletons,undead,2,2D3+2,10,1D4+1,1,atk,atk,atk,atk,atk,,,,,0,,0,100,TRUE,TRUE,FALSE,0,FALSE,FALSE,TRUE,230,1D6+1,1,,0
+4,rogue,robber,robbers,scruffy man,scruffy men,thief,2,2D5+1,10,2D2+1,1,atk,atk,atk,run,run,,,,,0,,0,12,FALSE,FALSE,FALSE,0,TRUE,TRUE,TRUE,380,1D4+1,1,,0
+5,bushwacker,cop,cops,man in uniform,men in uniform,fighter,3,3D6+1,8,2D4+1,1,atk,atk,atk,run,atk,,,,,0,,0,18,FALSE,FALSE,FALSE,0,TRUE,TRUE,TRUE,620,1D4+1,1,,0
+6,highwayman,yakuza,yakuzas,scary man,scary men,fighter,3,3D4+2,6,1D2+1,4,atk,atk,atk,atk,run,,,,TRUE,0,,,18,,,,,TRUE,TRUE,FALSE,840,2D6,2,zombie,20
+7,zombie,zombie,zombies,wierd humanoid,weird humanoids,undead,1,1D10+1,4,1D6,1,atk,atk,atk,atk,atk,,TRUE,,,0,,,100,,,,,,,,520,1D6+1,2,creeping crud,20
+8,creeping crud,wild turky,wild turkies,bird,birds,animal,3,3D4+2,6,1D3+1,1,atk,atk,atk,atk,atk,TRUE,,,,0,,,18,,TRUE,,,TRUE,,TRUE,550,1D6+1,2,,24
+9,gas cloud,gas cloud,gas clouds,gas cloud,gas clouds,magic,2,2D4,10,1D4,1,m2,m2,atk,run,atk,,TRUE,,,,,,12,,,,,TRUE,,TRUE,350,2D4,2,,15
+10,lvl1 mage,lvl1 mage,lvl1 mages,man in robes,men in robes,mage,1,1D4+1,4,2D2,1,m1,m1,atk,run,run,,,,,,,,6,,,,,TRUE,TRUE,TRUE,475,1D1,2,highwayman,20
+11,lvl1 priest,lvl1 priest,lvl1 priests,priest,priests,priest,1,1D8,5,1D8,1,p1,p1,atk,run,run,,,,,,,,6,,,,,TRUE,TRUE,TRUE,515,1D4+1,2,rogue,25
+12,creeping coin?,coffee bean,coffee beans,dot,dots,magic,1,1D1,4,1D1,1,atk,help,breath,breath,breath,,,,,,???,,6,TRUE,TRUE,TRUE,,TRUE,,TRUE,920,9D1,2,creeping coin?,100
+13,lvl1 ninja,lvl1 ninja,lvl1 ninjas,kimonoed man,kimomoed men,fighter,5,2D4+2,5,1D4,3,atk,atk,atk,atk,atk,,,,TRUE,,,,12,,,,,TRUE,TRUE,TRUE,600,2D4,2,lvl1 ninja,20
+14,vorpal bunny,vorpal bunny,vorpal bunnies,rabbit,rabbits,animal,3,3D6+2,6,1D7,2,atk,atk,atk,run,run,,,,TRUE,,,,18,,TRUE,,,TRUE,,TRUE,735,2D3+2,"2, 3",capybara,20
+15,capybara,capybara,capybaras,giant rodent,giant rodents,animal,4,4D4,8,1D10,1,atk,atk,atk,run,run,TRUE,,,,,,,24,,,,,TRUE,,TRUE,520,2D4+1,3,coyote,20
+16,giant toad,giant toad,giant toads,amphibian,amphibians,animal,4,4D5,7,2D3+2,2,atk,atk,atk,run,atk,TRUE,,,,,,,24,TRUE,,,,TRUE,,TRUE,795,2D2+4,3,coyote,25
+17,coyote,coyote,coyotes,mangy dog,mangy dogs,animal,4,4D6,8,4D4,1,atk,atk,atk,run,run,,,,,,,,24,,,TRUE,,TRUE,,TRUE,780,4D2,3,vorpal bunny,25
+18,lvl3 priest,lvl3 priest,lvl3 priests,priest,priests,priest,3,3D8+1,4,1D8+2,1,p2,p2,atk,run,p2,TRUE,,,,,,,18,,,,,TRUE,TRUE,TRUE,990,2D2+3,3,lvl1 priest,30
+19,lvl3 samurai,lvl3 samurai,lvl3 samurai,kimonoed man,kimonoed men,fighter,3,3D6+4,5,1D5+1,3,m1,m1,m1,run,atk,,,,,,,,18,,,,,TRUE,,TRUE,795,4D2,3,creeping coin?,20
+20,lvl3 ninja,lvl3 ninja,lvl3 ninjas,kimonoed man,kimoned men,fighter,3,3D8,3,5D4,1,atk,atk,atk,atk,atk,TRUE,,,TRUE,0,,0,18,FALSE,FALSE,FALSE,0,TRUE,FALSE,TRUE,1360,2D4+2,"3, 4",lvl1 ninja,20
+21,were bear,were bear,were bears,bear,bears,animal,5,3D8,6,3D6+1,1,atk,atk,atk,run,atk,TRUE,TRUE,,,0,,1,30,FALSE,TRUE,TRUE,0,TRUE,FALSE,TRUE,1320,2D3+2,"3, 4",vorpal bunny,30
+22,dragon fly,dragon fly,dragon flies,fly,flies,dragon,2,2D8,4,1D5,3,atk,atk,breath,breath,breath,,,,,,fire,,12,TRUE,,,20,TRUE,TRUE,TRUE,1275,1D3+1,"3, 4",,0
+23,rotting corpose,rotting corpose,rotting corposes,weird humanoid,weird humanoids,undead,2,2D8,6,1D4,3,atk,atk,atk,atk,atk,,TRUE,,,,,,100,,,,,,,TRUE,680,1D5,"3, 4",grave mist,10
+24,ogre,ogre,ogres,ogre,ogres,fighter,4,4D8+1,5,2D6,1,atk,atk,atk,run,run,,,,,,,,24,,,,,TRUE,TRUE,TRUE,960,1D8,"3, 4",vorpal bunny,20
+25,huge spider,huge spider,huge spiders,insect,insects,insect,2,2D8+2,6,1D6,1,atk,atk,atk,atk,atk,TRUE,,,,,,,12,,,,,TRUE,TRUE,TRUE,600,1D8,"3, 4",boring beetle,10
+26,wererat,wererat,wererats,wererat,wererats,were,6,3D8+1,6,1D8,1,atk,atk,atk,atk,atk,,,,,,,,18,,,,,TRUE,TRUE,TRUE,755,1D4,"3, 4",coyote,50
+27,boring beetle,boring beetle,boring beetles,insect,insects,insect,5,3D8,3,5D4,1,atk,atk,atk,atk,atk,,,,,,,,30,,,,,TRUE,,TRUE,1120,1D8,"3, 4",huge spider,20
+28,gas dragon,gas dragon,gas dragons,dragon,dragons,dragon,5,5D8,3,3D6+4,1,m1,breath,breath,breath,atk,TRUE,,,,,,,30,,,,,TRUE,,TRUE,2075,1D4,"3, 4",dragon fly,40
+29,priestess,priestess,priestesses,priest,priests,priest,3,3D8+1,1,1D6+2,1,p2,p2,atk,run,run,,,,,,,,18,,,,,TRUE,TRUE,TRUE,870,1D6+1,"3, 4",gas dragon,60
+30,swordsman,swordsman,swordsmen,man in armor,men in armor,fighter,3,3D10,3,2D7,1,atk,atk,atk,atk,atk,,,,,,,,18,,,,,TRUE,TRUE,TRUE,960,1D6+1,"4, 5",attack dog,35
+31,huge spider_,huge spider_,huge spiders_,insect,insects,insect,2,2D8+2,6,1D6,1,atk,atk,atk,atk,atk,TRUE,,,,,,,12,,,,,TRUE,TRUE,TRUE,600,1D8,"4, 5",shade,10
+32,attack dog,attack dog,attack dogs,animal,animals,animal,4,4D8,1,1D6,1,atk,atk,atk,run,run,,,,,,,,24,,,,,TRUE,TRUE,TRUE,1120,1D6,"4, 5",dragon fly,20
+33,gargoyle,gargoyle,gargoyles,gargoyle,gargolyes,magic,4,4D8+4,5,1D4,4,atk,atk,atk,atk,atk,,,,,,,,24,,,,50,TRUE,,TRUE,2435,1D6,"4, 5",,0
+34,grave mist,grave mist,grave mists,unseen entity,unseen entities,undead,4,4D8,4,1D4,4,atk,atk,atk,atk,atk,,TRUE,,,,,,100,,,,,,,TRUE,1080,1D6,"4, 5",shade,20
+35,dragon puppy,dragon puppy,dragon puppies,animal,animals,dragon,5,5D10,4,1D10,1,atk,atk,breath,breath,breath,,,,,,cold,,30,,,,,TRUE,,TRUE,2280,1D6,"4, 5",wererat,10
+36,werewolf,werewolf,werewolves,wolf,wolves,were,4,4D8+3,5,2D4,2,atk,atk,atk,atk,atk,,,,,,,,24,,,,,TRUE,,TRUE,975,1D6,"4, 5",wererat,25
+37,shade,shade,shades,unseen entity,unseen entities,undead,3,3D8+3,7,1D4+1,1,atk,atk,atk,atk,atk,,,,,1,,,100,,,,,,,TRUE,875,1D6,"4, 5",rotting corpose,20
+38,bishop,bishop,bishops,priest,priests,priest,4,4D8,4,1D10,1,m1,p3,p3,m1,atk,,,,,,,,24,,,,,TRUE,TRUE,TRUE,1135,1D6,"4, 5",minor daimyo,10
+39,minor daimyo,minor daimyo,minor daimyos,man in armor,men in armor,fighter,4,4D10,2,1D12,1,atk,atk,atk,atk,atk,,,,,,,,24,,,,,TRUE,TRUE,TRUE,1200,1D6,"4, 5",bishop,20
+40,lvl5 mage,lvl5 mage,lvl5 mages,man in robes,men in robes,mage,5,5D4,10,1D4,1,m3,m3,m3,m3,atk,,,,,,,,30,,,,,TRUE,TRUE,TRUE,620,1D6,"5, 6",lvl4 thief,20
+41,lvl4 thief,lvl4 thief,lvl4 thieves,man in leather,men in leather,thief,4,4D8+3,10,1D6,3,atk,atk,atk,run,run,,,,,,,,24,,,,,TRUE,,TRUE,740,1D6,"5, 6",bishop,20
+42,killer wolf,killer wolf,killer wolves,animal,animals,animal,6,6D8,0,2D4,2,atk,atk,atk,atk,run,,,,,,,,36,,,,,TRUE,,TRUE,1460,1D6,"5, 6",dragon puppy,15
+43,spirit,spirit,spirits,unseen entity,unseen entities,myth,7,7D3+2,2,1D4,1,m3,m3,atk,atk,atk,TRUE,,,,,,1,42,,,,25,TRUE,,TRUE,1245,1D6,"5, 6",gargoyle,20
+44,giant spider,giant spider,giant spiders,insect,insects,insect,4,4D8+4,4,2D4,1,atk,atk,atk,atk,atk,TRUE,,,,,,,24,,,,,TRUE,,TRUE,960,1D6,"5, 6",huge spider,20
+45,weretiger,weretiger,weretigers,animal,animals,were,5,5D8,4,2D6+2,2,atk,atk,atk,atk,atk,TRUE,,,,,,1,30,,,,,TRUE,TRUE,TRUE,1405,1D8,"5, 6, 7",werewolf,20
+46,medusalilzard,medusalilzard,medusalizards,strange animal,strange animals,myth,5,5D8,6,1D3,1,atk,atk,atk,atk,atk,,,TRUE,,,,,30,,,,,TRUE,,TRUE,1040,1D6,"5, 6, 7",spirit,20
+47,lvl5 priest,lvl5 priest,lvl5 priests,priest,priests,priest,5,5D8,4,1D6+2,1,p3,p3,p3,p3,atk,,,,,,,,30,,,,,TRUE,,TRUE,1220,1D5,"5, 6, 7",lvl6 ninja,20
+48,lvl6 ninja,lvl6 ninja,lvl6 ninjas,man in black,men in black,fighter,6,6D10,6,1D6,3,atk,atk,atk,atk,atk,,,,,,,,36,,,,,TRUE,,TRUE,1520,1D5,"5, 6, 7",master thief,20
+49,lvl7 mage,lvl7 mage,lvl7 mages,man in robe,men in robes,mage,7,7D4,8,1D4,1,m4,m4,m4,m4,atk,,,,,,,,42,,,,,TRUE,TRUE,TRUE,1000,1D6,"5, 6, 7",lvl6 ninja,20
+50,master thief,master thief,master thieves,man in leather,men in leather,thief,4,4D6,4,1D6,4,atk,atk,atk,run,run,,,,,,,,24,,,,,TRUE,TRUE,TRUE,960,1D6,"5, 6, 7, 8",lvl5 priest,10
+51,major daimyo,major daimyo,major daimyos,man in armor,men in armor,fighter,7,7D12,0,1D7,2,atk,atk,atk,atk,atk,,,,,,,,42,,,,20,TRUE,,TRUE,2340,1D5,"5, 6, 7, 8",lvl5 priest,50
+52,high priest,high priest,high priests,priest,priests,priest,8,8D8,3,1D8+2,1,p5,p5,p5,p5,atk,,,,,,,,48,,,,,,,TRUE,2160,1D6,"5, 6, 7, 8",champ samurai,20
+53,champ samurai,champ samurai,champ samuurai,man in armor,men in armor,fighter,10,10D10,2,1D12+2,1,m1,m1,atk,atk,atk,,,,,,,,60,,,,,,,TRUE,2395,1D6,"5, 6, 7, 8",high priest,25
+54,arch mage,arch mage,arch mages,man in robes,men in robes,mage,9,8D4+2,9,1D4,1,m2,m2,m2,m2,atk,,,,,,,,48,,,,,,,TRUE,790,1D6,"5, 6, 7, 8",champ samurai,30
+55,master thief_,master thief_,master thieves_,man in leather,men in leather,thief,6,6D6,3,1D8,4,atk,atk,atk,run,run,,,,,,,,36,,,,,TRUE,,TRUE,1140,1D6,"5, 6, 7, 8, 9",arch mage,25
+56,gaze hound,gaze hound,gaze hounds,animal,animals,animal,4,4D8,-1,1D2,1,atk,atk,atk,run,run,,TRUE,,,,,,24,,,,,TRUE,,TRUE,1235,1D5,"5, 6, 7, 8, 9",gaze hound,20
+57,ogre lord,ogre lord,ogre lords,ogre,ogres,mage,8,8D8,4,1D12,1,m3,m3,atk,atk,atk,,,,,,,1,48,,,,,,,TRUE,1790,1D5,"5, 6, 7, 8, 9",troll,10
+58,troll,troll,trolls,strange animal,strange animals,fighter,6,6D8+6,4,1D4+4,3,atk,atk,atk,atk,atk,,,,,,,3,36,,,,,TRUE,,TRUE,1720,1D3+1,"5, 6, 7, 8, 9",troll,5
+59,lifestealer,lifestealer,lifestealers,unseen entity,unseen entities,undead,5,5D8+3,3,1D4,1,m3,p3,atk,atk,atk,,,,,2,,,100,,,TRUE,20,,,TRUE,2240,1D1,"5, 6, 7, 8, 9",lifestealer,50
+60,nightstalker,nightstalker,nightstalkers,unseen entity,unseen entities,undead,5,5D8+3,4,1D6,1,atk,atk,atk,atk,atk,,,,,1,,,100,,,,25,,,TRUE,1475,2D3+2,"5, 6, 7, 8, 9",ogre lord,23
+61,wyvern,wyvern,wyverns,strange animal,strange animals,animal,7,7D8+7,3,2D7,2,atk,atk,atk,atk,atk,TRUE,,,,,,,42,,,,,TRUE,,TRUE,1540,1D6,"5, 6, 7, 8, 9",spirit,20
+62,lvl8 priest,lvl8 priest,lvl8 priests,priest,priests,priest,7,7D8,3,1D8,1,p4,p4,p4,p4,atk,,,,,,,,42,,,,,TRUE,,TRUE,1720,1D5,"5, 6, 7, 8, 9",wyvern,20
+63,lvl10 fighter,lvl10 fighter,lvl10 fighters,man in armor,men in armor,fighter,7,7D10,0,1D12,2,atk,atk,atk,atk,atk,,,,,,,,42,,,,,TRUE,,TRUE,1900,1D6,"5, 6, 7, 8, 9",lvl10 fighter,10
+64,lvl7 mage_,lvl7 mage_,lvl7 mages_,man in robes,men in robes,mage,7,7D4,8,1D4,1,m5,m5,m5,m5,atk,,,,,,,,42,,,,,TRUE,,TRUE,1240,1D6,"5, 6, 7, 8, 9",wyvern,30
+65,lvl7 thief,lvl7 thief,lvl7 thieves,man in leather,men in leather,thief,7,7D6,4,2D8,2,atk,atk,atk,run,run,,,,,,,,42,,,,,TRUE,,TRUE,1220,1D5,"5, 6, 7, 8, 9",lvl8 priest,20
+66,lvl8 ninja,lvl8 ninja,lvl8 ninjas,monk,monks,fighter,8,8D4,4,1D6,3,atk,atk,atk,atk,atk,,,,TRUE,,,,48,,,,,,,TRUE,1020,1D3+1,"5, 6, 7, 8, 9",nightstalker,20
+67,earth giant,earth giant,earth giants,giant,giants,giant,1,1D1+40,9,2D8,2,atk,atk,atk,atk,atk,,,,,,,,6,,,,85,TRUE,,TRUE,20435,1D5,"5, 6, 7, 8, 9",,0
+68,lesser demon,lesser demon,lesser demons,demon,demons,demon,10,10D8,4,2D6,4,m3,m3,atk,help,atk,,,,,,,,60,,,,60,,,TRUE,5100,1D1,"5, 6, 7, 8, 9",lvl8 ninja,80
+69,chimera,chimera,chimeras,strange animal,strange animals,animal,9,9D6,2,1D4,9,atk,atk,breath,breath,breath,,,,,,fire,,54,TRUE,,,,,,TRUE,3515,1D4,"5, 6, 7, 8, 9",arch mage,20
+70,fire giant,fire giant,fire giants,giant,giants,giant,11,11D8+4,3,5D6,1,atk,atk,atk,atk,atk,,,,,,,,66,TRUE,,,,,,TRUE,2115,1D4,"6, 7, 8, 9, 10",lesser demon,10
+71,gorgon,gorgon,gorgons,strange animal,strange animals,myth,8,8D8,2,2D6,1,atk,atk,breath,breath,breath,,,,,,stone,,48,,,,,,,TRUE,2920,1D1,"6, 7, 8, 9, 10",chimera,50
+72,lvl8 bishop,lvl8 bishop,lvl8 bishops,priest,priests,priest,8,8D8,2,1D8+4,1,m3,p4,m3,p4,atk,,,,,,,,48,,,,,,,TRUE,2060,1D6,"6, 7, 8, 9, 10",gorgon,20
+73,lvl8 fighter,lvl8 fighter,lvl8 fighters,man in armor,men in armor,fighter,8,8D10,-1,1D12+2,2,atk,atk,atk,atk,atk,,,,,,,,48,,,,,,,TRUE,2140,1D6,"6, 7, 8, 9, 10",lvl8 fighter,20
+74,lvl10 mage,lvl10 mage,lvl10 mages,man in robes,men in robes,mage,10,10D4,10,1D4,1,m5,m5,m5,m5,atk,,,,,,,,60,,,,,,,TRUE,1400,1D6,"6, 7, 8, 9, 10",gorgon,30
+75,thief,thief,thieves,man in leather,men in leather,thief,9,9D6,4,1D8,7,atk,atk,atk,run,run,,,,,,,,54,,,,,,,TRUE,1640,1D5,"6, 7, 8, 9, 10",gorgon,20
+76,master ninja,master ninja,master ninjas,man in robes,men in robes,fighter,10,10D4,3,1D10+3,3,atk,atk,atk,atk,atk,,,,TRUE,,,,60,,,,,,,TRUE,1280,1D5,"6, 7, 8, 9, 10",lvl7 mage_,30
+77,murphy's ghost,murphy's ghost,murphy's ghosts,unseen entity,unseen entities,undead,10,10D10+10,-3,1D1+1,1,atk,atk,atk,atk,help,,,,,0,,1,100,TRUE,TRUE,TRUE,TRUE,FALSE,TRUE,TRUE,4450,1D1,"6, 7, 8, 9, 10",murphy's ghost,80
+78,will o' wisp,will o' wisp,will o' wisps,unseen entity,unseen entities,magic,10,10D8,-8,2D8,1,atk,atk,atk,atk,atk,,,,,,,,60,,,,95,,,TRUE,42840,1D2,"6, 7, 8, 9, 10",,0
+79,bleeb,bleeb,bleebs,strange animal,strange animals,animal,10,10D8,0,1D8+1,2,atk,atk,run,help,atk,,,,,,,,60,TRUE,TRUE,TRUE,,,,FALSE,3300,1D8,"6, 7, 8, 9, 10",master ninja,20
+80,frost giant,frost giant,frost giants,giant,giants,giant,1,1D8+50,6,3D10,1,atk,atk,atk,atk,atk,,,,,0,,0,6,FALSE,TRUE,FALSE,95,TRUE,FALSE,FALSE,41355,1D4,"7, 8, 9, 10",thief,30
+81,fire dragon,fire dragon,fire dragon,dragon,dragon,dragon,12,12D8,-1,6D4,1,atk,m5,breath,breath,m5,,,,,0,,0,72,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,TRUE,5000,1D4,"7, 8, 9. 10",,0
+82,high priest_,high priest_,high priests_,priest,priests,priest,11,11D8,2,1D8,2,p6,p6,p6,p6,atk,,,,,,,,66,,,,,,,TRUE,3300,1D1,"7, 8, 9, 10",fire giant,100
+83,high wizard,high wizard,high wizards,man in robes,men in robes,mage,12,12D4,4,1D4,1,M6,m6,m6,m6,atk,,,,,,,,72,TRUE,,,,,,TRUE,2395,1D1,"7, 8, 9, 10",lvl8 bishop,100
+84,master thief__,master thief__,master thieves__,man in leather,men in leather,thief,12,12D6,2,1D8,6,atk,atk,atk,run,run,,,,,,,,72,,,TRUE,,,,TRUE,1935,1D1,"7, 8, 9, 10",lvl8 fighter,100
+85,hatamoto,hatamoto,hatamotos,man in robes,men in robes,fighter,12,12D4,-1,3D8,3,atk,atk,atk,atk,atk,,,,TRUE,,,,72,,,,,,,TRUE,1600,1D1,"8, 9, 10",lvl10 mage,100
+86,vampire,vampire,vampires,unseen entity,unseen entities,undead,11,11D8,-1,1D6,4,m3,m3,atk,atk,atk,,TRUE,,,2,,1,100,,,,,,,TRUE,3330,1D4,"8, 9, 10",vampire,15
+87,greater demon,greater demon,greater demons,demon,demons,demon,11,11D8,-3,1D6,8,m5,m5,help,run,help,TRUE,TRUE,,,,,1,66,,,,95,,,TRUE,44090,1D6,"8, 9, 10",lvl8 ninja,70
+88,poison giant,poison giant,poison giants,giant,giants,giant,1,1D1+80,3,4D10,1,atk,atk,breath,breath,breath,,,,,0,poison,0,6,FALSE,FALSE,FALSE,95,TRUE,FALSE,TRUE,41230,1D4,"8, 9, 10",will o' wisp,50
+89,dragon zombie,dragon zombie,dragon zombies,dragon,dragons,undead,12,12D8,-2,5D10+2,1,m5,m5,breath,breath,breath,,,,,,,,100,,,,25,,,TRUE,5200,1D4,"8, 9, 10",bleeb,10
+90,ravor lord,ravor lord,ravor lords,man in armor,men in armor,animal,15,15D10,10,3D12,2,m5,p4,atk,atk,atk,,,,,,,2,90,TRUE,,,,,,TRUE,4155,1D1,"9, 10",high priest_,100
+91,high master,high master,high masters,conhead,conheads,fighter,15,15D4,-2,3D10,3,atk,atk,atk,atk,atk,,,,TRUE,,,,90,TRUE,TRUE,TRUE,,,,TRUE,3000,1D1,"9, 10",hatamoto,100
+92,flack,flack,fleck,strange animal,strange animals,animal,15,15D12,-3,4D8+3,1,atk,atk,breath,breath,atk,TRUE,TRUE,TRUE,TRUE,0,cold,0,90,TRUE,TRUE,TRUE,TRUE,FALSE,FALSE,FALSE,9200,1D1,"9, 10",murphy's ghost,100
+93,arch mage,arch mage,arch mages,man in robes,men in robes,mage,20,20D4,0,1D4,1,atk,m6,m6,m6,m6,,,,,0,,0,100,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,TRUE,3160,1D1,"9, 10",high wizard,100
+94,maelfics,maelfics,maelfics,unseen being,unseen beings,undead,25,25D4,-5,1D4+1,1,atk,atk,m7,m7,m7,TRUE,TRUE,,,3,,3,100,FALSE,FALSE,FALSE,50,FALSE,FALSE,TRUE,7460,1D0+1,"9, 10",poison giant,100
+95,vampire lord,vampire lord,vampire lords,unseen entity,unseen entities,undead,20,20D8,-5,1D4,1,atk,atk,m6,m6,m6,,TRUE,,,4,,4,100,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,TRUE,7320,1D1,sp,vampire,100
+96,werdna,werdna,werdna,man in robes,men in robes,mage,10,10D10+200,-7,16D5,1,atk,atk,m7,m7,m7,TRUE,TRUE,TRUE,TRUE,4,,5,60,TRUE,TRUE,TRUE,70,FALSE,FALSE,FALSE,15880,1D1,sp,vampire lord,100
+97,high ninja,high ninja,high ninjas,man in kimono,men in kimono,fighter,12,12D4,-1,3D8,3,atk,atk,atk,atk,atk,,,,TRUE,,,,72,,,,,,,TRUE,1600,1D1,,,0
+98,high priest__,high priest__,high priests__,priest,priests,priest,8,8D8,2,1D8+4,1,p5,p5,p5,p5,atk,,,,,,,,48,,,,,,,TRUE,2200,2D1,,high ninja,100
+99,lvl7 mage__,lvl7 mage__,lvl7 mages__,man in robes,men in robes,mage,7,7D4,8,1D4,1,m4,m4,m4,m4,atk,,,,,,,,42,,,,,TRUE,TRUE,TRUE,1000,2D1,,high priest__,100
+100,lvl7 fighter,lvl7 fighter,lvl7 fighters,man in armor,men in armor,fighter,7,7D10,0,1D12,2,atk,atk,atk,atk,atk,,,,,,,,42,,,,,TRUE,,TRUE,1900,2D1,,lvl7 mage__,100
