@@ -39,8 +39,8 @@ class Align(Enum):
 
 
 class Place(Enum):
-    MAZE, EDGE_OF_TOWN, TRAINING_GROUNDS, CASTLE, HAWTHORNE_TAVERN, TRADER_JAYS, LAKEHOUSE_INN, LEAVE_GAME = range(
-        8)
+    MAZE, EDGE_OF_TOWN, TRAINING_GROUNDS, CASTLE, HAWTHORNE_TAVERN, TRADER_JAYS, LAKEHOUSE_INN, CAMP, LEAVE_GAME = range(
+        9)
 
 
 race_status = {
@@ -64,6 +64,7 @@ job_requirements = {
 
 
 class Member:
+    # Represents a character
     def __init__(self, name, align, race, age):
         self.name = name
         self.align = align
@@ -142,27 +143,96 @@ class Member:
             ol = l
 
     def inspect_character(self, game):
+        """
+        Inspect a character
+        Show the character info and dispatch item or spell menus
+        """
         mw = game.vscr.meswins[-1]
         while True:
             self.disp_character(game)
             mw.print(f"", start=' ')
-            c1 = mw.input_char("i)tems s)pells l)eave",
-                               values=['i', 's', 'l'])
+            c1 = mw.input_char("i)tems s)pells jk)change member l)leave",
+                               values=['i', 's', 'j', 'k', 'l'])
             if c1 == 'l':
                 mw.cls()
-                break
+                return 0  # leave
             elif c1 == 'i':
                 self.item_menu(game)
             elif c1 == 's':
                 self.spell_menu(game)
+            elif c1 == 'j':
+                return 1  # next member
+            elif c1 == 'k':
+                return -1  # previous member
+
+    def spell_menu(self, game):
+        """
+        Spell menu.  Cast, read spells.
+        """
+        v = game.vscr
+        mw = Meswin(v, 14, 4, 44, 12, frame=True)
+        v.meswins.append(mw)
+        while True:
+            mw.print("Spell memu:")
+            c = mw.input_char("c)ast v)iew spells l)eave",
+                              values=['c', 'v', 'l'])
+            if c == 'l':
+                break
+            elif c == 'v':
+                sw = Meswin(v, 1, 2, 76, 14)
+                v.meswins.append(sw)
+                d = game.spelldef
+                lines = []
+                if self.mspells:
+                    lines.append("Mage spells:")
+                    for name in self.mspells:
+                        lines.append(
+                            f"{d[name].level} {name.ljust(13)}{d[name].desc[:57]}")
+                    lines.append("")
+                if self.pspells:
+                    lines.append("Priest spells:")
+                    for name in self.pspells:
+                        lines.append(
+                            f"{d[name].level} {name.ljust(13)}{d[name].desc[:57]}")
+                if len(lines) <= 14-1:
+                    for l in lines:
+                        sw.print(l, start=' ')
+                    sw.print("Hit any key.")
+                    v.disp_scrwin()
+                    getch()
+                else:
+                    idx = 0
+                    while True:
+                        sw.cls()
+                        for l in lines[idx:idx+14-1]:
+                            sw.print(l, start=' ')
+                        sw.print("j)down k)up l)eave")
+                        v.disp_scrwin()
+                        c = getch(wait=True)
+                        if c == 'j' and idx < len(lines)-14+1:
+                            idx += 1
+                        elif c == 'k' and idx > 0:
+                            idx -= 1
+                        elif c == 'l':
+                            break
+                sw.cls()
+                v.disp_scrwin()
+                v.disp_scrwin()
+                v.meswins.pop()
+        mw.cls()
+        v.disp_scrwin()
+        v.meswins.pop()
 
     def item_menu(self, game):
+        """
+        Item menu.  Use, equip, trade, drop an item.
+        """
         vscr = game.vscr
         iw = Meswin(vscr, 14, 2, 44, 8, frame=True)
         vscr.meswins.append(iw)
         while True:
             iw.print("which item?  # or l)leave")
-            vscr.disp_scrwin(game.party)
+            vscr.disp_scrwin()
             c = getch()
             if c == 'l':
                 vscr.meswins.pop()
@@ -181,7 +251,7 @@ class Member:
             if c == 'l':
                 continue
             elif c == 'e':
-                if self.job.name[:1] not in game.itemdef[self.items[inum][0]].jpbs:
+                if self.job.name[:1] not in game.itemdef[self.items[inum][0]].jobs:
                     iw.print("Can't equip the item.")
                     continue
                 for item in self.items:
@@ -195,16 +265,19 @@ class Member:
                 if game.itemdef[self.items[inum][0]].curse:
                     self.items[inum][2] = True  # cursed
                     iw.print("Cursed!")
-                    vscr.disp_scrwin(game.party)
+                    vscr.disp_scrwin()
                     getch()
                 self.items[inum][1] = True  # equipped
                 self.calc_ac(game)
                 vscr.meswins.pop()
-                vscr.disp_scrwin(game.party)
-                vscr.disp_scrwin(game.party)
+                vscr.disp_scrwin()
+                vscr.disp_scrwin()
                 return
 
     def calc_ac(self, game):
+        """
+        Utility method to calculate AC
+        """
         self.ac = 10
         for item in self.items:
             if item[1] or item[2]:
@@ -224,7 +297,7 @@ class Member:
 
     def calc_bonus(self):
         """
-        Calculate bonus points
+        Calculate bonus points (on creating a character)
         """
         bonus = random.randrange(5, 9)
         for _ in range(3):
@@ -258,7 +331,7 @@ class Member:
                 job = True
                 line = ''.join([line, Job(jobnum).name[:].lower(), ' '])
         mw.print(line)
-        vscr.disp_scrwin(game.party)
+        vscr.disp_scrwin()
         return job
 
     def distribute_bonus(self, game):
@@ -324,7 +397,7 @@ class Member:
             self.stat[i] += statplus[i]
         game.characters.append(self)
         mw.print("Character created")
-        game.vscr.disp_scrwin(game.party)
+        game.vscr.disp_scrwin()
 
 
 class Game:
@@ -454,7 +527,7 @@ class Game:
         load spell definition file
         """
         Spell = collections.namedtuple(
-            'Spell', ['categ', 'level', 'battle', 'camp', 'target', 'value', 'attr', 'desc'])
+            'Spell', ['categ', 'level', 'battle', 'camp', 'type', 'target', 'value', 'attr', 'desc'])
         with open('spells.csv') as csvfile:
             rdr = csv.reader(csvfile)
             spell_def = {}
@@ -462,7 +535,7 @@ class Game:
                 if i == 0:
                     continue
                 spell = Spell(row[1], int(row[2]), json.loads(row[5].lower()),
-                              json.loads(row[6].lower()), row[7], row[8], row[9], row[10])
+                              json.loads(row[6].lower()), row[7], row[8], row[9], row[10], row[12])
                 spell_def[row[3]] = spell
             self.spelldef = spell_def
 
@@ -628,12 +701,16 @@ class Vscr:
         line = f" daemon lord - dl - [{party.place.name.lower()}] floor:{party.floor:2d} ({party.x}/{party.y}) "
         self.cur_vscr_view[:len(line)] = line.encode()
 
-    def disp_scrwin(self, party, floor_obj=None):
+    def disp_scrwin(self, floor_obj=None):
         """
         Display scroll window main
         """
+        game = self.game
+        party = game.party
+        if not floor_obj and party.place == Place.CAMP:
+            floor_obj = party.floor_obj
         start = time.time()
-        if party.place == Place.MAZE:
+        if party.place == Place.MAZE or party.place == Place.CAMP:
             for y in range(party.y-1, party.y+2):
                 for x in range(party.x-1, party.x+2):
                     floor_obj.put_tile(
@@ -756,6 +833,10 @@ class Party:
         self.members = []
 
     def can_open(self, game):
+        """
+        Check if they can unlock the door
+        Returns True if they can, False otherwise
+        """
         return True  # ++++++++++++++++++++++++++++++
 
     def choose_character(self, game):
@@ -788,10 +869,101 @@ class Party:
             try:
                 if 0 <= (chid := int(ch)-1) < len(game.party.members):
                     del self.members[chid]
-                    game.vscr.disp_scrwin(self)
-                    game.vscr.disp_scrwin(self)
+                    game.vscr.disp_scrwin()
+                    game.vscr.disp_scrwin()
             except:
                 pass
+
+
+class Dungeon:
+    """
+    Represents the dungeon
+    """
+
+    def __init__(self, game):
+        self.game = game
+        self.floors = []
+
+    def generate_floor(self, floor):
+        """
+        Generate a dungeon floor.
+        Create rooms, connect among them and place doors
+        """
+        floor_x_size = config['floor_xmin']  # ++++++++++++++++++++++++++++++
+        floor_y_size = config['floor_ymin']
+        floor_data = bytearray(b'#' * floor_x_size *
+                               floor_y_size)  # rock only floor
+        floor_obj = Floor(floor_x_size, floor_y_size, floor, floor_data)
+
+        rooms = floor_obj.prepare_rooms()
+        for r in rooms:
+            for y in range(r.y_size):
+                start = (r.y + y)*floor_x_size + r.x
+                floor_obj.floor_view[start:start+r.x_size] = b'.'*r.x_size
+        floor_obj.connect_all_rooms(rooms)
+        floor_obj.place_doors(rooms)
+        floor_obj.floor_orig = floor_obj.floor_data
+        floor_obj.floor_data = bytearray(b'^' * floor_x_size * floor_y_size)
+        return floor_obj
+
+    def move_floor(self, floor_obj):
+        """
+        Check and move to a upper/lower floor.  Generate floor_obj if
+        not created yet.  Exit from dungeon.
+
+        Return floor_obj.  Return None if exit from dungeon.
+        """
+        game = self.game
+        party = game.party
+        vscr = game.vscr
+        meswin = vscr.meswins[0]
+
+        if floor_obj:
+            if floor_obj.get_tile(party.x, party.y) == b'<':  # upstairs
+                vscr.disp_scrwin(floor_obj)
+                if party.floor == 1:
+                    c = meswin.input_char("Exit from dungeon? (y/n)",
+                                          values=['y', 'n'])
+                else:
+                    c = meswin.input_char(
+                        "Stairs.  Go up? (y/n)", values=['y', 'n'])
+                if c == 'y':
+                    party.floor -= 1
+                    party.floor_move = 2  # go up
+                    if party.floor > 0:
+                        vscr.disp_scrwin(floor_obj)
+            elif floor_obj.get_tile(party.x, party.y) == b'>':  # downstairs
+                vscr.disp_scrwin(floor_obj)
+                c = meswin.input_char(
+                    "Stairs.  Go down? (y/n)", values=['y', 'n'])
+                if c == 'y':
+                    party.floor += 1
+                    party.floor_move = 1  # go down
+                    vscr.disp_scrwin(floor_obj)
+            vscr.disp_scrwin(floor_obj)
+
+        if party.floor_move:
+            if party.floor <= 0:  # exit from dungeon
+                party.place = Place.EDGE_OF_TOWN
+                return None  # Exit from dungeon
+
+            floor_obj = None
+            for f in self.floors:
+                if f.floor == party.floor:
+                    floor_obj = f
+            if not floor_obj:
+                floor_obj = self.generate_floor(party.floor)
+                self.floors.append(floor_obj)
+            if party.floor_move == 1:
+                party.x = floor_obj.up_x
+                party.y = floor_obj.up_y
+            elif party.floor_move == 2:
+                party.x = floor_obj.down_x
+                party.y = floor_obj.down_y
+            party.floor_move = 0
+            vscr.disp_scrwin(floor_obj)
+
+        return floor_obj
 
 
 class Floor:
@@ -808,6 +980,10 @@ class Floor:
         return f"Floor(size: {self.x_size}x{self.y_size}, floor: {self.floor} - {s})"
 
     def get_tile(self, x, y):
+        """
+        Return the byte character representing the tile on
+        the specified (x, y) location
+        """
         if x >= self.x_size or x < 0:
             return b'^'
         if y >= self.y_size or y < 0:
@@ -816,6 +992,10 @@ class Floor:
         return self.floor_orig[pos:pos+1]
 
     def put_tile(self, x, y, bc, orig=True):
+        """
+        Place the tile byte character to (x, y) location.
+        If orig flag is False, place it on the virtual map
+        """
         if 0 <= x < self.x_size and 0 <= y < self.y_size:
             pos = y * self.x_size + x
             if orig:
@@ -824,12 +1004,20 @@ class Floor:
                 self.floor_data[pos:pos+1] = bc
 
     def can_move(self, x, y):
+        """
+        Utility function to check if they can move to
+        (x, y).
+        """
         bc = self.get_tile(x, y)
         if bc in b"*+#^":
             return False
         return True
 
     def open_door(self, game, mw):
+        """
+        Open a door.  If it's a locked door ('*'), unlock and
+        open it.  Unlock could fail.
+        """
         x = game.party.x
         y = game.party.y
         c = mw.input_char("Which direction? - ;)leave",
@@ -854,7 +1042,6 @@ class Floor:
                 self.put_tile(x, y, b'.')
         else:
             mw.print("Not a door.")
-            # game.vscr.disp_scrwin(game.party)
 
     def draw_line(self, x1, y1, x2, y2):
         """
@@ -1011,29 +1198,6 @@ def terminal_size():
     return w, h
 
 
-def generate_floor(floor):
-    """
-    Generate a dungeon floor.
-    Create rooms, connect among them and place doors
-    """
-    floor_x_size = config['floor_xmin']  # ++++++++++++++++++++++++++++++
-    floor_y_size = config['floor_ymin']
-    floor_data = bytearray(b'#' * floor_x_size *
-                           floor_y_size)  # rock only floor
-    floor_obj = Floor(floor_x_size, floor_y_size, floor, floor_data)
-
-    rooms = floor_obj.prepare_rooms()
-    for r in rooms:
-        for y in range(r.y_size):
-            start = (r.y + y)*floor_x_size + r.x
-            floor_obj.floor_view[start:start+r.x_size] = b'.'*r.x_size
-    floor_obj.connect_all_rooms(rooms)
-    floor_obj.place_doors(rooms)
-    floor_obj.floor_orig = floor_obj.floor_data
-    floor_obj.floor_data = bytearray(b'^' * floor_x_size * floor_y_size)
-    return floor_obj
-
-
 def getch(wait=False):
     """
     realtime key scan
@@ -1065,10 +1229,10 @@ def create_character(game):
         if (name := mw.input("Enter new name")):
             if name in [char.name for char in game.characters]:
                 mw.print("The name is already used")
-                vscr.disp_scrwin(game.party)
+                vscr.disp_scrwin()
             else:
                 break
-    vscr.disp_scrwin(game.party)
+    vscr.disp_scrwin()
 
     c = mw.input_char("Choose race - h)uman e)lf d)warf g)nome o)hobbit",
                       values=['h', 'e', 'd', 'g', 'o'])
@@ -1083,7 +1247,7 @@ def create_character(game):
     else:
         race = Race.HOBBIT
     mw.print(f"{race.name.lower()}")
-    vscr.disp_scrwin(game.party)
+    vscr.disp_scrwin()
 
     c = mw.input_char(
         "Choose alignment - g)ood n)eutral e)vil", values=['g', 'n', 'e'])
@@ -1094,7 +1258,7 @@ def create_character(game):
     else:
         align = Align.EVIL
     mw.print(f"Alignment: {align.name.lower()}")
-    vscr.disp_scrwin(game.party)
+    vscr.disp_scrwin()
 
     while True:
         age = mw.input("How old is he/she? (13-199)")
@@ -1104,9 +1268,9 @@ def create_character(game):
                 break
         except:
             pass
-        vscr.disp_scrwin(game.party)
+        vscr.disp_scrwin()
     mw.print(f"{age} years old.")
-    vscr.disp_scrwin(game.party)
+    vscr.disp_scrwin()
 
     ch = Member(name, align, race, age)
     ch.distribute_bonus(game)
@@ -1119,7 +1283,7 @@ def inspect_characters(game):
     vscr = game.vscr
     mw = vscr.meswins[-1]
     mw.mes_lines = []
-    vscr.disp_scrwin(game.party)
+    vscr.disp_scrwin()
     cnum = 0
     chlist = game.party.members
     if game.party.place == Place.TRAINING_GROUNDS:
@@ -1133,7 +1297,7 @@ def inspect_characters(game):
             else:
                 cur = '  '
             mw.print(''.join([cur, str(i+1), ' ', str(mem)]), start=' ')
-        vscr.disp_scrwin(game.party)
+        vscr.disp_scrwin()
         c = getch()
         if c == 'l':
             break
@@ -1142,7 +1306,15 @@ def inspect_characters(game):
         elif c == 'k' and cnum > 0:
             cnum -= 1
         elif c == 'i' and len(chlist) > 0:
-            chlist[cnum].inspect_character(game)
+            while True:
+                rtn = chlist[cnum].inspect_character(game)
+                if rtn == 0:
+                    break
+                cnum += rtn
+                if cnum < 0:
+                    cnum = len(chlist)-1
+                elif cnum >= len(chlist):
+                    cnum = 0
 
 
 def training(game):
@@ -1153,11 +1325,11 @@ def training(game):
     game.party.place = Place.TRAINING_GROUNDS
     mw = vscr.meswins[-1]
     vscr.cls()
-    vscr.disp_scrwin(game.party)
+    vscr.disp_scrwin()
     while True:
         mw.print(
             "*** training grounds ***\nc)reate a character\ni)nspect a character\nl)eave")
-        vscr.disp_scrwin(game.party)
+        vscr.disp_scrwin()
         c = mw.input_char("Command?")
         if c == 'l':
             break
@@ -1169,16 +1341,16 @@ def training(game):
 
 def tavern_add(game):
     """
-    add members to the party
+    Add members to the party (a tavern item)
     """
     vscr = game.vscr
     mw = vscr.meswins[-1]
     if len(game.party.members) >= 6:
         mw.print("Party full.")
-        vscr.disp_scrwin(game.party)
+        vscr.disp_scrwin()
         return
 
-    vscr.disp_scrwin(game.party)
+    vscr.disp_scrwin()
     chwin = Meswin(vscr, 12, 2, 40, 16)
     vscr.meswins.append(chwin)
     top = idx = 0
@@ -1201,7 +1373,7 @@ def tavern_add(game):
             "|  - j)down k)up x)choose l)eave".ljust(chwin.width-1)+'|')
         for chl in chlines[top:top+chwin.height-2]:
             chwin.mes_lines.append(chl.ljust(chwin.width-1)+'|')
-        vscr.disp_scrwin(game.party)
+        vscr.disp_scrwin()
         c = getch(wait=True)
         if c == 'l':
             break
@@ -1218,7 +1390,7 @@ def tavern_add(game):
             if len(game.party.members) >= 6 or len(charlist) <= 1:
                 break
     vscr.meswins.pop()
-    vscr.disp_scrwin(game.party)
+    vscr.disp_scrwin()
 
 
 def tavern(game):
@@ -1232,7 +1404,7 @@ def tavern(game):
     ch = ''
     while True:
         mw.print("*** The Hawthorne Tavern ***")
-        vscr.disp_scrwin(game.party)
+        vscr.disp_scrwin()
         ch = mw.input_char("Command? - a)dd r)emove i)nspect d)ivvy gold l)eave",
                            values=['a', 'r', 'i', 'd', 'l'])
         if ch == 'l':
@@ -1244,8 +1416,17 @@ def tavern(game):
             else:
                 mw.print("No characters to add")
         elif ch == 'i':
-            if (mem := game.party.choose_character(game)):
-                mem.inspect_character(game)
+            idx = 0
+            while True:
+                mem = game.party.members[idx]
+                rtn = mem.inspect_character(game)
+                if rtn == 0:
+                    break
+                idx += rtn
+                if idx < 0:
+                    idx = len(game.party.members) - 1
+                elif idx >= len(game.party.members):
+                    idx = 0
         elif ch == 'r':
             game.party.remove_character(game)
 
@@ -1284,7 +1465,7 @@ def trader_buy(game, mem):
             iw.mes_lines.append(il.ljust(iw.width-1))
         for _ in range(iw.width - len(iw.mes_lines)):
             iw.mes_lines.append(''.join(['|', ' '*(iw.width-2), '|']))
-        vscr.disp_scrwin(game.party)
+        vscr.disp_scrwin()
         c = getch(wait=True)
         if c == ';':
             break
@@ -1308,13 +1489,13 @@ def trader_buy(game, mem):
             if len(mem.items) >= 8:
                 iw.mes_lines[0] = "| Looks like, your bag is full.".ljust(
                     iw.width-1)+'|'
-                vscr.disp_scrwin(game.party)
+                vscr.disp_scrwin()
                 getch()
             elif mem.gold < game.itemdef[items[idx]].price:
                 iw.mes_lines[0] = "| Sorry, you can't afford it.".ljust(
                     iw.width-1)+'|'
                 #iw.mes_lines[1] = f"{mem.gold} < {game.itemdef[items[idx]][10]}"
-                vscr.disp_scrwin(game.party)
+                vscr.disp_scrwin()
                 getch()
             else:
                 iw.mes_lines[0] = "| Anything else, noble sir?".ljust(
@@ -1323,7 +1504,7 @@ def trader_buy(game, mem):
                 bought = [items[idx], False, False, False]
                 mem.items.append(bought)
                 game.shopitems[items[idx]] -= 1
-                vscr.disp_scrwin(game.party)
+                vscr.disp_scrwin()
                 getch()
     vscr.meswins.pop()
 
@@ -1391,7 +1572,7 @@ def trader_sell(game, mem, op):
         mw.print(f"Uncursed {mem.items[int(c)-1][0]}.")
         del mem.items[int(c)-1]
 
-    game.vscr.disp_scrwin(game.party)
+    game.vscr.disp_scrwin()
     getch()
 
 
@@ -1405,7 +1586,7 @@ def trader(game):
     mw = vscr.meswins[-1]
     while True:
         mw.print("*** Trader Jay's ***")
-        vscr.disp_scrwin(game.party)
+        vscr.disp_scrwin()
         mem = game.party.choose_character(game)
         if not mem:
             break
@@ -1436,7 +1617,7 @@ def castle(game):
     vscr = game.vscr
     mw = vscr.meswins[-1]
     vscr.cls()
-    vscr.disp_scrwin(game.party)
+    vscr.disp_scrwin()
     ch = ''
     while True:
         mw.cls()
@@ -1444,7 +1625,7 @@ def castle(game):
         mw.print("*** Castle ***")
         mw.print("h)awthorne tavern\nt)rader jay's\nl)akehouse inn", start=' ')
         mw.print("k)makura shrine\ne)dge of town", start=' ')
-        vscr.disp_scrwin(game.party)
+        vscr.disp_scrwin()
         ch = mw.input_char("Command?", values=['h', 'e', 't'])
         if ch == 'h':
             tavern(game)
@@ -1468,7 +1649,7 @@ def edge_town(game):
         game.party.place = Place.EDGE_OF_TOWN
         mw.print("*** Edge of Town ***")
         mw.print("m)aze\nt)raining grounds\nl)eave game\nc)astle", start=' ')
-        vscr.disp_scrwin(game.party)
+        vscr.disp_scrwin()
         ch = mw.input_char("Command? ", values=['t', 'm', 'c', 'l'])
         if ch == 't':
             training(game)
@@ -1483,11 +1664,46 @@ def edge_town(game):
             break
         elif ch == 'l':
             mw.print("type Q to quit for now...")
-            vscr.disp_scrwin(game.party)
+            vscr.disp_scrwin()
             getch()
 
 
+def camp(game, floor_obj):
+    """
+    Camp main
+    """
+    game.party.place = Place.CAMP
+    v = game.vscr
+    mw = Meswin(v, 10, 1, 64, 17, frame=True)
+    v.meswins.append(mw)
+
+    while True:
+        mw.print("*** Camp ***\ni)nspect\nq)save and quit game\nl)eave")
+        c = mw.input_char("Command?", values=['i', 'q', 'l'])
+        if c == 'l':
+            break
+        elif c == 'i':
+            idx = 0
+            while True:
+                mem = game.party.members[idx]
+                rtn = mem.inspect_character(game)
+                if rtn == 0:
+                    break
+                idx += rtn
+                if idx < 0:
+                    idx = len(game.party.members) - 1
+                elif idx >= len(game.party.members):
+                    idx = 0
+
+    v.disp_scrwin(floor_obj)
+    v.meswins.pop()
+    game.party.place = Place.MAZE
+
+
 def maze(game):
+    """
+    Maze (dungeon) main
+    """
     party = game.party
     party.place = Place.MAZE
     party.floor = 1
@@ -1498,56 +1714,22 @@ def maze(game):
     meswin = vscr.meswins[0]
     vscr.meswins = [meswin]
 
-    while True:
-        if party.floor_move:
-            if party.floor <= 0:  # exit from dungeon
-                party.place = Place.EDGE_OF_TOWN
-                break
-            floor_obj = None
-            for f in game.floors:
-                if f.floor == party.floor:
-                    floor_obj = f
-            if not floor_obj:
-                floor_obj = generate_floor(party.floor)
-                game.floors.append(floor_obj)
-            if party.floor_move == 1:
-                party.x = floor_obj.up_x
-                party.y = floor_obj.up_y
-            elif party.floor_move == 2:
-                party.x = floor_obj.down_x
-                party.y = floor_obj.down_y
-            party.floor_move = 0
-            vscr.disp_scrwin(party, floor_obj)
+    dungeon = Dungeon(game)
+    floor_obj = None
 
-        if floor_obj.get_tile(party.x, party.y) == b'<':
-            vscr.disp_scrwin(party, floor_obj)
-            if party.floor == 1:
-                c = meswin.input_char("Exit from dungeon? (y/n)",
-                                      values=['y', 'n'])
-            else:
-                c = meswin.input_char(
-                    "Stairs.  Go up? (y/n)", values=['y', 'n'])
-            if c == 'y':
-                party.floor -= 1
-                party.floor_move = 2  # go up
-                if party.floor > 0:
-                    vscr.disp_scrwin(party, floor_obj)
-                continue
-        if floor_obj.get_tile(party.x, party.y) == b'>':
-            vscr.disp_scrwin(party, floor_obj)
-            c = meswin.input_char("Stairs.  Go down? (y/n)", values=['y', 'n'])
-            if c == 'y':
-                party.floor += 1
-                party.floor_move = 1  # go down
-                vscr.disp_scrwin(party, floor_obj)
-                continue
-        vscr.disp_scrwin(party, floor_obj)
+    while True:
+        floor_obj = dungeon.move_floor(floor_obj)
+        party.floor_obj = floor_obj
+        if not floor_obj:  # Exit from dungeon
+            break
 
         c = getch()
         draw = True
         if c:
             if c == 'Q':
                 sys.exit()
+            elif c == 'c':
+                camp(game, floor_obj)
             elif c in 'hH' and party.x > 0:
                 if (c == 'H' and config['debug']) or \
                    floor_obj.can_move(party.x-1, party.y):
@@ -1568,7 +1750,7 @@ def maze(game):
                    floor_obj.can_move(party.x+1, party.y):
                     party.x += 1
                     meswin.print("east")
-            elif c == 'o':
+            elif c == 'o':  # open or unlock door
                 vscr.display()
                 floor_obj.open_door(game, meswin)
             elif c == '.':
@@ -1586,11 +1768,11 @@ def maze(game):
         else:
             draw = False
         if draw:
-            vscr.disp_scrwin(party, floor_obj)
+            vscr.disp_scrwin(floor_obj)
     vscr.meswins = meswins_save
     vscr.cls()
     party.place = Place.EDGE_OF_TOWN
-    vscr.disp_scrwin(party)
+    vscr.disp_scrwin()
 
 
 def dispatch(game):
@@ -1615,11 +1797,11 @@ def main():
     game.load_itemdef()
     game.load_monsterdef()
     party.place = Place.CASTLE
-    # floor_obj = generate_floor(1)
     w, h = terminal_size()
     # vscr = Vscr(w, h)
     vscr = Vscr(80, 25)  # +++++++++++++++
     game.vscr = vscr
+    vscr.game = game
     vscr.meswins.append(Meswin(vscr, 42, 18, 40, 7))  # meswin for scrollwin
     # meswin for castle/edge of town
     vscr.meswins.append(Meswin(vscr, 10, 1, 64, 17, frame=True))
@@ -1630,6 +1812,18 @@ def main():
     m.maxhp = m.hp = 13
     m.gold = 50000
     m.items.append(['shield -3', False, False, True])
+    m.mspells = []
+    for n, s in game.spelldef.items():
+        if s.categ == 'mage':
+            m.mspells.append(n)
+    m.mspell_cnt = [9, 9, 9, 9, 9, 9, 9]
+    m.mspell_max = [9, 9, 9, 9, 9, 9, 9]
+    m.pspells = []
+    for n, s in game.spelldef.items():
+        if s.categ == 'priest':
+            m.pspells.append(n)
+    m.pspell_cnt = [9, 9, 9, 9, 9, 9, 9]
+    m.pspell_max = [9, 9, 9, 9, 9, 9, 9]
     game.characters.append(m)
     m = Member("Betty", Align.GOOD, Race.HUMAN, 28)
     m.job = Job.FIGHTER
@@ -1650,11 +1844,23 @@ def main():
     m.job = Job.PRIEST
     m.stat = (12, 15, 18, 15, 12, 9)
     m.maxhp = m.hp = 12
+    m.pspells = []
+    for n, s in game.spelldef.items():
+        if s.categ == 'priest':
+            m.pspells.append(n)
+    m.pspell_cnt = [9, 9, 9, 9, 9, 9, 9]
+    m.pspell_max = [9, 9, 9, 9, 9, 9, 9]
     game.characters.append(m)
     m = Member("Fast", Align.GOOD, Race.ELF, 36)
     m.job = Job.MAGE
     m.stat = (8, 18, 10, 14, 16, 14)
     m.maxhp = m.hp = 7
+    m.mspells = []
+    for n, s in game.spelldef.items():
+        if s.categ == 'mage':
+            m.mspells.append(n)
+    m.mspell_cnt = [9, 9, 9, 9, 9, 9, 9]
+    m.mspell_max = [9, 9, 9, 9, 9, 9, 9]
     game.characters.append(m)
     dispatch(game)
 
