@@ -1,4 +1,4 @@
-﻿id,wizname,name,names,unundentified,unundentifieds,type,lvl,HP,AC,atk,cnt,act1,act2,act3,act4,act5,poison,paraly,stone,critical,drain,breath sp,heal,regist death %,regist fire,regist cold,regist poison,regist spell %,weak makanito,weak sleep,friendly,exp,num,floor,後続,後続%
+﻿id,wizname,name,names,unundentified,unundentifieds,type,lvl,HP,AC,atk,cnt,act1,act2,act3,act4,act5,poison,paraly,stone,critical,drain,breath sp,heal,regist death %,regist fire,regist cold,regist poison,regist spell %,weak makanito,weak sleep,friendly,exp,num,floors,fellowwiz,frllowp
 0,bubbly slime,green slime,green slimes,slime,slimes,animal,1,1D3+1,12,1D1,1,atk,atk,atk,atk,atk,,,,,0,,0,6,FALSE,FALSE,FALSE,0,TRUE,FALSE,FALSE,55,2D2,1,,0
 1,orc,orc,orcs,small humanoid,small humanoids,fighter,1,1D4,10,1D4,1,atk,atk,run,run,atk,,,,,0,,0,0,TRUE,FALSE,FALSE,0,TRUE,TRUE,TRUE,235,3D2,1,,0
 2,kobold,kobold,kobolds,small humanoid,small humanoids,fighter,2,2D3+1,8,2D3,1,atk,atk,atk,run,atk,,,,,0,,0,12,FALSE,TRUE,FALSE,0,TRUE,TRUE,FALSE,415,2D2+1,1,,0
@@ -80,7 +80,7 @@
 78,will o' wisp,will o' wisp,will o' wisps,unseen entity,unseen entities,magic,10,10D8,-8,2D8,1,atk,atk,atk,atk,atk,,,,,,,,60,,,,95,,,TRUE,42840,1D2,"6, 7, 8, 9, 10",,0
 79,bleeb,bleeb,bleebs,strange animal,strange animals,animal,10,10D8,0,1D8+1,2,atk,atk,run,help,atk,,,,,,,,60,TRUE,TRUE,TRUE,,,,FALSE,3300,1D8,"6, 7, 8, 9, 10",master ninja,20
 80,frost giant,frost giant,frost giants,giant,giants,giant,1,1D8+50,6,3D10,1,atk,atk,atk,atk,atk,,,,,0,,0,6,FALSE,TRUE,FALSE,95,TRUE,FALSE,FALSE,41355,1D4,"7, 8, 9, 10",thief,30
-81,fire dragon,fire dragon,fire dragon,dragon,dragon,dragon,12,12D8,-1,6D4,1,atk,m5,breath,breath,m5,,,,,0,,0,72,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,TRUE,5000,1D4,"7, 8, 9. 10",,0
+81,fire dragon,fire dragon,fire dragon,dragon,dragon,dragon,12,12D8,-1,6D4,1,atk,m5,breath,breath,m5,,,,,0,,0,72,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,TRUE,5000,1D4,"7, 8, 9, 10",,0
 82,high priest_,high priest_,high priests_,priest,priests,priest,11,11D8,2,1D8,2,p6,p6,p6,p6,atk,,,,,,,,66,,,,,,,TRUE,3300,1D1,"7, 8, 9, 10",fire giant,100
 83,high wizard,high wizard,high wizards,man in robes,men in robes,mage,12,12D4,4,1D4,1,M6,m6,m6,m6,atk,,,,,,,,72,TRUE,,,,,,TRUE,2395,1D1,"7, 8, 9, 10",lvl8 bishop,100
 84,master thief__,master thief__,master thieves__,man in leather,men in leather,thief,12,12D6,2,1D8,6,atk,atk,atk,run,run,,,,,,,,72,,,TRUE,,,,TRUE,1935,1D1,"7, 8, 9, 10",lvl8 fighter,100
@@ -94,8 +94,8 @@
 92,flack,flack,fleck,strange animal,strange animals,animal,15,15D12,-3,4D8+3,1,atk,atk,breath,breath,atk,TRUE,TRUE,TRUE,TRUE,0,cold,0,90,TRUE,TRUE,TRUE,TRUE,FALSE,FALSE,FALSE,9200,1D1,"9, 10",murphy's ghost,100
 93,arch mage,arch mage,arch mages,man in robes,men in robes,mage,20,20D4,0,1D4,1,atk,m6,m6,m6,m6,,,,,0,,0,100,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,TRUE,3160,1D1,"9, 10",high wizard,100
 94,maelfics,maelfics,maelfics,unseen being,unseen beings,undead,25,25D4,-5,1D4+1,1,atk,atk,m7,m7,m7,TRUE,TRUE,,,3,,3,100,FALSE,FALSE,FALSE,50,FALSE,FALSE,TRUE,7460,1D0+1,"9, 10",poison giant,100
-95,vampire lord,vampire lord,vampire lords,unseen entity,unseen entities,undead,20,20D8,-5,1D4,1,atk,atk,m6,m6,m6,,TRUE,,,4,,4,100,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,TRUE,7320,1D1,sp,vampire,100
-96,werdna,werdna,werdna,man in robes,men in robes,mage,10,10D10+200,-7,16D5,1,atk,atk,m7,m7,m7,TRUE,TRUE,TRUE,TRUE,4,,5,60,TRUE,TRUE,TRUE,70,FALSE,FALSE,FALSE,15880,1D1,sp,vampire lord,100
+95,vampire lord,vampire lord,vampire lords,unseen entity,unseen entities,undead,20,20D8,-5,1D4,1,atk,atk,m6,m6,m6,,TRUE,,,4,,4,100,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,TRUE,7320,1D1,,vampire,100
+96,werdna,werdna,werdna,man in robes,men in robes,mage,10,10D10+200,-7,16D5,1,atk,atk,m7,m7,m7,TRUE,TRUE,TRUE,TRUE,4,,5,60,TRUE,TRUE,TRUE,70,FALSE,FALSE,FALSE,15880,1D1,,vampire lord,100
 97,high ninja,high ninja,high ninjas,man in kimono,men in kimono,fighter,12,12D4,-1,3D8,3,atk,atk,atk,atk,atk,,,,TRUE,,,,72,,,,,,,TRUE,1600,1D1,,,0
 98,high priest__,high priest__,high priests__,priest,priests,priest,8,8D8,2,1D8+4,1,p5,p5,p5,p5,atk,,,,,,,,48,,,,,,,TRUE,2200,2D1,,high ninja,100
 99,lvl7 mage__,lvl7 mage__,lvl7 mages__,man in robes,men in robes,mage,7,7D4,8,1D4,1,m4,m4,m4,m4,atk,,,,,,,,42,,,,,TRUE,TRUE,TRUE,1000,2D1,,high priest__,100

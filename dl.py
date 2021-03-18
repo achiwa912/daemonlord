@@ -1,4 +1,5 @@
 import collections
+import itertools
 import csv
 import json
 import fcntl
@@ -21,6 +22,446 @@ config = {
 }
 
 
+class Vscr:
+    """
+    Manage and control scroll window and virtual scroll windows
+    """
+
+    def __init__(self, width, height):
+        self.width = width
+        self.height = height
+        self.vscr0 = bytearray(b'P'*width*height)
+        self.vscr1 = bytearray(b'Q'*width*height)
+        self.prev_vscr_view = memoryview(self.vscr0)
+        self.cur_vscr_view = memoryview(self.vscr1)
+        self.meswins = []
+
+    def draw_map(self, party, floor_obj):
+        """
+        Copy map data to a virtual scroll window
+        """
+        floor_view = memoryview(floor_obj.floor_data)
+        cv = self.cur_vscr_view
+        w = self.width
+        for cy in range(self.height):
+            cv[cy*w:(cy+1)*w] = b'^'*w  # fill with rocks
+            my = party.y - (self.height-7)//2 + cy  # convert cy to floor_y
+            if 0 <= my < floor_obj.y_size:
+                l_left = min(0, party.x-w//2) * -1
+                l_right = min(w, floor_obj.x_size - party.x + w//2)
+                map_left = my*floor_obj.x_size + party.x - w//2 + l_left
+                map_right = map_left + l_right - l_left
+                cv[cy*w+l_left:cy*w+l_right] = floor_view[map_left:map_right]
+            if cy == (self.height-7)//2:
+                cv[cy*w+w//2:cy*w+w//2+1] = b'@'
+
+    def cls(self):
+        """
+        clear both vscr0 and vscr1, and force clear screen
+        """
+        self.cur_vscr_view[:] = b' ' * self.width * self.height
+        self.prev_vscr_view[:] = b' ' * self.width * self.height
+        self.display(force=True)
+
+    def display(self, force=False):
+        """
+        Actually print scroll window on the terminal
+        """
+        cv = self.cur_vscr_view
+        w = self.width
+        for y in range(self.height):
+            slc = slice(y*w, (y+1)*w)
+            if force == True or cv[slc] != self.prev_vscr_view[slc]:
+                print(f"\033[{y+1};0H", end='')
+                print(cv[slc].tobytes().decode(), end='')
+        self.cur_vscr_view, self.prev_vscr_view \
+            = self.prev_vscr_view, self.cur_vscr_view
+
+    def draw_meswins(self):
+        """
+        Display the message window
+        """
+        for mw in self.meswins:
+            meswidth = mw.width - 2
+            if mw.frame:
+                meswidth -= 4
+            for y in range(mw.height):
+                if len(mw.mes_lines) <= y:
+                    line = ' '*(meswidth)
+                else:
+                    line = mw.mes_lines[y].ljust(meswidth)
+                if mw.frame:
+                    line = ''.join(['| ', line, ' |'])
+                line = line.encode()
+                vscr_left = (mw.y+y)*self.width + mw.x
+                self.cur_vscr_view[vscr_left:vscr_left+len(line)] = line
+
+    def draw_partywin(self, party):
+        """
+        Show the party window
+        """
+        for y in range(7):
+            line = " # name       class  ac   hp status       "
+            width = len(line)
+            if y != 0:
+                if len(party.members) >= y:
+                    m = party.members[y-1]
+                    alcls = ''.join([m.align.name[0], '-', m.job.name[:3]])
+                    if party.place == Place.BATTLE and \
+                       (m.state == State.OK or m.state == State.POISONED):
+                        line = f" {y} {m.name[:10].ljust(10)} {alcls} {m.ac:3d} {m.hp:4d} {m.action.ljust(13)}"
+                    else:
+                        line = f" {y} {m.name[:10].ljust(10)} {alcls} {m.ac:3d} {m.hp:4d} {m.state.name[:13].ljust(13)}"
+                else:
+                    line = f" {y}" + ' '*(width-2)
+            line = line.encode()
+            vscr_left = (self.height-7+y)*self.width
+            self.cur_vscr_view[vscr_left:vscr_left+len(line)] = line
+
+    def draw_header(self, party):
+        """
+        Display the header info
+        """
+        line = f" daemon lord - dl - [{party.place.name.lower()}] floor:{party.floor:2d} ({party.x}/{party.y}) "
+        self.cur_vscr_view[:len(line)] = line.encode()
+
+    def disp_scrwin(self, floor_obj=None):
+        """
+        Display scroll window main
+        """
+        game = self.game
+        party = game.party
+        if not floor_obj and party.place == Place.CAMP:
+            floor_obj = party.floor_obj
+        start = time.time()
+        if party.place == Place.MAZE or party.place == Place.CAMP:
+            for y in range(party.y-1, party.y+2):
+                for x in range(party.x-1, party.x+2):
+                    floor_obj.put_tile(
+                        x, y, floor_obj.get_tile(x, y), orig=False)
+            self.draw_map(party, floor_obj)
+        self.draw_partywin(party)
+        self.draw_header(party)
+        self.draw_meswins()
+        self.display()
+        delta = time.time() - start
+        try:
+            print(f"\033[{self.height};0H", end='')
+            print(f"\n{party.x:03d}/{party.y:03d}, {delta:.5f}",
+                  end='', flush=True)
+        except:
+            pass
+
+
+class Meswin:
+    """
+    Message window.  A message line starts with "* ".
+    """
+
+    def __init__(self, vscr, x, y, width, height, frame=False):
+        self.vscr = vscr
+        self.width = min(width, vscr.width)
+        self.height = min(height, vscr.height)
+        self.x = x
+        self.y = y
+        self.cur_x = 0  # cursor position in message area
+        self.cur_y = 0
+        self.frame = frame
+        self.show = False
+        self.mes_lines = []
+        self.cls()
+
+    def change(self, x, y, width, height):
+        """
+        Change size and position of message window
+        """
+        self.x = x
+        self.y = y
+        self.width = min(width, self.vscr.width)
+        self.height = min(height, self.vscr.height)
+
+    def cls(self):
+        # clear message area
+        self.mes_lines = []
+
+    def print(self, msg, start='*'):
+        """
+        Print a message in the message window.  Long text wraps
+        to the next line.  Process '\n' in texts.
+        """
+        meswidth = self.width - 2
+        if self.frame:
+            meswidth = self.width - 6
+
+        sublines = re.split('\n', msg)
+        for idx, sl in enumerate(sublines):  # subline
+            header = '  '
+            if idx == 0:
+                header = start + ' '
+            ssls = textwrap.wrap(sl, width=meswidth)
+            if len(ssls) == 0:
+                self.mes_lines.append(header)
+            else:
+                for ssl in ssls:
+                    self.mes_lines.append(''.join([header, ssl]))
+                    header = '  '
+        if len(self.mes_lines) > self.height:
+            self.mes_lines = self.mes_lines[len(
+                self.mes_lines)-self.height:]
+        self.cur_y = len(self.mes_lines)-1
+        self.show = True
+
+    def input(self, msg):
+        """
+        Input a string in the message window.
+        """
+        self.print(msg)
+        self.print('', start='>')
+        self.vscr.draw_meswins()
+        self.vscr.display()
+        print(f"\033[{self.y+self.cur_y+1};{self.x+5}H", end='', flush=True)
+        try:
+            value = input()
+            self.mes_lines[self.cur_y] = "> " + value
+        except:
+            pass
+        return value
+
+    def input_char(self, msg, values=[]):
+        """
+        Input a character in the message window.
+        """
+        ch = ''
+        while ch not in values:
+            self.print(msg+' >', start=' ')
+            self.vscr.draw_meswins()
+            self.vscr.display()
+            print(f"\033[{self.y+self.cur_y+1};{self.x+len(msg)+8}H",
+                  end='', flush=True)
+            ch = getch()
+            l = self.mes_lines.pop()
+            self.print(''.join([l, ' ', ch])[2:], start=' ')
+            self.vscr.draw_meswins()
+            self.vscr.display()
+            if not values:
+                break
+        return ch
+
+
+class Game:
+    def __init__(self):
+        self.characters = []  # registerd characters
+        self.floors = []  # dungeon floors
+
+    def load_monsterdef(self):
+        """
+        load monster definition file
+        As fellow monster in csv is wizname, convert to dl name
+        """
+        Monster = collections.namedtuple(
+            'Monster', ['names', 'unident', 'unidents', 'type',
+                        'level', 'hp', 'ac', 'attack', 'count', 'act',
+                        'poison', 'paraly',
+                        'stone', 'critical', 'drain', 'breathsp', 'heal',
+                        'regdeathp', 'regfire', 'regcold', 'regpoison',
+                        'regspellp', 'weakmaka', 'weaksleep', 'friendly',
+                        'exp', 'number', 'floors', 'fellow', 'fellowp'])
+        Tmpmonster = collections.namedtuple(
+            'Tmpmonster', ['name', 'names', 'unident', 'unidents', 'type',
+                           'level', 'hp', 'ac', 'attack', 'count', 'act1',
+                           'act2', 'act3', 'act4', 'act5', 'poison', 'paraly',
+                           'stone', 'critical', 'drain', 'breathsp', 'heal',
+                           'regdeathp', 'regfire', 'regcold', 'regpoison',
+                           'regspellp', 'weakmaka', 'weaksleep', 'friendly',
+                           'exp', 'number', 'floors', 'fellowwiz', 'fellowp'])
+        with open('monsters.csv') as csvfile:
+            rdr = csv.reader(csvfile)
+            tmp_dic = {}
+            for i, row in enumerate(rdr):
+                if i == 0:
+                    continue
+                try:
+                    level = int(row[7])
+                except:
+                    level = 1
+                try:
+                    ac = int(row[9])
+                except:
+                    ac = 10
+                try:
+                    count = int(row[11])
+                except:
+                    count = 1
+                poison = False
+                if row[17].lower() == 'true':
+                    poison = True
+                paraly = False
+                if row[18].lower() == 'true':
+                    paraly = True
+                stone = False
+                if row[19].lower() == 'true':
+                    stone = True
+                critical = False
+                if row[20].lower() == 'true':
+                    critical = True
+                try:
+                    drain = int(row[21])
+                except:
+                    drain = 0
+                try:
+                    heal = int(row[23])
+                except:
+                    heal = 0
+                try:
+                    regdeathp = int(row[24])
+                except:
+                    regdeathp = 0
+                regfire = False
+                if row[25].lower() == 'true':
+                    regfire = True
+                regcold = False
+                if row[26].lower() == 'true':
+                    regcold = True
+                regpoison = False
+                if row[27].lower() == 'true':
+                    regpoison = True
+                try:
+                    regspellp = int(row[28])
+                except:
+                    regspellp = 0
+                weakmaka = False
+                if row[29].lower() == 'true':
+                    weakmaka = True
+                weaksleep = False
+                if row[30].lower() == 'true':
+                    weaksleep = True
+                friendly = False
+                if row[31].lower() == 'true':
+                    friendly = True
+                try:
+                    exp = int(row[32])
+                except:
+                    exp = 0
+                floors = row[34]  # floors
+                if floors == '':
+                    floors = {999}
+                else:
+                    floors_tmp = re.split(r',\s*', floors)
+                    floors = set()
+                    for floor in floors_tmp:
+                        try:
+                            floor = int(floor)
+                        except:
+                            floor = 999
+                        floors.add(floor)
+                try:
+                    fellowp = int(row[36])
+                except:
+                    fwllowp = 0
+                tmp_monster \
+                    = Tmpmonster(row[2], row[3], row[4], row[5], row[6],
+                                 level, row[8], ac, row[10], count, row[12],
+                                 row[13], row[14], row[15], row[16], poison, paraly,
+                                 stone, critical, drain, row[22], heal,
+                                 regdeathp, regfire, regcold, regpoison,
+                                 regspellp, weakmaka, weaksleep, friendly,
+                                 exp, row[33], floors, row[35], fellowp)
+                tmp_dic[row[1]] = tmp_monster
+
+        monster_def = {}
+        for wizname, m in tmp_dic.items():
+            if m.fellowwiz == '':
+                fellow = ''
+            else:
+                fellow = tmp_dic[m.fellowwiz].name
+            monster = Monster(m[1], m[2], m[3], m[4], m[5], m[6], m[7], m[8],
+                              (m[9], m[10], m[11], m[12], m[13]), m[14], m[15],
+                              m[16], m[17], m[18], m[19], m[20], m[21], m[22],
+                              m[23], m[24], m[25], m[26], m[27], m[28], m[29],
+                              m[30], m[31], m[32], fellow, m[34])
+            monster_def[m.name] = monster
+        self.mondef = monster_def
+
+    def load_spelldef(self):
+        """
+        load spell definition file
+        """
+        Spell = collections.namedtuple(
+            'Spell', ['categ', 'level', 'battle', 'camp', 'type', 'target', 'value', 'attr', 'desc'])
+        with open('spells.csv') as csvfile:
+            rdr = csv.reader(csvfile)
+            spell_def = {}
+            for i, row in enumerate(rdr):
+                if i == 0:
+                    continue
+                spell = Spell(row[1], int(row[2]), json.loads(row[5].lower()),
+                              json.loads(row[6].lower()), row[7], row[8], row[9], row[10], row[12])
+                spell_def[row[3]] = spell
+            self.spelldef = spell_def
+
+    def load_itemdef(self):
+        """
+        load item definition file
+        """
+        Item = collections.namedtuple(
+            'Item', ['level', 'unident', 'type', 'range', 'jobs', 'ac',
+                     'st', 'at', 'dice', 'shop', 'price', 'curse',
+                     'hp', 'brk', 'regist'])
+
+        with open('items.csv') as csvfile:
+            rdr = csv.reader(csvfile)
+            item_def = {}
+            for i, row in enumerate(rdr):
+                if i == 0 or not row:
+                    continue
+                if not (name := row[2]):
+                    name = row[4]
+                if not (unident := row[3]):
+                    unident = row[5]
+                try:
+                    ac = int(row[9])
+                except:
+                    ac = 0
+                try:
+                    st = int(row[10])
+                except:
+                    st = 0
+                try:
+                    at = int(row[11])
+                except:
+                    at = 0
+                try:
+                    shop = int(row[13])
+                except:
+                    shop = 0
+                try:
+                    price = int(row[14])
+                except:
+                    price = 0
+                if row[15] == 'TRUE':
+                    curse = True
+                else:
+                    curse = False
+                try:
+                    hp = int(row[16])
+                except:
+                    hp = 0
+                try:
+                    brk = int(row[18])
+                except:
+                    brk = 0
+                # (0level, 1unident, 2type, 3range, 4jobs, 5ac, 6st, 7at,
+                #  8dice, 9shop, 10price, 11curse, 12hp, 13brk, 14regist)
+                item = Item(row[1], unident, row[6], row[7], row[8], ac,
+                            st, at, row[12], shop, price,
+                            curse, hp, brk, row[19])
+                item_def[name] = item
+            self.itemdef = item_def
+            self.shopitems = {}
+            for name in self.itemdef:
+                self.shopitems[name] = self.itemdef[name].shop
+
+
 class Job(Enum):
     FIGHTER, MAGE, PRIEST, THIEF, BISHOP, SAMURAI, LORD, NINJA, UNEMPLOYED = range(
         9)
@@ -39,8 +480,8 @@ class Align(Enum):
 
 
 class Place(Enum):
-    MAZE, EDGE_OF_TOWN, TRAINING_GROUNDS, CASTLE, HAWTHORNE_TAVERN, TRADER_JAYS, LAKEHOUSE_INN, CAMP, LEAVE_GAME = range(
-        9)
+    MAZE, EDGE_OF_TOWN, TRAINING_GROUNDS, CASTLE, HAWTHORNE_TAVERN, TRADER_JAYS, LAKEHOUSE_INN, CAMP, BATTLE, LEAVE_GAME = range(
+        10)
 
 
 race_status = {
@@ -63,6 +504,65 @@ job_requirements = {
 }
 
 
+class Party:
+    # Represents a party
+    def __init__(self, x, y, floor):
+        self.x = x
+        self.y = y
+        self.px = x
+        self.py = x
+        self.floor = floor
+        self.members = []
+        self.light_cnt = 0  # milwa=+30-45, lomilwa=+9999
+        self.ac = 0  # -2 if maporfic
+        self.silenced = False  # can't cast spell
+        self.identify = False  # latumapic
+        self.gps = False  # eternal dumapic
+
+    def can_open(self, game):
+        """
+        Check if they can unlock the door
+        Returns True if they can, False otherwise
+        """
+        return True  # ++++++++++++++++++++++++++++++
+
+    def choose_character(self, game):
+        """
+        Choose and return a party member
+        Return False if not chosen
+        """
+        mw = game.vscr.meswins[-1]
+        while True:
+            ch = mw.input_char(f"Who? - # or l)eave")
+            if ch == 'l':
+                break
+            try:
+                if 0 <= (chid := int(ch)-1) < len(game.party.members):
+                    break
+            except:
+                pass
+        if ch == 'l':
+            return False
+        return self.members[chid]
+
+    def remove_character(self, game):
+        """
+        Choose and remove a party member
+        """
+        mw = game.vscr.meswins[-1]
+        while True:
+            ch = mw.input_char(f"Remove who? - # or l)eave")
+            if ch == 'l':
+                break
+            try:
+                if 0 <= (chid := int(ch)-1) < len(game.party.members):
+                    del self.members[chid]
+                    game.vscr.disp_scrwin()
+                    game.vscr.disp_scrwin()
+            except:
+                pass
+
+
 class Member:
     # Represents a character
     def __init__(self, name, align, race, age):
@@ -72,10 +572,12 @@ class Member:
         self.age = age
         self.level = 1
         self.ac = 10
+        self.acplus = 0  # valid only in battle
         self.job = Job.UNEMPLOYED
         self.state = State.OK
         self.gold = random.randrange(100, 200)
         self.exp = 0
+        self.nextexp = 0
         self.marks = 0
         self.rip = 0
         self.items = []
@@ -165,6 +667,52 @@ class Member:
             elif c1 == 'k':
                 return -1  # previous member
 
+    def view_spells(self, game):
+        """
+        View mage and priest spell list that he/she has mastered
+        """
+        v = game.vscr
+        sw = Meswin(v, 1, 2, 76, 14)
+        v.meswins.append(sw)
+        d = game.spelldef
+        lines = []
+        if self.mspells:
+            lines.append("Mage spells:")
+            for name in self.mspells:
+                lines.append(
+                    f"{d[name].level} {name.ljust(13)}{d[name].desc[:57]}")
+            lines.append("")
+        if self.pspells:
+            lines.append("Priest spells:")
+            for name in self.pspells:
+                lines.append(
+                    f"{d[name].level} {name.ljust(13)}{d[name].desc[:57]}")
+        if len(lines) <= 14-1:
+            for l in lines:
+                sw.print(l, start=' ')
+            sw.print("Hit any key.")
+            v.disp_scrwin()
+            getch()
+        else:
+            idx = 0
+            while True:
+                sw.cls()
+                for l in lines[idx:idx+14-1]:
+                    sw.print(l, start=' ')
+                sw.print("j)down k)up l)eave")
+                v.disp_scrwin()
+                c = getch(wait=True)
+                if c == 'j' and idx < len(lines)-14+1:
+                    idx += 1
+                elif c == 'k' and idx > 0:
+                    idx -= 1
+                elif c == 'l':
+                    break
+        sw.cls()
+        v.disp_scrwin()
+        v.disp_scrwin()
+        v.meswins.pop()
+
     def spell_menu(self, game):
         """
         Spell menu.  Cast, read spells.
@@ -174,51 +722,14 @@ class Member:
         v.meswins.append(mw)
         while True:
             mw.print("Spell memu:")
-            c = mw.input_char("c)ast v)iew spells l)eave",
+            c = mw.input_char("c)ast spell v)iew list l)eave",
                               values=['c', 'v', 'l'])
             if c == 'l':
                 break
+            elif c == 'c':
+                game.spell.cast_spell(self)
             elif c == 'v':
-                sw = Meswin(v, 1, 2, 76, 14)
-                v.meswins.append(sw)
-                d = game.spelldef
-                lines = []
-                if self.mspells:
-                    lines.append("Mage spells:")
-                    for name in self.mspells:
-                        lines.append(
-                            f"{d[name].level} {name.ljust(13)}{d[name].desc[:57]}")
-                    lines.append("")
-                if self.pspells:
-                    lines.append("Priest spells:")
-                    for name in self.pspells:
-                        lines.append(
-                            f"{d[name].level} {name.ljust(13)}{d[name].desc[:57]}")
-                if len(lines) <= 14-1:
-                    for l in lines:
-                        sw.print(l, start=' ')
-                    sw.print("Hit any key.")
-                    v.disp_scrwin()
-                    getch()
-                else:
-                    idx = 0
-                    while True:
-                        sw.cls()
-                        for l in lines[idx:idx+14-1]:
-                            sw.print(l, start=' ')
-                        sw.print("j)down k)up l)eave")
-                        v.disp_scrwin()
-                        c = getch(wait=True)
-                        if c == 'j' and idx < len(lines)-14+1:
-                            idx += 1
-                        elif c == 'k' and idx > 0:
-                            idx -= 1
-                        elif c == 'l':
-                            break
-                sw.cls()
-                v.disp_scrwin()
-                v.disp_scrwin()
-                v.meswins.pop()
+                self.view_spells(game)
         mw.cls()
         v.disp_scrwin()
         v.meswins.pop()
@@ -400,479 +911,72 @@ class Member:
         game.vscr.disp_scrwin()
 
 
-class Game:
-    def __init__(self):
-        self.characters = []  # registerd characters
-        self.floors = []  # dungeon floors
-
-    def load_monsterdef(self):
-        """
-        load monster definition file
-        As fellow monster in csv is wizname, convert to dl name
-        """
-        Monster = collections.namedtuple(
-            'Monster', ['names', 'unident', 'unidents', 'type',
-                        'level', 'hp', 'ac', 'attack', 'count', 'act1',
-                        'act2', 'act3', 'act4', 'act5', 'poison', 'paraly',
-                        'stone', 'critical', 'drain', 'breathsp', 'heal',
-                        'regdeathp', 'regfire', 'regcold', 'regpoison',
-                        'regspellp', 'weakmaka', 'weaksleep', 'friendly',
-                        'exp', 'number', 'floors', 'fellow', 'fellowp'])
-        Tmpmonster = collections.namedtuple(
-            'Tmpmonster', ['name', 'names', 'unident', 'unidents', 'type',
-                           'level', 'hp', 'ac', 'attack', 'count', 'act1',
-                           'act2', 'act3', 'act4', 'act5', 'poison', 'paraly',
-                           'stone', 'critical', 'drain', 'breathsp', 'heal',
-                           'regdeathp', 'regfire', 'regcold', 'regpoison',
-                           'regspellp', 'weakmaka', 'weaksleep', 'friendly',
-                           'exp', 'number', 'floors', 'fellowwiz', 'fellowp'])
-        with open('monsters.csv') as csvfile:
-            rdr = csv.reader(csvfile)
-            tmp_dic = {}
-            for i, row in enumerate(rdr):
-                if i == 0:
-                    continue
-                try:
-                    level = int(row[7])
-                except:
-                    level = 1
-                try:
-                    ac = int(row[9])
-                except:
-                    ac = 10
-                try:
-                    count = int(row[11])
-                except:
-                    count = 1
-                poison = False
-                if row[17].lower() == 'true':
-                    poison = True
-                paraly = False
-                if row[18].lower() == 'true':
-                    paraly = True
-                stone = False
-                if row[19].lower() == 'true':
-                    stone = True
-                critical = False
-                if row[20].lower() == 'true':
-                    critical = True
-                try:
-                    drain = int(row[21])
-                except:
-                    drain = 0
-                try:
-                    heal = int(row[23])
-                except:
-                    heal = 0
-                try:
-                    regdeathp = int(row[24])
-                except:
-                    regdeathp = 0
-                regfire = False
-                if row[25].lower() == 'true':
-                    regfire = True
-                regcold = False
-                if row[26].lower() == 'true':
-                    regcold = True
-                regpoison = False
-                if row[27].lower() == 'true':
-                    regpoison = True
-                try:
-                    regspellp = int(row[28])
-                except:
-                    regspellp = 0
-                weakmaka = False
-                if row[29].lower() == 'true':
-                    weakmaka = True
-                weaksleep = False
-                if row[30].lower() == 'true':
-                    weaksleep = True
-                friendly = False
-                if row[31].lower() == 'true':
-                    friendly = True
-                try:
-                    exp = int(row[32])
-                except:
-                    exp = 0
-                try:
-                    fellowp = int(row[36])
-                except:
-                    fwllowp = 0
-                tmp_monster \
-                    = Tmpmonster(row[2], row[3], row[4], row[5], row[6],
-                                 level, row[8], ac, row[10], count, row[12],
-                                 row[13], row[14], row[15], row[16], poison, paraly,
-                                 stone, critical, drain, row[22], heal,
-                                 regdeathp, regfire, regcold, regpoison,
-                                 regspellp, weakmaka, weaksleep, friendly,
-                                 exp, row[33], row[34], row[35], fellowp)
-                tmp_dic[row[1]] = tmp_monster
-
-        monster_def = {}
-        for wizname, m in tmp_dic.items():
-            if m.fellowwiz == '':
-                fellow = ''
-            else:
-                fellow = tmp_dic[m.fellowwiz].name
-            monster = Monster(m[1], m[2], m[3], m[4], m[5], m[6], m[7], m[8],
-                              m[9], m[10], m[11], m[12], m[13], m[14], m[15],
-                              m[16], m[17], m[18], m[19], m[20], m[21], m[22],
-                              m[23], m[24], m[25], m[26], m[27], m[28], m[29],
-                              m[30], m[31], m[32], fellow, m[34])
-            monster_def[m.name] = monster
-        self.mondef = monster_def
-
-    def load_spelldef(self):
-        """
-        load spell definition file
-        """
-        Spell = collections.namedtuple(
-            'Spell', ['categ', 'level', 'battle', 'camp', 'type', 'target', 'value', 'attr', 'desc'])
-        with open('spells.csv') as csvfile:
-            rdr = csv.reader(csvfile)
-            spell_def = {}
-            for i, row in enumerate(rdr):
-                if i == 0:
-                    continue
-                spell = Spell(row[1], int(row[2]), json.loads(row[5].lower()),
-                              json.loads(row[6].lower()), row[7], row[8], row[9], row[10], row[12])
-                spell_def[row[3]] = spell
-            self.spelldef = spell_def
-
-    def load_itemdef(self):
-        """
-        load item definition file
-        """
-        Item = collections.namedtuple(
-            'Item', ['level', 'unident', 'type', 'range', 'jobs', 'ac',
-                     'st', 'at', 'dice', 'shop', 'price', 'curse',
-                     'hp', 'brk', 'regist'])
-
-        with open('items.csv') as csvfile:
-            rdr = csv.reader(csvfile)
-            item_def = {}
-            for i, row in enumerate(rdr):
-                if i == 0 or not row:
-                    continue
-                if not (name := row[2]):
-                    name = row[4]
-                if not (unident := row[3]):
-                    unident = row[5]
-                try:
-                    ac = int(row[9])
-                except:
-                    ac = 0
-                try:
-                    st = int(row[10])
-                except:
-                    st = 0
-                try:
-                    at = int(row[11])
-                except:
-                    at = 0
-                try:
-                    shop = int(row[13])
-                except:
-                    shop = 0
-                try:
-                    price = int(row[14])
-                except:
-                    price = 0
-                if row[15] == 'TRUE':
-                    curse = True
-                else:
-                    curse = False
-                try:
-                    hp = int(row[16])
-                except:
-                    hp = 0
-                try:
-                    brk = int(row[18])
-                except:
-                    brk = 0
-                # (0level, 1unident, 2type, 3range, 4jobs, 5ac, 6st, 7at,
-                #  8dice, 9shop, 10price, 11curse, 12hp, 13brk, 14regist)
-                item = Item(row[1], unident, row[6], row[7], row[8], ac,
-                            st, at, row[12], shop, price,
-                            curse, hp, brk, row[19])
-                item_def[name] = item
-            self.itemdef = item_def
-            self.shopitems = {}
-            for name in self.itemdef:
-                self.shopitems[name] = self.itemdef[name].shop
-
-
-class Vscr:
+class Spell:
     """
-    Manage and control scroll window and virtual scroll windows
+    Has actual spell implementation here
     """
 
-    def __init__(self, width, height):
-        self.width = width
-        self.height = height
-        self.vscr0 = bytearray(b'P'*width*height)
-        self.vscr1 = bytearray(b'Q'*width*height)
-        self.prev_vscr_view = memoryview(self.vscr0)
-        self.cur_vscr_view = memoryview(self.vscr1)
-        self.meswins = []
+    def __init__(self, game):
+        self.game = game
 
-    def draw_map(self, party, floor_obj):
-        """
-        Copy map data to a virtual scroll window
-        """
-        floor_view = memoryview(floor_obj.floor_data)
-        cv = self.cur_vscr_view
-        w = self.width
-        for cy in range(self.height):
-            cv[cy*w:(cy+1)*w] = b'^'*w  # fill with rocks
-            my = party.y - (self.height-7)//2 + cy  # convert cy to floor_y
-            if 0 <= my < floor_obj.y_size:
-                l_left = min(0, party.x-w//2) * -1
-                l_right = min(w, floor_obj.x_size - party.x + w//2)
-                map_left = my*floor_obj.x_size + party.x - w//2 + l_left
-                map_right = map_left + l_right - l_left
-                cv[cy*w+l_left:cy*w+l_right] = floor_view[map_left:map_right]
-            if cy == (self.height-7)//2:
-                cv[cy*w+w//2:cy*w+w//2+1] = b'@'
-
-    def cls(self):
-        """
-        clear both vscr0 and vscr1, and force clear screen
-        """
-        self.cur_vscr_view[:] = b' ' * self.width * self.height
-        self.prev_vscr_view[:] = b' ' * self.width * self.height
-        self.display(force=True)
-
-    def display(self, force=False):
-        """
-        Actually print scroll window on the terminal
-        """
-        cv = self.cur_vscr_view
-        w = self.width
-        for y in range(self.height):
-            slc = slice(y*w, (y+1)*w)
-            if force == True or cv[slc] != self.prev_vscr_view[slc]:
-                print(f"\033[{y+1};0H", end='')
-                print(cv[slc].tobytes().decode(), end='')
-        self.cur_vscr_view, self.prev_vscr_view \
-            = self.prev_vscr_view, self.cur_vscr_view
-
-    def draw_meswins(self):
-        """
-        Display the message window
-        """
-        for mw in self.meswins:
-            meswidth = mw.width - 2
-            if mw.frame:
-                meswidth -= 4
-            for y in range(mw.height):
-                if len(mw.mes_lines) <= y:
-                    line = ' '*(meswidth)
-                else:
-                    line = mw.mes_lines[y].ljust(meswidth)
-                if mw.frame:
-                    line = ''.join(['| ', line, ' |'])
-                line = line.encode()
-                vscr_left = (mw.y+y)*self.width + mw.x
-                self.cur_vscr_view[vscr_left:vscr_left+len(line)] = line
-
-    def draw_partywin(self, party):
-        """
-        Show the party window
-        """
-        for y in range(7):
-            line = " # name       class  ac   hp status       "
-            width = len(line)
-            if y != 0:
-                if len(party.members) >= y:
-                    m = party.members[y-1]
-                    alcls = ''.join([m.align.name[0], '-', m.job.name[:3]])
-                    line = f" {y} {m.name[:10].ljust(10)} {alcls} {m.ac:3d} {m.hp:4d} {m.state.name[:13].ljust(13)}"
-                else:
-                    line = f" {y}" + ' '*(width-2)
-            line = line.encode()
-            vscr_left = (self.height-7+y)*self.width
-            self.cur_vscr_view[vscr_left:vscr_left+len(line)] = line
-
-    def draw_header(self, party):
-        """
-        Display the header info
-        """
-        line = f" daemon lord - dl - [{party.place.name.lower()}] floor:{party.floor:2d} ({party.x}/{party.y}) "
-        self.cur_vscr_view[:len(line)] = line.encode()
-
-    def disp_scrwin(self, floor_obj=None):
-        """
-        Display scroll window main
-        """
+    def cast_spell(self, mem):
         game = self.game
-        party = game.party
-        if not floor_obj and party.place == Place.CAMP:
-            floor_obj = party.floor_obj
-        start = time.time()
-        if party.place == Place.MAZE or party.place == Place.CAMP:
-            for y in range(party.y-1, party.y+2):
-                for x in range(party.x-1, party.x+2):
-                    floor_obj.put_tile(
-                        x, y, floor_obj.get_tile(x, y), orig=False)
-            self.draw_map(party, floor_obj)
-        self.draw_partywin(party)
-        self.draw_header(party)
-        self.draw_meswins()
-        self.display()
-        delta = time.time() - start
-        try:
-            print(f"\033[{self.height};0H", end='')
-            print(f"\n{party.x:03d}/{party.y:03d}, {delta:.5f}",
-                  end='', flush=True)
-        except:
-            pass
+        v = game.vscr
+        mw = v.meswins[-1]
+        s = mw.input("What spell to cast?")
+        if s not in game.spelldef:  # No such spell
+            mw.print("What?")
+            return
+        elif s not in list(itertools.chain(mem.mspells, mem.pspells)):
+            mw.print("Haven't mastered the spell.")
+            return
 
+        sdef = game.spelldef[s]
+        if game.party.place == Place.BATTLE:
+            if not sdef.battle:
+                mw.print("Can't cast now.")
+                return
+        elif not sdef.camp:  # note: you can use it at tavern, too.
+            mw.print("Can't cast it now.")
+            return
 
-class Meswin:
-    """
-    Message window.  A message line starts with "* ".
-    """
+        if sdef.categ == 'mage':
+            splcntlst = mem.mspell_cnt
+        else:
+            splcntlst = mem.pspell_cnt
+        if splcntlst[sdef.level-1] <= 0:
+            mw.print("MP exhausted.")
+            return
+        splcntlst[sdef.level-1] -= 1
 
-    def __init__(self, vscr, x, y, width, height, frame=False):
-        self.vscr = vscr
-        self.width = min(width, vscr.width)
-        self.height = min(height, vscr.height)
-        self.x = x
-        self.y = y
-        self.cur_x = 0  # cursor position in message area
-        self.cur_y = 0
-        self.frame = frame
-        self.show = False
-        self.mes_lines = []
-        self.cls()
+        mw.print(f"{mem.name} started casting {s}")
+        if sdef.type == 'heal':
+            self.heal(s, sdef)
+        else:
+            mw.print("(not implemented yet)")
+        v.disp_scrwin()
+        v.disp_scrwin()
 
-    def change(self, x, y, width, height):
-        """
-        Change size and position of message window
-        """
-        self.x = x
-        self.y = y
-        self.width = min(width, self.vscr.width)
-        self.height = min(height, self.vscr.height)
-
-    def cls(self):
-        # clear message area
-        self.mes_lines = []
-
-    def print(self, msg, start='*'):
-        """
-        Print a message in the message window.  Long text wraps
-        to the next line.  Process '\n' in texts.
-        """
-        meswidth = self.width - 2
-        if self.frame:
-            meswidth = self.width - 6
-
-        sublines = re.split('\n', msg)
-        for idx, sl in enumerate(sublines):  # subline
-            header = '  '
-            if idx == 0:
-                header = start + ' '
-            ssls = textwrap.wrap(sl, width=meswidth)
-            if len(ssls) == 0:
-                self.mes_lines.append(header)
+    def heal(self, sname, sdef):
+        if sdef.target == 'party':
+            for target in party:
+                self.heal_single(sname, sdef, target)
+        else:
+            target = self.game.party.choose_character(self.game)
+            if target is False:
+                mw = self.game.vscr.meswins[-1]
+                mw.print("Aborted.")
             else:
-                for ssl in ssls:
-                    self.mes_lines.append(''.join([header, ssl]))
-                    header = '  '
-        if len(self.mes_lines) > self.height:
-            self.mes_lines = self.mes_lines[len(
-                self.mes_lines)-self.height:]
-        self.cur_y = len(self.mes_lines)-1
-        self.show = True
+                self.heal_single(sname, sdef, target)
 
-    def input(self, msg):
-        """
-        Input a string in the message window.
-        """
-        self.print(msg)
-        self.print('', start='>')
-        self.vscr.draw_meswins()
-        self.vscr.display()
-        print(f"\033[{self.y+self.cur_y+1};{self.x+3}H", end='', flush=True)
-        try:
-            value = input()
-            self.mes_lines[self.cur_y] = "> " + value
-        except:
-            pass
-        return value
-
-    def input_char(self, msg, values=[]):
-        """
-        Input a character in the message window.
-        """
-        ch = ''
-        while ch not in values:
-            self.print(msg+' >', start=' ')
-            self.vscr.draw_meswins()
-            self.vscr.display()
-            print(f"\033[{self.y+self.cur_y+1};{self.x+len(msg)+6}H",
-                  end='', flush=True)
-            ch = getch()
-            l = self.mes_lines.pop()
-            self.print(''.join([l, ' ', ch])[2:], start=' ')
-            self.vscr.draw_meswins()
-            self.vscr.display()
-            if not values:
-                break
-        return ch
-
-
-class Party:
-    # Represents a party
-    def __init__(self, x, y, floor):
-        self.x = x
-        self.y = y
-        self.floor = floor
-        self.members = []
-
-    def can_open(self, game):
-        """
-        Check if they can unlock the door
-        Returns True if they can, False otherwise
-        """
-        return True  # ++++++++++++++++++++++++++++++
-
-    def choose_character(self, game):
-        """
-        Choose and return a party member
-        """
-        mw = game.vscr.meswins[-1]
-        while True:
-            ch = mw.input_char(f"Who? - # or l)eave")
-            if ch == 'l':
-                break
-            try:
-                if 0 <= (chid := int(ch)-1) < len(game.party.members):
-                    break
-            except:
-                pass
-        if ch == 'l':
-            return False
-        return self.members[chid]
-
-    def remove_character(self, game):
-        """
-        Choose and remove a party member
-        """
-        mw = game.vscr.meswins[-1]
-        while True:
-            ch = mw.input_char(f"Remove who? - # or l)eave")
-            if ch == 'l':
-                break
-            try:
-                if 0 <= (chid := int(ch)-1) < len(game.party.members):
-                    del self.members[chid]
-                    game.vscr.disp_scrwin()
-                    game.vscr.disp_scrwin()
-            except:
-                pass
+    def heal_single(self, sname, sdef, target):
+        plus = dice(sdef.value)
+        target.hp = min(target.hp+plus, target.maxhp)
+        mw = self.game.vscr.meswins[-1]
+        if target.hp == target.maxhp:
+            mw.print("Completely healed.")
+        else:
+            mw.print(f"{plus} HP was restored.")
 
 
 class Dungeon:
@@ -902,6 +1006,7 @@ class Dungeon:
                 floor_obj.floor_view[start:start+r.x_size] = b'.'*r.x_size
         floor_obj.connect_all_rooms(rooms)
         floor_obj.place_doors(rooms)
+        floor_obj.rooms = rooms
         floor_obj.floor_orig = floor_obj.floor_data
         floor_obj.floor_data = bytearray(b'^' * floor_x_size * floor_y_size)
         return floor_obj
@@ -974,6 +1079,7 @@ class Floor:
         self.floor = floor
         self.floor_data = floor_data
         self.floor_view = memoryview(floor_data)
+        self.battled = []
 
     def __repr__(self):
         s = self.floor_data.decode()
@@ -1095,6 +1201,7 @@ class Floor:
                     break
             if not intersect:
                 rooms.append(room)
+                self.battled.append(False)
         return rooms
 
     def connect_all_rooms(self, rooms):
@@ -1171,6 +1278,15 @@ class Room:
     def __repr__(self):
         return f"Room(x/y: {self.x}/{self.y}, size: {self.x_size}/{self.y_size})"
 
+    def in_room(self, x, y):
+        """
+        Return if (x, y) is in the room
+        """
+        if self.x <= x < self.x+self.x_size:
+            if self.y <= y < self.y+self.y_size:
+                return True
+        return False
+
     def rooms_intersect(self, r):
         """
         Return True if two rooms are intersected.
@@ -1185,6 +1301,300 @@ class Room:
         """
         return (self.x+self.x_size//2 - (r.x+r.x_size//2))**2 \
             + (self.y+self.y_size//2 - (r.y+r.y_size//2))**2
+
+
+class Monster:
+    """
+    Represents a monster
+    """
+
+    def __init__(self, game, name):
+        self.game = game
+        self.name = name
+        mdef = self.game.mondef[name]
+        self.hp = self.maxhp = dice(mdef.hp)
+        self.ac = mdef.ac
+        self.status = State.OK
+
+
+class Monstergrp:
+    """
+    Represents a monster group
+    """
+
+    def __init__(self, game, name):
+        self.game = game
+        self.name = name
+        self.mdef = self.game.mondef[name]
+        self.monsters = []
+        self.identified = False
+        if random.randrange(100) % 2 == 0:
+            self.identified = True
+
+
+class Battle:
+    """
+    Represents battles
+    """
+
+    def __init__(self, game):
+        self.game = game
+        self.mw = Meswin(game.vscr, 14, 6, 44, 12, frame=True)
+        self.ew = Meswin(game.vscr, 14, 1, 44, 4, frame=True)
+
+    def new_battle(self):
+        """
+        Clear variables for a new battle
+        """
+        self.friendly = False
+        self.room_index = -1  # random encounter
+        self.monp = []  # includes monster group(s)
+        self.entities = []  # includes party member or monster
+        for m in self.game.party.members:
+            m.action = '????????????'
+
+    def draw_ew(self):
+        """
+        draw enemy window that lists the monster groups and number
+        of monsters in them
+        """
+        self.ew.cls()
+        for i, mg in enumerate(self.monp, 1):
+            active = 0
+            if self.friendly:
+                mg.identified = True
+            if mg.identified:
+                dispname = mg.name
+                if len(mg.monsters) > 1:
+                    dispname = mg.mdef.names
+            else:
+                dispname = mg.mdef.unident
+                if len(mg.monsters) > 1:
+                    dispname = mg.mdef.unidents
+            for m in mg.monsters:
+                if m.status in [State.OK, State.POISONED]:
+                    active += 1
+            self.ew.print(
+                f"{i}) {len(mg.monsters)} {dispname.ljust(24)} ({active})", start=' ')
+
+    def create_monsterparty(self):
+        """
+        Create a monster party and save it to self.monp
+        """
+        candidates = []
+        for mname in self.game.mondef:
+            if self.game.party.floor in self.game.mondef[mname].floors:
+                candidates.append(mname)
+        mname = random.choice(candidates)
+
+        self.friendly = False
+        # self.monp = []
+        while len(self.monp) < 4:  # up to 4 groups
+            mdef = self.game.mondef[mname]
+            if len(self.monp) == 0:  # 1st group
+                if mdef.friendly and random.randrange(100) < 10:  # 1/10
+                    self.friendly = True
+
+            mong = Monstergrp(self.game, mname)
+            self.monp.append(mong)
+            for _ in range(dice(mdef.number)):
+                mon = Monster(self.game, mname)
+                mong.monsters.append(mon)
+            if mdef.fellowp <= random.randrange(100):
+                break
+            mname = mdef.fellow
+        return
+
+    def handle_friendly(self):
+        """
+        Handle friendly monsters.
+        Return True if leave, False if fight
+        """
+        if len(self.monp) > 1:
+            dispname = 'monsters'
+        else:
+            mong = self.monp[0]
+            if mong.identified:
+                dispname = mong.name
+                if len(mong.monsters) > 1:
+                    dispname = mong.mdef.names
+            else:
+                dispname = mong.mdef.unident
+                if len(mong.monsters) > 1:
+                    dispname = mong.mdef.unidents
+        if self.friendly:
+            self.mw.print(f"You encountered friendly {dispname}.")
+            c = self.mw.input_char("Leave? (y/n)", values=['y', 'n'])
+            if c == 'y':
+                idx = self.room_index
+                if idx >= 0:  # room encounter
+                    self.game.party.floor_obj.battled[idx] = True
+                v.meswins.pop()
+                v.meswins.pop()
+                self.game.party.place = place
+                return True
+        else:
+            self.mw.print(f"You encountered {dispname}.")
+        return False
+
+    def input_action(self):
+        """
+        Input party member actions
+        return True if ran successfully
+        """
+        while True:
+            for mem in self.game.party.members:
+                self.mw.print(f"{mem.name}'s options:")
+                self.mw.print(f"f)ight s)pell u)se", start=" ")
+                self.mw.print(f"p)arry r)un t)ake back", start=" ")
+                c = self.mw.input_char(f"Action?",
+                                       values=['f', 's', 'u', 'p', 'r'])
+                if c == 'r':
+                    if self.canrun():
+                        return True
+                    else:
+                        pass
+                elif c == 't':
+                    self.mw.print("..taking back")
+                    self.game.vscr.disp_scrwin()
+                    getch()
+                    break
+                elif c == 'p':
+                    mem.action = 'parry'
+                    self.game.vscr.disp_scrwin()
+                    self.game.vscr.disp_scrwin()
+                elif c == 'f':
+                    mong = self.monp[self.choose_group()]
+                    self.entities.append(
+                        Entity(mem, mem.stat[4], 'fight', mong))
+                    mem.action = 'fight'
+                    self.game.vscr.disp_scrwin()
+                    self.game.vscr.disp_scrwin()
+                elif c == 's':
+                    s, target = self.choose_spell(mem)
+                    self.entities.append(
+                        Entity(mem, mem.stat[4], s, target))
+                    mem.action = s
+                    self.game.vscr.disp_scrwin()
+                    self.game.vscr.disp_scrwin()
+            if c != 't':
+                break
+
+    def choose_group(self):
+        """
+        choose monster group and return group #
+        """
+        if len(self.monp) == 1:
+            return 0
+        while True:
+            self.mw.print(f"Which group? (#)")
+            self.game.vscr.disp_scrwin()
+            n = getch(wait=True)
+            try:
+                n = int(n)
+            except:
+                continue
+            if n > len(self.monp):
+                continue
+            return n-1
+
+    def choose_spell(self, mem):
+        mw = self.mw
+        s = mw.input("What spell to cast?")
+        s = s.lower()
+        if s not in self.game.spelldef:  # No such spell
+            return s, None
+        elif s not in list(itertools.chain(mem.mspells, mem.pspells)):
+            return s, None  # not mastered yet
+        sdef = self.game.spelldef[s]
+        if sdef.target == 'enemy' or sdef.target == 'group':
+            target = self.monp[self.choose_group()]
+        elif sdef.target == 'member':
+            while True:
+                ch = mw.input_char(f"To who? (#)")
+                try:
+                    if 0 <= (chid := int(ch)-1) < len(self.game.party.members):
+                        break
+                except:
+                    pass
+            target = self.game.party.members[chid]
+        else:
+            target = None
+        return s, target
+
+    def battle(self):
+        """
+        battle main
+        """
+        self.new_battle()
+        place = self.game.party.place
+        self.game.party.place = Place.BATTLE
+        v = self.game.vscr
+        v.meswins.append(self.ew)
+        v.meswins.append(self.mw)
+        self.mw.cls()
+
+        self.create_monsterparty()
+        self.draw_ew()
+
+        if self.handle_friendly():
+            v.meswins.pop()
+            v.meswins.pop()
+            self.game.party.place = place
+            return
+
+        while True:
+            for m in self.game.party.members:
+                m.action = '????????????'
+            v.disp_scrwin()
+            v.disp_scrwin()
+            if self.input_action():
+                break  # run successfully
+
+        self.mw.print(f"Battle!!!")
+        v.disp_scrwin()
+        getch()
+
+        v.meswins.pop()
+        v.meswins.pop()
+        self.game.party.place = place
+        return
+
+    def check_battle(self):
+        """
+        Check if they'll have a battle
+        Return 0 if False, 1 if random encounter, 2 if room battle.
+        (3 if event battle?)
+        """
+        party = self.game.party
+        rooms = party.floor_obj.rooms
+        for idx, room in enumerate(rooms):
+            if idx == 0:
+                continue
+            if room.in_room(party.x, party.y) \
+               and party.floor_obj.battled[idx] is False:
+                if random.randrange(20) > 0:
+                    self.room_index = idx
+                    return 2  # with room guardian
+                else:
+                    party.floor_obj.battled[idx] = True
+        if random.randrange(64) == 0:
+            self.room_index = -1  # random encounter
+            return 1  # random encounter
+
+        return 0
+
+
+class Entity:
+    """
+    Represents a battle entity, either a monster or a party member
+    """
+
+    def __init__(self, entity, agi, action, target):
+        self.entity = entity  # member or monster object
+        self.agi = agi  # agility
+        self.action = action  #
+        self.target = target
 
 
 def terminal_size():
@@ -1217,6 +1627,15 @@ def getch(wait=False):
     if ch == 'Q' and config['debug'] == True:
         sys.exit()
     return ch
+
+
+def dice(valstr):
+    pattern = r"(\d+)[dD](\d+)(\+(\d+))?"
+    m = re.search(pattern, valstr)
+    if m[4] is None:
+        return int(m[1]) * random.randint(1, int(m[2]))
+    else:
+        return int(m[1]) * random.randint(1, int(m[2])) + int(m[4])
 
 
 def create_character(game):
@@ -1714,7 +2133,7 @@ def maze(game):
     meswin = vscr.meswins[0]
     vscr.meswins = [meswin]
 
-    dungeon = Dungeon(game)
+    dungeon = game.dungeon
     floor_obj = None
 
     while True:
@@ -1723,7 +2142,20 @@ def maze(game):
         if not floor_obj:  # Exit from dungeon
             break
 
-        c = getch()
+        if party.light_cnt > 0:  # milwa/lomilwa counter
+            light_cnt -= 1
+
+        rtn = game.battle.check_battle()
+        if rtn:  # 1 or 2 (or 3?) if battle
+            meswin.print("*** encounter ***")
+            vscr.disp_scrwin(floor_obj)
+            getch()
+            game.battle.battle()
+            if rtn == 2:  # room battle
+                pass  # chest()
+            vscr.disp_scrwin(floor_obj)
+
+        c = getch(wait=True)
         draw = True
         if c:
             if c == 'Q':
@@ -1733,31 +2165,37 @@ def maze(game):
             elif c in 'hH' and party.x > 0:
                 if (c == 'H' and config['debug']) or \
                    floor_obj.can_move(party.x-1, party.y):
+                    party.px = party.x
+                    party.py = party.y
                     party.x -= 1
                     meswin.print("west")
             elif c in 'kK' and party.y > 0:
                 if (c == 'K' and config['debug']) or \
                    floor_obj.can_move(party.x, party.y-1):
+                    party.px = party.x
+                    party.py = party.y
                     party.y -= 1
                     meswin.print("north")
             elif c in 'jJ' and party.y < floor_obj.y_size-1:
                 if (c == 'J' and config['debug']) or \
                    floor_obj.can_move(party.x, party.y+1):
+                    party.px = party.x
+                    party.py = party.y
                     party.y += 1
                     meswin.print("south")
             elif c in 'lL' and party.x < floor_obj.x_size-1:
                 if (c == 'L' and config['debug']) or \
                    floor_obj.can_move(party.x+1, party.y):
+                    party.px = party.x
+                    party.py = party.y
                     party.x += 1
                     meswin.print("east")
             elif c == 'o':  # open or unlock door
                 vscr.display()
                 floor_obj.open_door(game, meswin)
             elif c == '.':
-                ch = meswin.input_char("Do you? (y/n)", values=['n', 'y'])
-                meswin.print("Input char: "+ch)
-                vscr.draw_meswins()
-                vscr.display()
+                meswin.print(".")
+                vscr.disp_scrwin
             elif c == '#' and config['debug']:
                 for y in range(party.y-10, party.y+10+1):
                     for x in range(party.x-32, party.x+32+1):
@@ -1790,7 +2228,7 @@ def dispatch(game):
 
 
 def main():
-    game = Game()
+    game = Game()  # singleton
     party = Party(0, 0, 1)
     game.party = party
     game.load_spelldef()
@@ -1798,13 +2236,16 @@ def main():
     game.load_monsterdef()
     party.place = Place.CASTLE
     w, h = terminal_size()
-    # vscr = Vscr(w, h)
+    # vscr = Vscr(w, h)  # singleton
     vscr = Vscr(80, 25)  # +++++++++++++++
     game.vscr = vscr
     vscr.game = game
     vscr.meswins.append(Meswin(vscr, 42, 18, 40, 7))  # meswin for scrollwin
     # meswin for castle/edge of town
     vscr.meswins.append(Meswin(vscr, 10, 1, 64, 17, frame=True))
+    game.spell = Spell(game)  # singleton
+    game.dungeon = Dungeon(game)  # singleton
+    game.battle = Battle(game)  # singleton
 
     m = Member("Alex", Align.GOOD, Race.DWARF, 32)
     m.job = Job.FIGHTER
@@ -1829,6 +2270,7 @@ def main():
     m.job = Job.FIGHTER
     m.stat = (16, 9, 5, 15, 12, 11)
     m.maxhp = m.hp = 15
+    m.hp = 3
     game.characters.append(m)
     m = Member("Cal", Align.GOOD, Race.HUMAN, 48)
     m.job = Job.SAMURAI
