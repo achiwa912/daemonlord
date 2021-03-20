@@ -1,5 +1,6 @@
 import collections
 import itertools
+from operator import itemgetter, attrgetter
 import csv
 import json
 import fcntl
@@ -65,17 +66,18 @@ class Vscr:
 
     def display(self, force=False):
         """
-        Actually print scroll window on the terminal
+        Actually print current virtual screen on the terminal and
+        flip virtual screens for the next display.
+        Caution: Do not call this method directly.  Use disp_scrwin() instead.
         """
         cv = self.cur_vscr_view
         w = self.width
         for y in range(self.height):
             slc = slice(y*w, (y+1)*w)
             if force == True or cv[slc] != self.prev_vscr_view[slc]:
-                print(f"\033[{y+1};0H", end='')
-                print(cv[slc].tobytes().decode(), end='')
-        self.cur_vscr_view, self.prev_vscr_view \
-            = self.prev_vscr_view, self.cur_vscr_view
+                print(f"\033[{y+1};0H{cv[slc].tobytes().decode()}", end='')
+        self.cur_vscr_view, self.prev_vscr_view = \
+            self.prev_vscr_view, self.cur_vscr_view
 
     def draw_meswins(self):
         """
@@ -130,10 +132,10 @@ class Vscr:
         Display scroll window main
         """
         game = self.game
-        party = game.party
-        if not floor_obj and party.place == Place.CAMP:
-            floor_obj = party.floor_obj
         start = time.time()
+        party = game.party
+        if not floor_obj:
+            floor_obj = party.floor_obj
         if party.place == Place.MAZE or party.place == Place.CAMP:
             for y in range(party.y-1, party.y+2):
                 for x in range(party.x-1, party.x+2):
@@ -147,7 +149,7 @@ class Vscr:
         delta = time.time() - start
         try:
             print(f"\033[{self.height};0H", end='')
-            print(f"\n{party.x:03d}/{party.y:03d}, {delta:.5f}",
+            print(f"\n{party.x:03d}/{party.y:03d}, {delta:.5f}, {self.prev_vscr_view}",
                   end='', flush=True)
         except:
             pass
@@ -217,8 +219,9 @@ class Meswin:
         """
         self.print(msg)
         self.print('', start='>')
-        self.vscr.draw_meswins()
-        self.vscr.display()
+        # self.vscr.draw_meswins()
+        # self.vscr.display()
+        self.vscr.disp_scrwin()
         print(f"\033[{self.y+self.cur_y+1};{self.x+5}H", end='', flush=True)
         try:
             value = input()
@@ -234,15 +237,17 @@ class Meswin:
         ch = ''
         while ch not in values:
             self.print(msg+' >', start=' ')
-            self.vscr.draw_meswins()
-            self.vscr.display()
+            # self.vscr.draw_meswins()
+            # self.vscr.display()
+            self.vscr.disp_scrwin()
             print(f"\033[{self.y+self.cur_y+1};{self.x+len(msg)+8}H",
                   end='', flush=True)
             ch = getch()
             l = self.mes_lines.pop()
             self.print(''.join([l, ' ', ch])[2:], start=' ')
-            self.vscr.draw_meswins()
-            self.vscr.display()
+            # self.vscr.draw_meswins()
+            # self.vscr.display()
+            self.vscr.disp_scrwin()
             if not values:
                 break
         return ch
@@ -265,7 +270,7 @@ class Game:
                         'stone', 'critical', 'drain', 'breathsp', 'heal',
                         'regdeathp', 'regfire', 'regcold', 'regpoison',
                         'regspellp', 'weakmaka', 'weaksleep', 'friendly',
-                        'exp', 'number', 'floors', 'fellow', 'fellowp'])
+                        'exp', 'number', 'floors', 'fellow', 'fellowp', 'agi'])
         Tmpmonster = collections.namedtuple(
             'Tmpmonster', ['name', 'names', 'unident', 'unidents', 'type',
                            'level', 'hp', 'ac', 'attack', 'count', 'act1',
@@ -273,7 +278,8 @@ class Game:
                            'stone', 'critical', 'drain', 'breathsp', 'heal',
                            'regdeathp', 'regfire', 'regcold', 'regpoison',
                            'regspellp', 'weakmaka', 'weaksleep', 'friendly',
-                           'exp', 'number', 'floors', 'fellowwiz', 'fellowp'])
+                           'exp', 'number', 'floors', 'fellowwiz', 'fellowp',
+                           'agi'])
         with open('monsters.csv') as csvfile:
             rdr = csv.reader(csvfile)
             tmp_dic = {}
@@ -357,7 +363,11 @@ class Game:
                 try:
                     fellowp = int(row[36])
                 except:
-                    fwllowp = 0
+                    fellowp = 0
+                try:
+                    agi = int(row[37])
+                except:
+                    agi = 10
                 tmp_monster \
                     = Tmpmonster(row[2], row[3], row[4], row[5], row[6],
                                  level, row[8], ac, row[10], count, row[12],
@@ -365,7 +375,7 @@ class Game:
                                  stone, critical, drain, row[22], heal,
                                  regdeathp, regfire, regcold, regpoison,
                                  regspellp, weakmaka, weaksleep, friendly,
-                                 exp, row[33], floors, row[35], fellowp)
+                                 exp, row[33], floors, row[35], fellowp, agi)
                 tmp_dic[row[1]] = tmp_monster
 
         monster_def = {}
@@ -375,10 +385,10 @@ class Game:
             else:
                 fellow = tmp_dic[m.fellowwiz].name
             monster = Monster(m[1], m[2], m[3], m[4], m[5], m[6], m[7], m[8],
-                              (m[9], m[10], m[11], m[12], m[13]), m[14], m[15],
+                              m[9], (m[10], m[11], m[12], m[13], m[14]), m[15],
                               m[16], m[17], m[18], m[19], m[20], m[21], m[22],
                               m[23], m[24], m[25], m[26], m[27], m[28], m[29],
-                              m[30], m[31], m[32], fellow, m[34])
+                              m[30], m[31], m[32], fellow, m[34], m[35])
             monster_def[m.name] = monster
         self.mondef = monster_def
 
@@ -512,6 +522,7 @@ class Party:
         self.px = x
         self.py = x
         self.floor = floor
+        self.floor_obj = ''
         self.members = []
         self.light_cnt = 0  # milwa=+30-45, lomilwa=+9999
         self.ac = 0  # -2 if maporfic
@@ -557,7 +568,6 @@ class Party:
             try:
                 if 0 <= (chid := int(ch)-1) < len(game.party.members):
                     del self.members[chid]
-                    game.vscr.disp_scrwin()
                     game.vscr.disp_scrwin()
             except:
                 pass
@@ -710,7 +720,6 @@ class Member:
                     break
         sw.cls()
         v.disp_scrwin()
-        v.disp_scrwin()
         v.meswins.pop()
 
     def spell_menu(self, game):
@@ -782,7 +791,6 @@ class Member:
                 self.calc_ac(game)
                 vscr.meswins.pop()
                 vscr.disp_scrwin()
-                vscr.disp_scrwin()
                 return
 
     def calc_ac(self, game):
@@ -810,7 +818,7 @@ class Member:
         """
         Calculate bonus points (on creating a character)
         """
-        bonus = random.randrange(5, 9)
+        bonus = random.randrange(5, 10)
         for _ in range(3):
             if random.randrange(6) == 0:
                 bonus += 10
@@ -954,7 +962,6 @@ class Spell:
             self.heal(s, sdef)
         else:
             mw.print("(not implemented yet)")
-        v.disp_scrwin()
         v.disp_scrwin()
 
     def heal(self, sname, sdef):
@@ -1170,7 +1177,7 @@ class Floor:
         """
         Create a hallway between two rooms and connect them.
         """
-        if random.randrange(1) == 0:  # 1/2
+        if random.randrange(2) == 0:  # 1/2
             cx = r1.center_x
             cy = r2.center_y
         else:
@@ -1405,11 +1412,39 @@ class Battle:
             mname = mdef.fellow
         return
 
-    def handle_friendly(self):
+    def canrun(self):
+        """
+        Return True if party was able to run away from the battle
+        """
+        success = pl = el = 0
+        for mg in self.monp:
+            for m in mg.monsters:
+                if m.status == State.OK:
+                    el += self.game.mondef[m.name].level
+        for mem in self.game.party.members:
+            if mem.state == State.OK:
+                pl += mem.level
+        if pl > el:
+            success += 20
+
+        if len(self.game.party.members) == 1:
+            success += 15
+        elif len(self.game.party.members) == 2:
+            success += 10
+        elif len(self.game.party.members) == 3:
+            success += 5
+
+        if success + 75 > random.randrange(100):
+            return True
+        else:
+            return False
+
+    def handle_friendly(self, place):
         """
         Handle friendly monsters.
         Return True if leave, False if fight
         """
+        v = self.game.vscr
         if len(self.monp) > 1:
             dispname = 'monsters'
         else:
@@ -1437,45 +1472,81 @@ class Battle:
             self.mw.print(f"You encountered {dispname}.")
         return False
 
+    def enemy_action(self):
+        """
+        Decide enemy/monster actions
+        """
+        mondef = self.game.mondef
+        party = self.game.party
+        for mong in self.monp:
+            for mon in mong.monsters:
+                if mon.status != State.OK and mon.status != State.POISONED:
+                    continue
+                action = mondef[mong.name].act[random.randrange(5)]
+                agi = mondef[mong.name].agi + random.randrange(4)
+                if action == 'run':
+                    self.entities.append(
+                        Entity(mon, agi, 'run', None))
+                elif action == 'breath':
+                    self.entities.append(
+                        Entity(mon, agi, 'breath', None))
+                elif action == 'atk':
+                    if len(party.members) > 3:
+                        if party.floor > 3 and random.randrange(100) < 40:
+                            target = random.choice(party.members)
+                        else:
+                            target = party.members[random.randrange(3)]
+                    else:
+                        target = random.choice(party.members)
+                    self.entities.append(
+                        Entity(mon, agi, 'fight', target))
+                else:
+                    self.entities.append(
+                        Entity(mon, agi, 'parry', None))
+
     def input_action(self):
         """
         Input party member actions
         return True if ran successfully
         """
+        self.entities = []
+        for mem in self.game.party.members:
+            mem.action = '????????????'
         while True:
             for mem in self.game.party.members:
-                self.mw.print(f"{mem.name}'s options:")
-                self.mw.print(f"f)ight s)pell u)se", start=" ")
-                self.mw.print(f"p)arry r)un t)ake back", start=" ")
-                c = self.mw.input_char(f"Action?",
-                                       values=['f', 's', 'u', 'p', 'r'])
+                self.mw.print(f"{mem.name}'s options: f)ight s)pell")
+                self.mw.print(f"u)se p)arry r)un t)ake back", start=' ')
+                c = self.mw.input_char("Action?",
+                                       values=['f', 's', 'u', 'p', 'r', 't'])
+                agi = mem.stat[4] + random.randrange(5)
                 if c == 'r':
                     if self.canrun():
                         return True
                     else:
                         pass
                 elif c == 't':
+                    self.entities = []
+                    for mem in self.game.party.members:
+                        mem.action = '????????????'
                     self.mw.print("..taking back")
                     self.game.vscr.disp_scrwin()
-                    getch()
                     break
                 elif c == 'p':
                     mem.action = 'parry'
-                    self.game.vscr.disp_scrwin()
+                    self.entities.append(
+                        Entity(mem, agi, 'parry', None))
                     self.game.vscr.disp_scrwin()
                 elif c == 'f':
                     mong = self.monp[self.choose_group()]
                     self.entities.append(
-                        Entity(mem, mem.stat[4], 'fight', mong))
+                        Entity(mem, agi, 'fight', mong))
                     mem.action = 'fight'
-                    self.game.vscr.disp_scrwin()
                     self.game.vscr.disp_scrwin()
                 elif c == 's':
                     s, target = self.choose_spell(mem)
                     self.entities.append(
-                        Entity(mem, mem.stat[4], s, target))
+                        Entity(mem, agi, s, target))
                     mem.action = s
-                    self.game.vscr.disp_scrwin()
                     self.game.vscr.disp_scrwin()
             if c != 't':
                 break
@@ -1499,6 +1570,9 @@ class Battle:
             return n-1
 
     def choose_spell(self, mem):
+        """
+        Choose spell to cast and the target monster group or the party member
+        """
         mw = self.mw
         s = mw.input("What spell to cast?")
         s = s.lower()
@@ -1522,6 +1596,95 @@ class Battle:
             target = None
         return s, target
 
+    def monster_attack(self, e):
+        if e.target.stat >= State.DEAD:
+            self.mw.print(f"{e.name} lost its target.")
+            return
+
+        apoint = 19
+        if e.target.action == 'parry':
+            apoint += 2
+        apoint -= self.game.mondef[e.name].level
+        bpoint = apoint - e.target.ac
+
+        if bpoint >= 19:
+            val = 19
+        elif b <= bpoint < 19:
+            val = bpoint
+        elif -36 <= b < 0:
+            val = 0
+        else:
+            if a < 0:
+                val = 0
+            else:
+                val = 19
+        hitp = (19 - val)*100//20  # hit percent
+
+        hitcnt = 0
+        damage = 0
+        for _ in self.game.mondef[e.name].count:
+            if hitp > random.randrange(100):
+                hitcnt += 1
+                damage += dice(self.game.mondef[e.name].attack)
+        e.target.hp -= damage
+        if e.target.state != State.OK:
+            e.target.hp -= damage  # twice the damage if not status OK
+        self.mw.print(f"{self.target.name} incurred {damage} damage.")
+        if e.target.hp <= 0:
+            e.target.hp = 0
+            e.target.state = State.DEAD
+            self.mw.print(f"{self.targe.name} is killed.")
+            return
+        if hitcnt == 0:
+            return
+
+        if self.game.momdef[e.name].poison:
+            if (e.target.stat[5]+1)*100//20 < random.randrange(100):
+                # +++ if not poison regist
+                e.target.state = State.POISONED
+                self.mw.print(f"{self.targe.name} is poisoned.")
+
+        if self.game.mondef[e.name].paraly:
+            if (e.target.stat[5]+1)*100//20 < random.randrange(100):
+                # +++ if not paraly regist
+                e.target.state = State.PARALYZED
+                self.mw.print(f"{self.targe.name} is paralyzed.")
+
+        if self.game.mondef[e.name].stone:
+            if (e.target.stat[5]+1)*100//20 < random.randrange(100):
+                # +++ if not stone regist
+                e.target.state = State.STONED
+                self.mw.print(f"{self.targe.name} is petrified.")
+
+        if e.drained is False and self.game.mondef[e.name].drain > 0:
+            if (e.target.stat[5]+1)*100//20 < random.randrange(100):
+                # +++ if not drain regist
+                prevlevel = e.target.level
+                e.target.level -= self.game.mondef[e.name].drain
+                self.mw.print(
+                    f"{self.targe.name} is drained by {self.game.mondef[e.name].drain} level.")
+                if e.target.level < 1:
+                    e.target.hp = 0
+                    e.target.state = State.LOST
+                    self.mw.print(f"{self.targe.name} is lost.")
+                    return
+                e.target.maxhp -= \
+                    e.target.maxhp * \
+                    (prevlevel - self.game.mondef[e.name].drain) \
+                    // prelevel
+                if e.target.hp > e.target.maxhp:
+                    e.target.hp = e.target.maxhp
+                e.drained = True
+
+        if self.game.mondef[e.name].critical:
+            if (e.target.stat[5]+1)*100//20 < random.randrange(100):
+                # +++ if not critical regist
+                if (49 - self.game.mondef[e.name].level) * 100 / 50 \
+                   < random.randrange(100):
+                    e.target.state = State.DEAD
+                    e.target.hp = 0
+                    self.mw.print(f"{self.targe.name} is decapitated.")
+
     def battle(self):
         """
         battle main
@@ -1537,7 +1700,7 @@ class Battle:
         self.create_monsterparty()
         self.draw_ew()
 
-        if self.handle_friendly():
+        if self.handle_friendly(place):
             v.meswins.pop()
             v.meswins.pop()
             self.game.party.place = place
@@ -1547,9 +1710,33 @@ class Battle:
             for m in self.game.party.members:
                 m.action = '????????????'
             v.disp_scrwin()
-            v.disp_scrwin()
             if self.input_action():
-                break  # run successfully
+                self.game.party.x, self.game.party.px =\
+                    self.game.party.px, self.game.party.x
+                self.game.party.y, self.game.party.py =\
+                    self.game.party.py, self.game.party.y
+                self.mw.print("Ran away from the battle.")
+                v.disp_scrwin()
+                break  # ran successfully
+            self.enemy_action()
+
+            self.entities.sort(key=attrgetter('agi'), reverse=True)
+            for e in self.entities:
+                if e.action == 'parry':
+                    self.mw.print(f"{e.entity.name} parried.")
+                elif e.action == 'fight':
+                    if isinstance(e, Member):
+                        self.member_attack(e)
+                    else:
+                        self.monster_attack(e)
+                elif e.action == 'run':
+                    self.mw.print(f"{e.entity.name} tried to run away")
+                    self.mw.print(f".. but wasn't able to.", start=' ')
+                else:
+                    self.mw.print(f"{e.entity.name} casted {e.action}")
+                    self.mw.print(f".. but nothing happend.", start=' ')
+                v.disp_scrwin()
+                getch()
 
         self.mw.print(f"Battle!!!")
         v.disp_scrwin()
@@ -1595,6 +1782,7 @@ class Entity:
         self.agi = agi  # agility
         self.action = action  #
         self.target = target
+        self.drained = False
 
 
 def terminal_size():
@@ -2191,7 +2379,7 @@ def maze(game):
                     party.x += 1
                     meswin.print("east")
             elif c == 'o':  # open or unlock door
-                vscr.display()
+                vscr.disp_scrwin(floor_obj)
                 floor_obj.open_door(game, meswin)
             elif c == '.':
                 meswin.print(".")
