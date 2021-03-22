@@ -200,7 +200,7 @@ class Meswin:
             header = '  '
             if idx == 0:
                 header = start + ' '
-            ssls = textwrap.wrap(sl, width=meswidth)
+            ssls = textwrap.wrap(sl, width=meswidth-1)
             if len(ssls) == 0:
                 self.mes_lines.append(header)
             else:
@@ -966,7 +966,7 @@ class Spell:
 
     def heal(self, sname, sdef):
         if sdef.target == 'party':
-            for target in party:
+            for target in self.game.party.members:
                 self.heal_single(sname, sdef, target)
         else:
             target = self.game.party.choose_character(self.game)
@@ -1335,8 +1335,6 @@ class Monstergrp:
         self.mdef = self.game.mondef[name]
         self.monsters = []
         self.identified = False
-        if random.randrange(100) % 2 == 0:
-            self.identified = True
 
 
 class Battle:
@@ -1416,10 +1414,15 @@ class Battle:
             mname = mdef.fellow
         return
 
-    def canrun(self):
+    def canrun(self, entity):
         """
         Return True if party was able to run away from the battle
         """
+        if isinstance(entity, Monster):
+            if 65 > random.randrange(100):
+                return True
+            else:
+                return False
         success = pl = el = 0
         for mg in self.monp:
             for m in mg.monsters:
@@ -1468,9 +1471,6 @@ class Battle:
                 idx = self.room_index
                 if idx >= 0:  # room encounter
                     self.game.party.floor_obj.battled[idx] = True
-                v.meswins.pop()
-                v.meswins.pop()
-                self.game.party.place = place
                 return True
         else:
             self.mw.print(f"You encountered {dispname}.")
@@ -1517,17 +1517,17 @@ class Battle:
         for mem in self.game.party.members:
             mem.action = '????????????'
         while True:
+            self.mw.print(f"Options - f)ight s)pell")
+            self.mw.print(f"u)se p)arry r)un t)ake back", start=' ')
             for idx, mem in enumerate(self.game.party.members, 1):
                 if mem.state not in [State.OK, State.POISONED]:
                     continue
                 while True:
-                    self.mw.print(f"{mem.name}'s options: f)ight s)pell")
-                    self.mw.print(f"u)se p)arry r)un t)ake back", start=' ')
-                    c = self.mw.input_char("Action?",
+                    c = self.mw.input_char(f"{mem.name}'s action?",
                                            values=['f', 's', 'u', 'p', 'r', 't'])
                     agi = mem.stat[4] + random.randrange(5)
                     if c == 'r':
-                        if self.canrun():
+                        if self.canrun(mem):
                             return True
                         else:
                             return False  # failed
@@ -1568,7 +1568,17 @@ class Battle:
                         mem.action = s
                         self.game.vscr.disp_scrwin()
                         break
+                if c == 't':
+                    break
             if c != 't':
+                self.mw.print("hit any key or t)ake back >")
+                self.game.vscr.disp_scrwin()
+                c = getch(wait=True)
+                if c == 't':
+                    self.entities = []
+                    for mem in self.game.party.members:
+                        mem.action = '????????????'
+                    continue
                 break
 
     def choose_group(self):
@@ -1665,7 +1675,7 @@ class Battle:
         if e.target.hp <= 0:
             e.target.hp = 0
             e.target.state = State.DEAD
-            self.mw.print(f"{e.target.name} is killed.")
+            self.mw.print(f"{e.target.name} is killed.", start=' ')
             return
         if hitcnt == 0:
             return
@@ -1770,9 +1780,8 @@ class Battle:
         else:
             dispname = self.game.mondef[e.target.name].unident
         verb = random.choice(['swings', 'thrusts', 'stabs', 'slashes'])
-        self.mw.print(f"{e.name} {verb} violently at {dispname}")
         self.mw.print(
-            f"and hits {hitcnt} times for {damage} damage.", start=' ')
+            f"{e.name} {verb} violently at {dispname} and hits {hitcnt} times for {damage} damage.")
         e.target.monsters[0].hp -= damage
 
         if e.entity.job == Job.NINJA:
@@ -1789,7 +1798,7 @@ class Battle:
 
         if e.target.monsters[0].hp <= 0:
             e.target.monsters[0].state = State.DEAD
-            self.mw.print(f"{dispname} is killed.")
+            self.mw.print(f"{dispname} is killed.", start=' ')
             self.exp += self.game.mondef[e.target.name].exp
             e.entity.marks += 1
             e.target.monsters.pop(0)
@@ -1803,6 +1812,14 @@ class Battle:
             if mem.state not in [State.OK, State.POISONED]:
                 mems.remove(mem)
                 mems.append(mem)
+
+    def identify_check(self):
+        """
+        Identify the monster (group) at 50% possibility
+        """
+        for mong in self.monp:
+            if random.randrange(100) % 2:
+                mong.identified = True
 
     def battle(self):
         """
@@ -1829,6 +1846,7 @@ class Battle:
             for m in self.game.party.members:
                 m.action = '????????????'
             self.reorder_party()
+            self.identify_check()
             self.draw_ew()
             v.disp_scrwin()
             if self.input_action():
@@ -1843,33 +1861,46 @@ class Battle:
 
             self.entities.sort(key=attrgetter('agi'), reverse=True)
             for e in self.entities:
+                dispname = e.name
+                if isinstance(e.entity, Monster):
+                    if not e.group.identified:
+                        dispname = self.game.mondef[e.name].unident
                 if e.entity.state is State.ASLEEP:
-                    self.mw.print(f"{e.name} is asleep.")
+                    self.mw.print(f"{dispname} is asleep.")
                     continue
                 if e.entity.state not in [State.OK, State.POISONED]:
                     continue
                 if not self.monp:
                     break
                 if e.action == 'parry':
-                    self.mw.print(f"{e.entity.name} parried.")
+                    self.mw.print(f"{dispname} parried.")
                 elif e.action == 'fight':
                     if isinstance(e.entity, Member):
                         self.member_attack(e)
                     else:
                         self.monster_attack(e)
-                elif e.action == 'run':
-                    self.mw.print(f"{e.entity.name} tried to run away")
-                    self.mw.print(f".. but wasn't able to.", start=' ')
+                elif e.action == 'run':  # monster only
+                    if self.canrun(e.entity):
+                        e.group.monsters.remove(e.entity)
+                        self.mw.print(f"{dispname} ran away")
+                        if not e.group.monsters:
+                            self.monp.remove(e.group)
+                        self.draw_ew()
+                    else:
+                        self.mw.print(f"{dispname} tried to run away")
+                        self.mw.print(f".. but wasn't able to.", start=' ')
                 else:
-                    self.mw.print(f"{e.entity.name} casted {e.action}")
+                    self.mw.print(f"{dispname} casted {e.action}")
                     self.mw.print(f".. but nothing happend.", start=' ')
                 v.disp_scrwin()
                 getch()
             if not self.monp:
                 survnum = sum(1 for m in self.game.party.members
                               if m.state == State.OK or m.state == State.POISONED)
-                self.mw.print(f"Each survivor gets {self.exp//survnum} ep.")
-                self.mw.print(f"Each survivor gets {self.gold//survnum} gold.")
+                self.mw.print(f"Each survivor gets {self.exp//survnum} ep.",
+                              start=' ')
+                self.mw.print(f"Each survivor gets {self.gold//survnum} gold.",
+                              start=' ')
                 for mem in self.game.party.members:
                     if mem.state == State.OK or mem.state == State.POISONED:
                         mem.exp += self.exp//survnum
@@ -1882,7 +1913,6 @@ class Battle:
                 v.disp_scrwin()
                 break
 
-        self.mw.print(f"Battle ended.")
         v.disp_scrwin()
         getch()
 
@@ -2486,6 +2516,7 @@ def maze(game):
             game.battle.battle()
             if rtn == 2:  # room battle
                 pass  # chest()
+            meswin.print("battle ended.")
             vscr.disp_scrwin(floor_obj)
 
         c = getch(wait=True)
