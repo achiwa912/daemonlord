@@ -111,7 +111,7 @@ class Vscr:
                     m = party.members[y-1]
                     alcls = ''.join([m.align.name[0], '-', m.job.name[:3]])
                     if party.place == Place.BATTLE and \
-                       (m.state == State.OK or m.state == State.POISONED):
+                       m.state in [State.OK]:
                         line = f" {y} {m.name[:10].ljust(10)} {alcls} {m.ac:3d} {m.hp:4d} {m.action.ljust(13)}"
                     else:
                         line = f" {y} {m.name[:10].ljust(10)} {alcls} {m.ac:3d} {m.hp:4d} {m.state.name[:13].ljust(13)}"
@@ -475,8 +475,11 @@ class Game:
             for i, row in enumerate(rdr):
                 if i == 0:
                     continue
+                attr = self.cell2strtup(row[10])
+                # (0categ, 1level, 2battle, 3camp, 4type, 5target, 6value,
+                #  7attr, 8desc)
                 spell = Spell(row[1], int(row[2]), json.loads(row[5].lower()),
-                              json.loads(row[6].lower()), row[7], row[8], row[9], row[10], row[12])
+                              json.loads(row[6].lower()), row[7], row[8], row[9], attr, row[12])
                 spell_def[row[3]] = spell
             self.spelldef = spell_def
 
@@ -570,7 +573,7 @@ class Race(Enum):
 
 
 class State(Enum):
-    OK, ASLEEP, PARALYZED, POISONED, STONED, DEAD, ASHED, LOST = range(8)
+    OK, ASLEEP, PARALYZED, STONED, DEAD, ASHED, LOST = range(7)
 
 
 class Align(Enum):
@@ -715,6 +718,8 @@ class Member:
         self.acplus = 0  # valid only in battle
         self.job = Job.UNEMPLOYED
         self.state = State.OK
+        self.silenced = False  # valid only in battle
+        self.poisoned = False
         self.gold = random.randrange(100, 200)
         self.exp = 0
         self.nextexp = 0
@@ -1131,13 +1136,124 @@ class Spell:
         else:  # etc
             self.etc(invoker, spell, target)
 
+    def ac(self, invoker, spell, target):
+        """
+        Decrease peer(s)' or increase opponent(s)' AC
+        """
+        v = self.game.vscr
+        mw = v.meswins[-1]
+        spelldef = self.game.spelldef[spell]
+        if spelldef.target == 'self':
+            if isinstance(invoker, Member):
+                invoker.acplus += int(spelldef.value)
+            else:
+                invoker.ac += int(spelldef.value)
+        elif spelldef.target == 'party':
+            for m in selg.game.party.members:
+                m.acplus += int(spelldef.value)
+        elif spelldef.target == 'enemy':
+            target.monsters[0].ac += int(spelldef.value)
+        elif spelldef.target == 'group':
+            for mon in target.monsters:
+                mon.ac += int(spelldef.value)
+        else:  # 'all'
+            for mong in self.game.battle.monp:
+                for mon in mong:
+                    mon.ac += int(spelldef.value)
+
+    def status(self, invoker, spell, target):
+        """
+        Spells that could put to sleep and silence the target group.
+        """
+        v = self.game.vscr
+        mw = v.meswins[-1]
+        spelldef = self.game.spelldef[spell]
+        if spelldef.target == 'group':  # currently, this is only the case.
+            if target.identified:
+                disptarget = target.name
+            else:  # unidentified
+                disptarget = self.game.mondef[target.name].unident
+            for mon in target.monsters:
+                if 'sleep' in spelldef.attr and mon.state == State.OK:
+                    if mon.mdef.weaksleep:
+                        chance = 80
+                    else:
+                        chance = 35
+                    if random.randrange(100) < chance and \
+                       random.randrange(100) < mon.mondef.regspellp:
+                        mon.state = State.ASLEEP
+                    if mon.state == State.ASLEEP:
+                        mw.print(f"{disptarget} is slept.", start=' ')
+                    else:
+                        mw.print(f"{disptarget} is not slept.", start=' ')
+                if 'silence' in spelldef.attr:
+                    chance = 50 * mon.mondef.regspellp // 100
+                    if random.randrange(100) < chance or mon.silenced:
+                        mon.silenced = True
+                        mw.print(f"{disptarget} is silenced.", start=' ')
+                    else:
+                        mw.print(f"{disptarget} is not silenced.", start=' ')
+
     def attack(self, invoker, spell, target):
         v = self.game.vscr
         mw = v.meswins[-1]
-        if isinstance(invoker, Member):
-            mw.print(f"{invoker.name} cast {spell} to {target.name}")
-            v.disp_scrwin()
-            getch(wait=True)
+        spelldef = self.game.spelldef[spell]
+        if spelldef.target == 'group':
+            if target.identified:
+                disptarget = target.name
+            else:  # unidentified
+                disptarget = self.game.mondef[target.name].unident
+            for mon in target.monsters:
+                self.attack_single(mon, disptarget,
+                                   spelldef.value, spelldef.attr, target)
+        elif spelldef.target == 'all':
+            for mong in self.game.battle.monp:
+                if mong.identified:
+                    disptarget = mong.name
+                else:
+                    disptarget = self.game.mondef[mong.name].unident
+                for mon in mong:
+                    self.attack_single(mon, disptarget,
+                                       spelldef.value, spelldef.attr, mong)
+        elif spelldef.target == 'enemy':
+            if target.identified:
+                disptarget = target.name
+            else:
+                disptarget = self.game.mondef[target.name].unident
+            self.attack_single(target.monsters[0], disptarget,
+                               spelldef.value, spelldef.attr, target)
+        monptmp = self.game.battle.monp[:]
+        for mong in monptmp:
+            mongtmp = mong.monsters[:]
+            for mon in mongtmp:
+                if mon.hp <= 0:
+                    mong.monsters.remove(mon)
+            if not mong.monsters:
+                self.game.battle.monp.remove(mong)
+
+    def attack_single(self, mon, dispname, value, attr, mong):
+        if mon.state == State.DEAD:
+            return
+        v = self.game.vscr
+        mw = v.meswins[-1]
+        damage = dice(value)
+        mondef = self.game.mondef[mon.name]
+        if 'fire' in attr:
+            if mondef.regfire:
+                damage = damage // 2
+        elif 'cold' in attr:
+            if mondef.regcold:
+                damage = damage // 2
+        if 'poison' in attr:
+            if not mondef.regpoison and random.randrange(100) < 50:
+                mon.poisoned = True
+                mw.print(f"{dispname} was poisoned.")
+        mon.hp = max(mon.hp-damage, 0)
+        mw.print(f"{dispname} incurred {damage} damage.", start=' ')
+        if mon.hp <= 0:
+            mw.print(f"{dispname} is killed.", start=' ')
+            mon.state = State.DEAD
+            self.game.battle.exp += mondef.exp
 
     def heal(self, invoker, spell, target):
         sdef = self.game.spelldef[spell]
@@ -1152,9 +1268,9 @@ class Spell:
         target.hp = min(target.hp+plus, target.maxhp)
         mw = self.game.vscr.meswins[-1]
         if target.hp == target.maxhp:
-            mw.print("{target.name} was completely healed.")
+            mw.print("{target.name}'s HP was fully restored.", start=' ')
         else:
-            mw.print(f"{plus} HP was restored to {target.name}.")
+            mw.print(f"{plus} HP was restored to {target.name}.", start=' ')
 
 
 class Dungeon:
@@ -1492,10 +1608,12 @@ class Monster:
     def __init__(self, game, name):
         self.game = game
         self.name = name
-        mdef = self.game.mondef[name]
-        self.hp = self.maxhp = dice(mdef.hp)
-        self.ac = mdef.ac
+        self.mdef = self.game.mondef[name]
+        self.hp = self.maxhp = dice(self.mdef.hp)
+        self.ac = self.mdef.ac
         self.state = State.OK
+        self.silenced = False
+        self.poisoned = False
 
 
 class Monstergrp:
@@ -1534,6 +1652,8 @@ class Battle:
         for m in self.game.party.members:
             m.action = '????????????'
             m.drained = False
+            m.acplus = 0
+            m.silenced = False
 
     def draw_ew(self):
         """
@@ -1554,7 +1674,7 @@ class Battle:
                 if len(mg.monsters) > 1:
                     dispname = mg.mdef.unidents
             for m in mg.monsters:
-                if m.state in [State.OK, State.POISONED]:
+                if m.state in [State.OK]:
                     active += 1
             self.ew.print(
                 f"{i}) {len(mg.monsters)} {dispname.ljust(24)} ({active})", start=' ')
@@ -1658,7 +1778,7 @@ class Battle:
         party = self.game.party
         for mong in self.monp:
             for mon in mong.monsters:
-                if mon.state != State.OK and mon.state != State.POISONED:
+                if mon.state != State.OK:
                     continue
                 action = mondef[mong.name].act[random.randrange(5)]
                 agi = mondef[mong.name].agi + random.randrange(4)
@@ -1694,7 +1814,7 @@ class Battle:
             self.mw.print(f"Options - f)ight s)pell")
             self.mw.print(f"u)se p)arry r)un t)ake back", start=' ')
             for idx, mem in enumerate(self.game.party.members, 1):
-                if mem.state not in [State.OK, State.POISONED]:
+                if mem.state not in [State.OK]:
                     continue
                 while True:
                     c = self.mw.input_char(f"{mem.name}'s action?",
@@ -1907,7 +2027,7 @@ class Battle:
         if self.game.mondef[e.name].poison:
             if (e.target.stat[5]+1)*100//20 < random.randrange(100):
                 if 'poison' not in regist:
-                    e.target.state = State.POISONED
+                    e.target.poisoned = True
                     self.mw.print(f"{e.target.name} is poisoned.")
 
         if self.game.mondef[e.name].paraly:
@@ -2009,6 +2129,8 @@ class Battle:
             dispname = e.target.name
         else:
             dispname = self.game.mondef[e.target.name].unident
+        if e.target.monsters[0] != State.OK:
+            damage *= 2
         verb = random.choice(['swings', 'thrusts', 'stabs', 'slashes'])
         self.mw.print(
             f"{e.name} {verb} violently at {dispname} and hits {hitcnt} times for {damage} damage.")
@@ -2039,7 +2161,7 @@ class Battle:
     def reorder_party(self):
         mems = self.game.party.members
         for mem in mems:
-            if mem.state not in [State.OK, State.POISONED]:
+            if mem.state not in [State.OK]:
                 mems.remove(mem)
                 mems.append(mem)
 
@@ -2098,7 +2220,7 @@ class Battle:
                 if e.entity.state is State.ASLEEP:
                     self.mw.print(f"{dispname} is asleep.")
                     continue
-                if e.entity.state not in [State.OK, State.POISONED]:
+                if e.entity.state not in [State.OK]:
                     continue
                 if not self.monp:
                     break
@@ -2170,22 +2292,27 @@ class Battle:
                                     v.disp_scrwin()
                                     getch(wait=True)
                                     continue
-                    self.mw.print(f"{dispname} casted {e.action}.")
-                    self.game.spell.cast_spell_dispatch(
-                        e.entity, e.action, e.target)
+                    if e.entity.silenced:
+                        self.mw.print(
+                            f"{dispname} tried to cast {e.action} but silenced.")
+                    else:
+                        self.mw.print(f"{dispname} casted {e.action}.")
+                        self.game.spell.cast_spell_dispatch(
+                            e.entity, e.action, e.target)
                 v.disp_scrwin()
                 getch(wait=True)
 
             # Battle end?
             if not self.monp:
                 survnum = sum(1 for m in self.game.party.members
-                              if m.state == State.OK or m.state == State.POISONED)
+                              if m.state in [State.OK, State.ASLEEP,
+                                             State.PARALYZED])
                 self.mw.print(f"Each survivor gets {self.exp//survnum} ep.",
                               start=' ')
                 self.mw.print(f"Each survivor gets {self.gold//survnum} gold.",
                               start=' ')
                 for mem in self.game.party.members:
-                    if mem.state == State.OK or mem.state == State.POISONED:
+                    if mem.state in [State.OK, State.ASLEEP, State.PARALYZED]:
                         mem.exp += self.exp//survnum
                         mem.gold += self.gold//survnum
                 party = self.game.party
@@ -2236,7 +2363,7 @@ class Entity:
 
     def __init__(self, entity, name, group, agi, action, target):
         self.entity = entity  # member or monster object
-        self.name = name
+        self.name = name  # member name or monster name (identified)
         self.group = group
         self.agi = agi  # agility
         self.action = action  #
@@ -2278,10 +2405,14 @@ def getch(wait=False):
 def dice(valstr):
     pattern = r"(\d+)[dD](\d+)(\+(\d+))?"
     m = re.search(pattern, valstr)
+    total = 0
     if m[4] is None:
-        return int(m[1]) * random.randint(1, int(m[2]))
+        plus = 0
     else:
-        return int(m[1]) * random.randint(1, int(m[2])) + int(m[4])
+        plus = int(m[4])
+    for _ in range(int(m[1])):
+        total += random.randint(1, int(m[2])) + plus
+    return total
 
 
 def create_character(game):
@@ -2799,11 +2930,11 @@ def levelup(game, m):
             know = sum(1 for s in m.mspells if
                        game.spelldef[s].level == idx+1 and
                        game.spelldef[s].categ == 'mage')
-            m.mspell_max = max(m.mspell_max, know)
+            m.mspell_max[idx] = max(m.mspell_max[idx], know)
             know = sum(1 for s in m.pspells if
                        game.spelldef[s].level == idx+1 and
                        game.spelldef[s].categ == 'priest')
-            m.mspell_max = max(m.mspell_max, know)
+            m.pspell_max[idx] = max(m.pspell_max[idx], know)
 
 
 def sleep(game, m, healhp):
