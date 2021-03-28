@@ -21,7 +21,7 @@
 18,mage,7,tenso,malor,TRUE,TRUE,etc,,,,teleport,Teleportation to a known location
 19,mage,7,tennotasuke,mahaman,TRUE,FALSE,etc,,,,haman + raise the dead!,More appeals to Daemon Lord for help
 20,mage,7,kakubaku,tiltowait,TRUE,FALSE,attack,all,10D15,,,Nuclear fusion to inflict 10-150 damage to all enemies
-,mage,7,mugenchikara,,TRUE,FALSE,attack,all,50D100,,,Ideon Sword to inflict 50-5000 damage to an enemy
+,mage,7,mugenchikara,,TRUE,FALSE,attack,enemy,50D100,,,Ideon Sword to inflict 50-5000 damage to an enemy
 21,priest,1,shukufuku,kalki,TRUE,FALSE,ac,party,-1,,,Reduce party's AC by 1
 22,priest,1,jiai,dios,TRUE,TRUE,heal,member,1D8,,,Restore 1-8 HP to a single target
 23,priest,1,ikari,badios,TRUE,FALSE,attack,enemy,1D8,friendly,,Angry power to inflict 1-8 damage to an enemy
@@ -29,7 +29,7 @@
 25,priest,1,mamori,porfic,TRUE,FALSE,ac,self,-4,,,Reduce the caster's AC by 4
 26,priest,2,kabe,matu,TRUE,TRUE,ac,party,-2,,,Reduce party's AC by 2
 27,priest,2,kantei,calfo,FALSE,FALSE,etc,,,,identify trap,Identify a trap with 95% accuracy
-28,priest,2,nero,manifo,TRUE,FALSE,status,group,,paraly,,Paralyze a group of enemies
+28,priest,2,nero,manifo,TRUE,FALSE,status,group,,sleep,,Paralyze a group of enemies
 29,priest,2,damare,monitino,TRUE,FALSE,status,group,1D4+1,silence,59 + 5*level_diff %,Silence an enemy group
 30,priest,3,hikarinotama,lomilwa,TRUE,TRUE,etc,,,,misc,A bright light lets you see further for a long time
 31,priest,3,okiro,dialko,TRUE,TRUE,cure,member,,"paraly, sleep",cure paraly + sleep,Cures a paralyzed or asleep for a single target
@@ -38,7 +38,7 @@
 34,priest,3,iyashi,dial,TRUE,TRUE,heal,member,4D4,,,Restore 4-16 HP to a single target
 35,priest,4,gekido,badial,TRUE,FALSE,attack,enemy,2D8,friendly,,Infuriate power to inflict 2-16 damage to an enemy
 36,priest,4,gedoku,latumofis,TRUE,TRUE,cure,,,poison,,Cure poison to a single target
-37,priest,4,hogo,maporfic,TRUE,TRUE,etc,,,,party AC -2 while in dungeon,Reduce party's AC by 2 while you are in the dungeon
+37,priest,4,hogo,maporfic,TRUE,TRUE,etc,,-2,,party AC -2 while in dungeon,Reduce party's AC by 2 while you are in the dungeon
 ,priest,4,zenjiai,,TRUE,TRUE,heal,party,1D8,,,Heal entire party by 1-8 HP
 38,priest,5,daikaifuku,dialma,TRUE,TRUE,heal,member,8D3,,,Restore 8-24 HP to a single target
 39,priest,5,chogekido,badialma,TRUE,FALSE,attack,enemy,3D8,friendly,,Extreme angry to inflict 3-24 damage to an enemy
