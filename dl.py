@@ -17,9 +17,8 @@ import re
 import pickle
 
 config = {
-    'floor_xmin': 76,  # 40,
-    'floor_ymin': 32,  # 16,
-    'max_depth': 16,
+    'floor_xmin': 40,
+    'floor_ymin': 16,
     'debug': True,
 }
 
@@ -42,8 +41,8 @@ class Align(Enum):
 
 
 class Place(Enum):
-    MAZE, EDGE_OF_TOWN, TRAINING_GROUNDS, CASTLE, HAWTHORNE_TAVERN, TRADER_JAYS, LAKEHOUSE_INN, CAMP, BATTLE, LEAVE_GAME = range(
-        10)
+    MAZE, EDGE_OF_TOWN, TRAINING_GROUNDS, CASTLE, HAWTHORNE_TAVERN, TRADER_JAYS, LAKEHOUSE_INN, MGH, CAMP, BATTLE, LEAVE_GAME = range(
+        11)
 
 
 class Trap(Enum):
@@ -671,6 +670,30 @@ class Party:
         self.identify = False  # latumapic
         self.gps = False  # eternal dumapic
 
+    def reorder(self, game):
+        v = game.vscr
+        mw = v.meswins[-1]
+        dst = []
+        idx = 1
+        while True:
+            c = mw.input_char(f"Who comes #{idx}? - # or l)eave")
+            if c == 'l':
+                break
+            try:
+                i = int(c)
+                mem = self.members[i-1]
+            except:
+                mw.print("What?")
+                continue
+            if mem in dst:
+                mw.print("Already chosen.")
+                continue
+            dst.append(mem)
+            if len(dst) == len(self.members):
+                self.members = dst
+                break
+            idx += 1
+
     def pay(self, gold):
         """
         Pay the price as a party.  Each member tries to pay their
@@ -705,7 +728,17 @@ class Party:
         Check if they can unlock the door
         Returns True if they can, False otherwise
         """
-        return True  # ++++++++++++++++++++++++++++++
+        lvl = 1
+        for mem in self.members:
+            if mem.job in [Job.THIEF, Job.NINJA]:
+                lvl = max(lvl, mem.level)
+            else:
+                lvl = max(lvl, mem.level//5+1)
+        chance = max((lvl+4-self.floor)*10, 5)
+        if random.randrange(100) < chance:
+            return True
+        else:
+            return False
 
     def choose_character(self, game):
         """
@@ -891,9 +924,10 @@ class Member:
                     idx -= 1
                 elif c == 'l':
                     break
-        sw.cls()
+        # sw.cls()
         v.disp_scrwin()
         v.meswins.pop()
+        v.cls()
 
     def spell_menu(self, game):
         """
@@ -912,9 +946,10 @@ class Member:
                 game.spell.cast_spell(self)
             elif c == 'v':
                 self.view_spells(game)
-        mw.cls()
+        # mw.cls()
         v.disp_scrwin()
         v.meswins.pop()
+        v.cls()
 
     def item_menu(self, game):
         """
@@ -929,6 +964,7 @@ class Member:
             c = getch()
             if c == 'l':
                 vscr.meswins.pop()
+                vscr.cls()
                 return
             try:
                 if (inum := int(c)-1) > len(self.items)-1:
@@ -943,6 +979,27 @@ class Member:
                               values=['u', 'e', 't', 'd', 'l'])
             if c == 'l':
                 continue
+            elif c == 't':
+                target = game.party.choose_character(game)
+                if target and len(target.items) < 8:
+                    target.items.append(self.items[inum])
+                    self.items.pop(inum)
+                    iw.print(f"Gave to {target.name}.")
+                    vscr.disp_scrwin()
+                    getch(wait=True)
+                vscr.meswins.pop()
+                vscr.cls()
+                break
+            elif c == 'd':
+                c = iw.input_char(f"Drop {dispname}? (y/n)",
+                                  values=['y', 'n'])
+                if c == 'y':
+                    self.items.pop(inum)
+                    iw.print(f"Dropped {dispname}.")
+                    vscr.disp_scrwin()
+                    vscr.meswins.pop()
+                    vscr.cls()
+                    break
             elif c == 'e':
                 if self.job.name[:1] not in game.itemdef[self.items[inum][0]].jobs:
                     iw.print("Can't equip the item.")
@@ -963,7 +1020,8 @@ class Member:
                 self.items[inum][1] = True  # equipped
                 self.calc_ac(game)
                 vscr.meswins.pop()
-                vscr.disp_scrwin()
+                vscr.cls()
+                # vscr.disp_scrwin()
                 return
 
     def calc_ac(self, game):
@@ -1283,7 +1341,7 @@ class Spell:
                     else:
                         chance = 35
                     if random.randrange(100) < chance and \
-                       random.randrange(100) < mon.mdef.regspellp:
+                       random.randrange(100) >= mon.mdef.regspellp:
                         mon.state = State.ASLEEP
                     if mon.state == State.ASLEEP:
                         mw.print(f"{disptarget} is slept.", start=' ')
@@ -1348,7 +1406,7 @@ class Spell:
                 disptarget = self.game.mondef[target.name].unident
             for mon in target.monsters:
                 self.attack_single(mon, disptarget,
-                                   spelldef.value, spelldef.attr, target)
+                                   spelldef.value, spelldef.attr, target, invoker)
         elif spelldef.target == 'all':
             for mong in self.game.battle.monp:
                 if mong.identified:
@@ -1357,14 +1415,14 @@ class Spell:
                     disptarget = self.game.mondef[mong.name].unident
                 for mon in mong.monsters:
                     self.attack_single(mon, disptarget,
-                                       spelldef.value, spelldef.attr, mong)
+                                       spelldef.value, spelldef.attr, mong, invoker)
         elif spelldef.target == 'enemy':
             if target.identified:
                 disptarget = target.name
             else:
                 disptarget = self.game.mondef[target.name].unident
             self.attack_single(target.monsters[0], disptarget,
-                               spelldef.value, spelldef.attr, target)
+                               spelldef.value, spelldef.attr, target, invoker)
         monptmp = self.game.battle.monp[:]
         for mong in monptmp:
             mongtmp = mong.monsters[:]
@@ -1374,7 +1432,7 @@ class Spell:
             if not mong.monsters:
                 self.game.battle.monp.remove(mong)
 
-    def attack_single(self, mon, dispname, value, attr, mong):
+    def attack_single(self, mon, dispname, value, attr, mong, invoker):
         if mon.state == State.DEAD:
             return
         v = self.game.vscr
@@ -1397,6 +1455,7 @@ class Spell:
             mw.print(f"{dispname} is killed.", start=' ')
             mon.state = State.DEAD
             self.game.battle.exp += mondef.exp
+            invoker.marks += 1
 
     def heal(self, invoker, spell, target):
         sdef = self.game.spelldef[spell]
@@ -1437,8 +1496,10 @@ class Dungeon:
         Generate a dungeon floor.
         Create rooms, connect among them and place doors
         """
-        floor_x_size = config['floor_xmin']  # ++++++++++++++++++++++++++++++
-        floor_y_size = config['floor_ymin']
+        floor_x_size = min(
+            256, int(config['floor_xmin'] * (1.2**(self.game.party.floor-1))))
+        floor_y_size = min(
+            128, int(config['floor_ymin'] * (1.2**(self.game.party.floor-1))))
         floor_data = bytearray(b'#' * floor_x_size *
                                floor_y_size)  # rock only floor
         floor_obj = Floor(floor_x_size, floor_y_size, floor, floor_data)
@@ -1786,8 +1847,11 @@ class Battle:
 
     def __init__(self, game):
         self.game = game
-        self.mw = Meswin(game.vscr, 14, 6, 44, 12, frame=True)
-        self.ew = Meswin(game.vscr, 14, 1, 44, 4, frame=True)
+        v = game.vscr
+        self.mw = Meswin(v, v.width//8, v.height//8+5,
+                         v.width*3//4, 12, frame=True)
+        self.ew = Meswin(v, v.width//8, v.height//8,
+                         v.width*3//4, 4, frame=True)
 
     def new_battle(self):
         """
@@ -2124,6 +2188,9 @@ class Battle:
         return iname, None
 
     def monster_attack(self, e):
+        """
+        Monster attacks a member
+        """
         mdef = self.game.mondef[e.name]
         if e.group.identified:
             dispname = e.name
@@ -2287,7 +2354,7 @@ class Battle:
             dispname = e.target.name
         else:
             dispname = self.game.mondef[e.target.name].unident
-        if e.target.monsters[0] != State.OK:
+        if e.target.monsters[0].state != State.OK:
             damage *= 2
         verb = random.choice(['swings', 'thrusts', 'stabs', 'slashes'])
         self.mw.print(
@@ -2317,6 +2384,9 @@ class Battle:
             self.draw_ew()
 
     def reorder_party(self):
+        """
+        Members with bad status move back.
+        """
         mems = self.game.party.members
         for mem in mems:
             if mem.state not in [State.OK]:
@@ -2509,6 +2579,9 @@ class Battle:
         return
 
     def recover_state(self):
+        """
+        Every turn, asleep members/monsers might wake up.
+        """
         v = self.game.vscr
         mw = v.meswins[-1]
         for mem in self.game.party.members:
@@ -2564,6 +2637,10 @@ class Entity:
 
 
 class Chest:
+    """
+    Represents a chest
+    """
+
     def __init__(self, game):
         self.game = game
         self.mw = Meswin(game.vscr, 14, 3, 44, 10, frame=True)
@@ -2571,6 +2648,10 @@ class Chest:
         self.items = None
 
     def chest(self):
+        """
+        Chest main.  Determine the trap, inspect, disarm, activate 
+        the trap, find items, etc.
+        """
         game = self.game
         v = game.vscr
         mw = self.mw
@@ -2610,6 +2691,7 @@ class Chest:
                     else:
                         chance = mem.level - game.party.floor
                     if random.randrange(70) < chance:
+                        mw.print("Disarmed the trap.")
                         self.treasure()
                         v.meswins.pop()
                         return
@@ -2662,11 +2744,13 @@ class Chest:
                 else:  # succeeded to identify
                     ans = self.trap
                 mem.identified = True
-                mw.print(f"It is {ans.name.lower().replace('_', ' ')}.")
+                mw.print(f"It was {ans.name.lower().replace('_', ' ')}.")
                 v.disp_scrwin()
-                getch(wait=True)
 
     def treasure(self):
+        """
+        Find and get up to 4 items from the chest.
+        """
         if len(self.items) > 0:
             if random.randrange(100) < 80:  # 80%
                 item = self.choose_item(self.items[0])
@@ -2688,6 +2772,9 @@ class Chest:
                 self.get_item(item)
 
     def choose_item(self, item_lvl):
+        """
+        Randomly pick one item of the specified item level.
+        """
         items = []
         for item in self.game.itemdef:
             if self.game.itemdef[item].level == item_lvl:
@@ -2696,6 +2783,9 @@ class Chest:
         return item
 
     def get_item(self, item):
+        """
+        Someone in the party get the item found.
+        """
         v = self.game.vscr
         mw = v.meswins[-1]
         mem = random.choice(
@@ -2707,6 +2797,9 @@ class Chest:
         getch(wait=True)
 
     def trap_activated(self, mem):
+        """
+        Trap is activated and do harm to party member(s).
+        """
         game = self.game
         v = game.vscr
         mw = self.mw
@@ -2719,6 +2812,7 @@ class Chest:
                 if random.randrange(100) < 50:
                     m.poisoned = True
                     mw.print(f"{m.name} was poisoned.")
+            v.disp_scrwin()
         elif self.trap == Trap.CROSSBOW_BOLT:
             damage = dice('1D8')*game.party.floor
             mem.hp = max(mem.hp-damage, 0)
@@ -2726,6 +2820,7 @@ class Chest:
             if mem.hp <= 0:
                 mem.state = State.DEAD
                 mw.print(f"{mem.name} is killed.")
+            v.disp_scrwin()
         elif self.trap == Trap.EXPLODING_BOX:
             for m in game.party.members:
                 if random.randrange(100) < 75 and \
@@ -2739,9 +2834,11 @@ class Chest:
                 if m.hp <= 0:
                     m.state = State.DEAD
                     mw.print(f"{m.name} is killed.")
+            v.disp_scrwin()
         elif self.trap == Trap.STUNNER:
             mem.state = State.PARALYZED
             mw.print(f"{m.name} got stunned.")
+            v.disp_scrwin()
         elif self.trap == Trap.TELEPORTER:
             party.x = random.randrange(game.party.floor.x_size)
             party.y = random.randrange(game.party.floor.y_size)
@@ -2763,6 +2860,7 @@ class Chest:
                         if m.state in [State.OK]:
                             m.state = State.PARALYZED
                             mw.print(f"{m.name} is paralyzed.")
+            v.disp_scrwin()
         elif self.trap == Trap.PRIEST_BLASTER:
             for m in game.party.members:
                 if m.job == Job.PRIEST:
@@ -2779,8 +2877,12 @@ class Chest:
                         if m.state in [State.OK]:
                             m.state = State.PARALYZED
                             mw.print(f"{m.name} is paralyzed.")
+            v.disp_scrwin()
 
     def choose_trap(self):
+        """
+        Decide which trap the chest has.
+        """
         game = self.game
         if game.party.floor <= 2:
             trap = random.choice([Trap.TRAPLESS_CHEST, Trap.POISON_NEEDLE,
@@ -3080,7 +3182,7 @@ def trader_buy(game, mem):
     a member chooses and buys items from shop inventory
     """
     vscr = game.vscr
-    iw = Meswin(vscr, 12, 1, 41, 12)
+    iw = Meswin(vscr, 12, 1, 46, 12, frame=True)
     vscr.meswins.append(iw)
     top = idx = page = 0
     pages = ('weapon', 'armor', 'shield', 'helm', 'gloves',
@@ -3099,16 +3201,16 @@ def trader_buy(game, mem):
                 canequip = '#'
             if mem.gold >= game.itemdef[item].price:
                 afford = '$'
-            iline = f"| {cur}{i+1:2} {item.ljust(21)[:21]} {game.itemdef[item].price:10d}{canequip}{afford}|"
+            iline = f"{cur}{i+1:2} {item.ljust(20)[:20]} {game.itemdef[item].price:10d}{canequip}{afford}"
             ilines.append(iline)
         iw.mes_lines = []
         iw.mes_lines.append(
-            f"| {mem.name} has {mem.gold} gold".ljust(40)+'|')
-        iw.mes_lines.append("|  jk)cursor x)choose hl)page ;)leave   |")
+            f"{mem.name} has {mem.gold} gold")
+        iw.mes_lines.append("  jk)cursor x)choose hl)page ;)leave")
         for il in ilines[top:top+iw.height-2]:
-            iw.mes_lines.append(il.ljust(iw.width-1))
+            iw.mes_lines.append(il.ljust(iw.width-6))
         for _ in range(iw.width - len(iw.mes_lines)):
-            iw.mes_lines.append(''.join(['|', ' '*(iw.width-2), '|']))
+            iw.mes_lines.append(' '*(iw.width-2))
         vscr.disp_scrwin()
         c = getch(wait=True)
         if c == ';':
@@ -3131,19 +3233,28 @@ def trader_buy(game, mem):
                 page = 0
         elif c == 'x':
             if len(mem.items) >= 8:
-                iw.mes_lines[0] = "| Looks like, your bag is full.".ljust(
-                    iw.width-1)+'|'
+                iw.mes_lines[0] = "Looks like, your bag is full."
                 vscr.disp_scrwin()
                 getch()
             elif mem.gold < game.itemdef[items[idx]].price:
-                iw.mes_lines[0] = "| Sorry, you can't afford it.".ljust(
-                    iw.width-1)+'|'
-                #iw.mes_lines[1] = f"{mem.gold} < {game.itemdef[items[idx]][10]}"
+                iw.mes_lines[0] = "Sorry, you can't afford it."
+                iw.mes_lines[1] = f"Will someone else pay? (y/n)>"
                 vscr.disp_scrwin()
-                getch()
+                c = getch(wait=True)
+                if c == 'y':
+                    if game.party.pay(game.itemdef[items[idx]].price):
+                        bought = [items[idx], False, False, False]
+                        mem.items.append(bought)
+                        game.shopitems[items[idx]] -= 1
+                        iw.mes_lines[0] = "Anything else, noble sir?"
+                    else:
+                        iw.mes_lines[0] = "Oh, I'm sorry."
+                    iw.mes_lines[1] = ""
+                    vscr.disp_scrwin()
+                    getch(wait=True)
+
             else:
-                iw.mes_lines[0] = "| Anything else, noble sir?".ljust(
-                    iw.width-1)+'|'
+                iw.mes_lines[0] = "Anything else, noble sir?"
                 mem.gold -= game.itemdef[items[idx]].price
                 bought = [items[idx], False, False, False]
                 mem.items.append(bought)
@@ -3161,10 +3272,13 @@ def trader_sell(game, mem, op):
     mw = vscr.meswins[-1]
     if op == 's':
         opword = 'sell'
+        div = 2
     elif op == 'u':
         opword = 'uncurse'
+        div = 2
     else:
         opword = 'identify'
+        div = 4
 
     mw.print(f"Which item to {opword}? -  # or leave")
     idic = {}
@@ -3186,7 +3300,9 @@ def trader_sell(game, mem, op):
                 continue
             if item[1]:  # equipped
                 mark = '*'
-        price = game.itemdef[item[0]].price//2
+        price = game.itemdef[item[0]].price//div
+        if op == 'i':
+            price = min(1000, max(price, 20))
         mw.print(
             f"{i}){mark}{dispname.ljust(16)}{price}",
             start=' ')
@@ -3208,11 +3324,31 @@ def trader_sell(game, mem, op):
         del mem.items[int(c)-1]
         mw.print("I'm sure fellows'll want it.")
     elif op == 'i':
-        mem.gold -= price
+        if mem.gold < price:
+            mw.print("Oh, you can't afford it.")
+            yn = mw.input_char("Someone else will pay? (y/n)",
+                               values=['y', 'n'])
+            if yn == 'y':
+                game.party.pay(price)
+            else:
+                mw.print("Ok, fine.")
+                return
+        else:
+            mem.gold -= price
         mem.items[int(c)-1][3] = False  # identified
         mw.print(f"Identified as {mem.items[int(c)-1][0]}.")
     else:
-        mem.gold -= price
+        if mem.gold < price:
+            mw.print("Um, you can't afford it.")
+            yn = mw.input_char("Someone else will pay? (y/n)",
+                               values=['y', 'n'])
+            if yn == 'y':
+                game.party.pay(price)
+            else:
+                mw.print("Ok, fine.")
+                return
+        else:
+            mem.gold -= price
         mw.print(f"Uncursed {mem.items[int(c)-1][0]}.")
         del mem.items[int(c)-1]
 
@@ -3275,7 +3411,7 @@ def levelup(game, m):
             r = random.randrange(100)
             if r < 20:  # 20%
                 m.stat[i] -= 1
-            elif r > 60:  # 40%
+            elif r >= 50:  # 50%
                 m.stat[i] += 1
                 m.stat[i] = min(m.stat[i], race_status[m.race][i]+10)
 
@@ -3456,6 +3592,7 @@ def sleep(game, m, healhp):
 
 def inn(game):
     v = game.vscr
+    game.party.place = Place.LAKEHOUSE_INN
     mw = v.meswins[-1]
     num = len(game.party.members)
     gold = sum(m.gold for m in game.party.members)
@@ -3500,6 +3637,7 @@ def inn(game):
 
 def hospital(game):
     v = game.vscr
+    game.party.place = Place.MGH
     mw = v.meswins[-1]
     num = len(game.party.members)
     gold = sum(m.gold for m in game.party.members)
@@ -3627,10 +3765,13 @@ def camp(game, floor_obj):
     v.meswins.append(mw)
 
     while True:
-        mw.print("*** Camp ***\ni)nspect\nS)ave and quit game\nl)eave")
-        c = mw.input_char("Command?", values=['i', 'S', 'l'])
+        mw.print(
+            "*** Camp ***\ni)nspect\nr)eorder party\nS)ave and quit game\nl)eave")
+        c = mw.input_char("Command?", values=['i', 'r', 'S', 'l'])
         if c == 'l':
             break
+        elif c == 'r':
+            game.party.reorder(game)
         elif c == 'S':
             game.party.place = Place.MAZE
             game.save()
@@ -3641,7 +3782,7 @@ def camp(game, floor_obj):
         elif c == 'i':
             idx = 0
             while True:
-                mem = game.party.members[idx]
+                mem = game.party.members[idx-1]
                 rtn = mem.inspect_character(game)
                 if rtn == 0:
                     break
@@ -3796,91 +3937,19 @@ def main():
     game.load_monsterdef()
     party.place = Place.CASTLE
     w, h = terminal_size()
-    # vscr = Vscr(w, h)  # singleton
-    vscr = Vscr(80, 25)  # +++++++++++++++
+    vscr = Vscr(w, h-1)  # singleton
+    # vscr = Vscr(80, 25)  # +++++++++++++++
     game.vscr = vscr
     vscr.game = game
-    vscr.meswins.append(Meswin(vscr, 42, 18, 40, 7))  # meswin for scrollwin
+    # meswin for scrollwin
+    vscr.meswins.append(Meswin(vscr, 43, vscr.height-7, vscr.width-42, 7))
     # meswin for castle/edge of town
-    vscr.meswins.append(Meswin(vscr, 10, 1, 64, 17, frame=True))
+    vscr.meswins.append(Meswin(vscr, 10, vscr.height//5, vscr.width-20,
+                               (vscr.height-8)*2//3, frame=True))
     game.spell = Spell(game)  # singleton
     game.dungeon = Dungeon(game)  # singleton
     game.battle = Battle(game)  # singleton
     game.chest = Chest(game)  # singleton
-
-    """
-    m = Member("Alex", Align.GOOD, Race.DWARF, 32)
-    m.job = Job.FIGHTER
-    m.stat = [18, 10, 5, 11, 13, 11]
-    m.maxhp = m.hp = 13
-    m.gold = 50000
-    m.exp = 25000
-    m.items.append(['long sword +3', True, False, True])
-    m.items.append(['plate mail', True, False, False])
-    m.items.append(['potion of curing', False, False, False])
-    m.items.append(['scroll of pain', False, False, True])
-    m.ac = 2
-    m.mspells = []
-    for n, s in game.spelldef.items():
-        if s.categ == 'mage':
-            m.mspells.append(n)
-    m.mspell_cnt = [9, 9, 9, 9, 9, 9, 9]
-    m.mspell_max = [9, 9, 9, 9, 9, 9, 9]
-    m.pspells = []
-    for n, s in game.spelldef.items():
-        if s.categ == 'priest':
-            m.pspells.append(n)
-    m.pspell_cnt = [9, 9, 9, 9, 9, 9, 9]
-    m.pspell_max = [9, 9, 9, 9, 9, 9, 9]
-    game.characters.append(m)
-    m = Member("Betty", Align.GOOD, Race.HUMAN, 28)
-    m.job = Job.FIGHTER
-    m.stat = [16, 9, 5, 15, 12, 11]
-    m.exp = 25000
-    m.maxhp = m.hp = 15
-    m.hp = 8
-    m.ac = 3
-    m.items.append(['long sword', True, False, False])
-    m.items.append(['plate mail', True, False, False])
-    game.characters.append(m)
-    m = Member("Cal", Align.GOOD, Race.HUMAN, 48)
-    m.job = Job.SAMURAI
-    m.stat = [16, 10, 5, 16, 13, 13]
-    m.maxhp = m.hp = 16
-    m.exp = 25000
-    m.ac = 4
-    m.items.append(['long sword', True, False, False])
-    m.items.append(['plate mail', True, False, False])
-    game.characters.append(m)
-    m = Member("Debora", Align.NEUTRAL, Race.HOBBIT, 36)
-    m.job = Job.THIEF
-    m.stat = [12, 10, 5, 18, 13, 18]
-    m.maxhp = m.hp = 11
-    m.exp = 25000
-    game.characters.append(m)
-    m = Member("Emily", Align.GOOD, Race.ELF, 29)
-    m.job = Job.PRIEST
-    m.stat = [12, 15, 18, 15, 12, 9]
-    m.maxhp = m.hp = 12
-    m.exp = 60000
-    m.pspells = ['jiai', 'iyashi']
-    m.pspell_cnt = [9, 9, 9, 9, 9, 9, 9]
-    m.pspell_max = [9, 9, 9, 9, 9, 9, 9]
-
-    game.characters.append(m)
-    m = Member("Fast", Align.GOOD, Race.ELF, 36)
-    m.job = Job.MAGE
-    m.stat = [8, 18, 10, 14, 16, 14]
-    m.maxhp = m.hp = 7
-    m.exp = 30000
-    m.mspells = []
-    for n, s in game.spelldef.items():
-        if s.categ == 'mage':
-            m.mspells.append(n)
-    m.mspell_cnt = [9, 9, 9, 9, 9, 9, 9]
-    m.mspell_max = [9, 9, 9, 9, 9, 9, 9]
-    game.characters.append(m)
-    """
 
     dispatch(game)
 
