@@ -5,7 +5,7 @@
 3,mage,2,gps,dumapic,FALSE,TRUE,etc,,,,misc,Locate the precise position in the dungeon
 4,mage,2,kurayami,dilto,TRUE,FALSE,ac,group,2,,,Increase AC by 2 for an enemy group
 5,mage,2,tomei,sopic,TRUE,FALSE,ac,self,-4,2,,Reduce the caster's AC by 4
-,mage,3,tsubasa,(malor),FALSE,TRUE,etc,,,,teleport,Teleport to a known floor
+,mage,2,tsubasa,(malor),FALSE,TRUE,etc,,,,teleport,Teleport to a known floor (not saved!)
 6,mage,3,taika,mahalito,TRUE,FALSE,attack,group,4D6,fire,,Wall of fire to hit a group of enemies for 4-24 damage
 7,mage,3,kamaitachi,molito,TRUE,FALSE,attack,group,3D6,friendly,,Sharp wind to inflict 3-18 damage to an enemy group
 8,mage,4,kanashibari,morlis,TRUE,FALSE,ac,group,4,,,Increase AC by 4 for an enemy group
@@ -34,7 +34,7 @@
 33,priest,3,kaminohogo,bamatu,TRUE,FALSE,ac,party,-4,,,Reduce party's AC by 4
 34,priest,3,iyashi,dial,TRUE,TRUE,heal,member,4D4,,,Restore 4-16 HP to a single target
 35,priest,4,gekido,badial,TRUE,FALSE,attack,enemy,2D8,friendly,,Infuriate power to inflict 2-16 damage to an enemy
-36,priest,4,gedoku,latumofis,TRUE,TRUE,cure,,,poison,,Cure poison to a single target
+36,priest,4,gedoku,latumofis,TRUE,TRUE,cure,member,,poison,,Cure poison to a single target
 37,priest,4,hogo,maporfic,TRUE,TRUE,etc,,-2,,party AC -2 while in dungeon,Reduce party's AC by 2 while you are in the dungeon
 ,priest,4,zenjiai,,TRUE,TRUE,heal,party,1D8,,,Heal entire party by 1-8 HP
 38,priest,5,daikaifuku,dialma,TRUE,TRUE,heal,member,8D3,,,Restore 8-24 HP to a single target
