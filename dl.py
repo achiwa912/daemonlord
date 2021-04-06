@@ -1154,25 +1154,27 @@ class Member:
         vscr = game.vscr
         mw = vscr.meswins[-1]
         mw.cls()
-        mw.print("Distribute bonus points")
-        mw.print("  h)minus j)down k)up l)plus .)change bonus x)done\n", start=' ')
-        mw.print(f"strength  {sp[0]+self.stat[0]:2d}", start=' ')
-        mw.print(f"iq        {sp[1]+self.stat[1]:2d}", start=' ')
-        mw.print(f"piety     {sp[2]+self.stat[2]:2d}", start=' ')
-        mw.print(f"vitality  {sp[3]+self.stat[3]:2d}", start=' ')
-        mw.print(f"agility   {sp[4]+self.stat[4]:2d}", start=' ')
-        mw.print(f"luck      {sp[5]+self.stat[5]:2d}", start=' ')
-        mw.print(f"\nbonus     {bonus:2d}", start=' ')
-        mw.print
-        mw.mes_lines[y+3] = mw.mes_lines[y+3][:11] + \
-            '>' + mw.mes_lines[y+3][12:]
+        mw.print("Distribute bonus points -")
+        mw.print("  h)minus j)down k)up l)plus", start=' ')
+        mw.print("  .)change bonus x)done", start=' ')
+        mw.print("", start=' ')
+        mw.print(f"  strength  {sp[0]+self.stat[0]:2d}", start=' ')
+        mw.print(f"  iq        {sp[1]+self.stat[1]:2d}", start=' ')
+        mw.print(f"  piety     {sp[2]+self.stat[2]:2d}", start=' ')
+        mw.print(f"  vitality  {sp[3]+self.stat[3]:2d}", start=' ')
+        mw.print(f"  agility   {sp[4]+self.stat[4]:2d}", start=' ')
+        mw.print(f"  luck      {sp[5]+self.stat[5]:2d}", start=' ')
+        mw.print(f"\n  bonus     {bonus:2d}", start=' ')
+        mw.print("", start=' ')
+        mw.mes_lines[y+4] = mw.mes_lines[y+4][:13] + \
+            '>' + mw.mes_lines[y+4][14:]
         line = ''
         job = False
         for jobnum in range(8):
             if self.job_applicable(sp, jobnum):
                 job = True
                 line = ''.join([line, Job(jobnum).name[:].lower(), ' '])
-        mw.print(line)
+        mw.print(line, start=' ')
         vscr.disp_scrwin()
         return job
 
@@ -1180,6 +1182,13 @@ class Member:
         """
         Bonus assignment and deciding class main routine
         """
+        v = game.vscr
+        newwin = False
+        mw = v.meswins[-1]
+        if mw.height < 14:
+            mw = Meswin(v, 13, 2, 55, 14, frame=True)
+            v.meswins.append(mw)
+            newwin = True
         bonus = self.calc_bonus()
         y = 0
         statplus = [0, 0, 0, 0, 0, 0]
@@ -1240,6 +1249,10 @@ class Member:
         game.characters.append(self)
         mw.print("Character created")
         game.vscr.disp_scrwin()
+        getch(wait=True)
+        if newwin:
+            v.meswins.pop()
+        v.cls()
 
 
 class Spell:
@@ -3412,7 +3425,12 @@ def inspect_characters(game):
     Can delete a character from here, too.
     """
     vscr = game.vscr
+    newwin = False
     mw = vscr.meswins[-1]
+    if mw.height < 16:
+        mw = Meswin(vscr, 10, 2, 60, 16, frame=True)
+        vscr.meswins.append(mw)
+        newwin = True
     mw.mes_lines = []
     vscr.disp_scrwin()
     cnum = 0
@@ -3462,6 +3480,9 @@ def inspect_characters(game):
                 vscr.disp_scrwin()
                 getch(wait=True)
             vscr.meswins.pop()
+    if newwin:
+        vscr.meswins.pop()
+    vscr.cls()
 
 
 def training(game):
@@ -3548,6 +3569,11 @@ def tavern(game):
     game.party.place = Place.HAWTHORNE_TAVERN
     vscr = game.vscr
     mw = vscr.meswins[-1]
+    newwin = False
+    if mw.height < 16:
+        mw = Meswin(vscr, 8, 2, 64, 16, frame=True)
+        vscr.meswins.append(mw)
+        newwin = True
     ch = ''
     while True:
         mw.print("*** The Hawthorne Tavern ***")
@@ -3592,6 +3618,9 @@ def tavern(game):
                     idx = 0
         elif ch == 'r':
             game.party.remove_character(game)
+    if newwin:
+        vscr.meswins.pop()
+        vscr.cls()
 
 
 def trader_buy(game, mem):
@@ -4407,7 +4436,7 @@ def main():
     party.place = Place.CASTLE
     w, h = terminal_size()
     vscr = Vscr(w, h-1)  # singleton
-    vscr = Vscr(78, 24)  # +++++++++++++++
+    # vscr = Vscr(78, 24)  # +++++++++++++++
     game.vscr = vscr
     vscr.game = game
     # meswin for scrollwin
