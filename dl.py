@@ -864,11 +864,10 @@ class Party:
 
 class Member:
     # Represents a character
-    def __init__(self, name, align, race, age):
+    def __init__(self, name, align, race):
         self.name = name
         self.align = align
         self.race = race
-        self.age = age
         self.level = 1
         self.ac = 10
         self.acplus = 0  # valid only in battle
@@ -914,14 +913,15 @@ class Member:
             f"{self.name.ljust(16)} L{self.level:3d} {self.align.name[:1].lower()}-{self.job.name[:3].lower()} {self.race.name.lower()}", start=' ')
         mw.print(f"", start=' ')
         mw.print(
-            f"strength {self.stat[0]:2d}  gold {self.gold:16d} lvl {self.level:5d}", start=' ')
+            f"strength {self.stat[0]:2d}  gold {self.gold:16d}   lvl {self.level:5d}", start=' ')
         mw.print(
-            f"    i.q. {self.stat[1]:2d}  e.p. {self.exp:16d} age {self.age:5d}", start=' ')
+            f"    i.q. {self.stat[1]:2d}  e.p. {self.exp:16d}   rip {self.rip:5d}", start=' ')
         mw.print(
-            f"   piety {self.stat[2]:2d}  h.p.  {self.hp:7d}/{self.maxhp:7d} a.c.{self.ac:5d}", start=' ')
+            f"   piety {self.stat[2]:2d}  next {self.nextexp:16d}   a.c.{self.ac:5d}", start=' ')
         mw.print(
-            f"vitality {self.stat[3]:2d}  rip  {self.rip:7d}     marks {self.marks:8d}", start=' ')
-        mw.print(f" agility {self.stat[4]:2d}", start=' ')
+            f"vitality {self.stat[3]:2d}  marks {self.marks:15d}", start=' ')
+        mw.print(
+            f" agility {self.stat[4]:2d}  h.p.  {self.hp:7d}/{self.maxhp:7d}", start=' ')
         mw.print(
             f"    luck {self.stat[5]:2d}  status {self.state.name}", start=' ')
         mw.print(f"", start=' ')
@@ -1223,6 +1223,7 @@ class Member:
             if c == Job(jobnum).name[:1].lower():
                 break
         self.job = Job(jobnum)
+        self.nextexp = level_table[Job(jobnum)][0]
         if self.job == Job.FIGHTER:
             self.maxhp = self.hp = random.randint(8, 15)
         elif self.job == Job.MAGE:
@@ -2221,9 +2222,9 @@ class Battle:
         self.game = game
         self.boss = False
         v = game.vscr
-        self.mw = Meswin(v, v.width//8, v.height//8+5,
-                         v.width*3//4, 12, frame=True)
-        self.ew = Meswin(v, v.width//8, v.height//8,
+        self.mw = Meswin(v, v.width//8, v.height//8+4,
+                         v.width*3//4, 10, frame=True)
+        self.ew = Meswin(v, v.width//8, v.height//8-1,
                          v.width*3//4, 4, frame=True)
 
     def new_battle(self):
@@ -3377,7 +3378,8 @@ def create_character(game):
                 break
     vscr.disp_scrwin()
 
-    c = mw.input_char("Choose race - h)uman e)lf d)warf g)nome o)hobbit",
+    mw.print("Choose race -")
+    c = mw.input_char("  h)uman e)lf d)warf g)nome o)hobbit",
                       values=['h', 'e', 'd', 'g', 'o'])
     if c == 'h':
         race = Race.HUMAN
@@ -3403,19 +3405,7 @@ def create_character(game):
     mw.print(f"Alignment: {align.name.lower()}")
     vscr.disp_scrwin()
 
-    while True:
-        age = mw.input("How old is he/she? (13-199)")
-        try:
-            age = int(age)
-            if 12 < age < 200:
-                break
-        except:
-            pass
-        vscr.disp_scrwin()
-    mw.print(f"{age} years old.")
-    vscr.disp_scrwin()
-
-    ch = Member(name, align, race, age)
+    ch = Member(name, align, race)
     ch.distribute_bonus(game)
 
 
@@ -4436,7 +4426,7 @@ def main():
     party.place = Place.CASTLE
     w, h = terminal_size()
     vscr = Vscr(w, h-1)  # singleton
-    # vscr = Vscr(78, 24)  # +++++++++++++++
+    vscr = Vscr(78, 24)  # +++++++++++++++
     game.vscr = vscr
     vscr.game = game
     # meswin for scrollwin
