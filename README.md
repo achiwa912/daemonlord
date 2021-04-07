@@ -1,32 +1,38 @@
 
 # Table of Contents
 
-1.  [dl.py - Daemon Lord](#org7a34d9e)
-    1.  [Overview](#orgc7e4ae2)
-        1.  [Wizardry clone](#orgf4de8e0)
-        2.  [Rogue-like dungeon maps](#org76d6e51)
-        3.  [A little more friendly than the original](#org2342d36)
-    2.  [Important: Under development](#orgc677279)
-2.  [Installation](#org41dac59)
-3.  [Prerequisites](#org86ad797)
-4.  [How to Play](#org62d014b)
-5.  [License](#orgbd1090c)
-6.  [Quick Guide to Daemon Lord](#org6734161)
-    1.  [Game start](#org9e8440f)
-    2.  [Edge of Town](#org8df31d0)
-        1.  [Training Grounds](#org5ddf009)
-    3.  [Castle](#org9bb964d)
-        1.  [Hawthorne Tavern](#org0497c68)
-        2.  [Trader Jay's](#orgf673ad5)
-        3.  [Equip](#orgf7b34d9)
-    4.  [Save and Resume](#orgb2f6a3c)
-    5.  [Dungeon](#orgd3ede3c)
-        1.  [Walk around the Dungeon](#org0417d85)
-        2.  [Battle](#org6a707a8)
+1.  [dl.py - Daemon Lord](#org532a630)
+    1.  [Overview](#org27cb574)
+        1.  [Wizardry clone](#org795c107)
+        2.  [Rogue-like dungeon maps](#org4af854e)
+        3.  [A little more friendly than the original](#org4e62e9e)
+    2.  [Important notice: Under development](#org882529c)
+2.  [Installation](#org97069f5)
+3.  [Prerequisites](#org0094b6c)
+4.  [How to Play](#orgc3cc554)
+5.  [License](#orgfd9f63e)
+6.  [Quick Tour of Daemon Lord](#org2bb327a)
+    1.  [Game start](#orgd8c4ce8)
+    2.  [Edge of Town](#org8e62709)
+        1.  [Training Grounds](#org1e25c25)
+    3.  [Castle](#org5ec3712)
+        1.  [Hawthorne Tavern](#org168e246)
+        2.  [Trader Jay's](#orgfc705c2)
+        3.  [Equip](#orgf5d5d69)
+    4.  [Save and Resume](#org7188287)
+    5.  [Dungeon](#org84f234d)
+        1.  [Walk around the Dungeon](#orgc6534b3)
+        2.  [Battle](#orgd287008)
+        3.  [Friendly monsters](#org1f71867)
+        4.  [Get ouf of the Dungeon](#orgb7dc2b4)
+        5.  [A new dungeon!](#org4dc5981)
+        6.  [Camp](#org37a835d)
+    6.  [Castle](#org7e74f1b)
+        1.  [The Lakehouse Inn](#org55a40d4)
 
 
 
-<a id="org7a34d9e"></a>
+<a id="org532a630"></a>
 
 # dl.py - Daemon Lord
 
@@ -58,12 +64,12 @@ Daemon Lord is a Wizardry-clone RPG with rogue-like (ie, text-based), randomly-c
      6 faun       G-MAG   8  200 taika        .* *** encounter ***               ^
 
 
-<a id="orgc7e4ae2"></a>
+<a id="org27cb574"></a>
 
 ## Overview
 
 
-<a id="orgf4de8e0"></a>
+<a id="org795c107"></a>
 
 ### Wizardry clone
 
@@ -76,7 +82,7 @@ Daemon Lord is a Wizardry-clone RPG with rogue-like (ie, text-based), randomly-c
 -   Need to type spells and chest traps accurately
 
 
-<a id="org76d6e51"></a>
+<a id="org4af854e"></a>
 
 ### Rogue-like dungeon maps
 
@@ -85,11 +91,11 @@ Daemon Lord is a Wizardry-clone RPG with rogue-like (ie, text-based), randomly-c
 -   Maps are auto-generated.  Every time you go down the dungeon, you will see different maps
 
 
-<a id="org2342d36"></a>
+<a id="org4e62e9e"></a>
 
 ### A little more friendly than the original
 
--   Re-calculate the bonus value with '.' key when creating a character
+-   Re-calculate the bonus value with `.` key when creating a character
 -   Age doesn't matter anymore
 -   "tsubasa" spell (mage level 2) will take your party to known depth
 -   Save and resume anywhere in the dungeon, preserving floor maps and effective spells such as identification of monsters or protection
@@ -98,16 +104,16 @@ Daemon Lord is a Wizardry-clone RPG with rogue-like (ie, text-based), randomly-c
 -   Group heal spells for the entire party
 
 
-<a id="orgc677279"></a>
+<a id="org882529c"></a>
 
-## Important: Under development
+## Important notice: Under development
 
 Currently, DL (daemon lord) is under development and has tons of bugs and not-yet-implemented features.  It is below alpha quality and not playable yet as of April 6th, 2021.  Please note that your saved file might become obsolete and be invalidated.  Backward compatibility is not supported.  Anything might change anytime.
 
 Please send bug reports to achiwa912+gmail.com (replace '+' with '@').
 
 
-<a id="org41dac59"></a>
+<a id="org97069f5"></a>
 
 # Installation
 
@@ -116,7 +122,7 @@ Please send bug reports to achiwa912+gmail.com (replace '+' with '@').
 3.  Run "python dl.py"
 
 
-<a id="org86ad797"></a>
+<a id="org0094b6c"></a>
 
 # Prerequisites
 
@@ -131,12 +137,12 @@ Please send bug reports to achiwa912+gmail.com (replace '+' with '@').
 -   items.csv - item data file
 
 
-<a id="org62d014b"></a>
+<a id="orgc3cc554"></a>
 
 # How to Play
 
-1.  Create and register characters at Proving Grounds
-2.  Form a party at Hawthorne's Tavern
+1.  Create and register characters at Training Grounds
+2.  Form a party at Hawthorne Tavern
 3.  Purchase weapons and armors at Trader Jay's
 4.  Equip weaspns and armors at Hawthorne's Tavern
 5.  Go in to the dungeon
@@ -145,10 +151,10 @@ Please send bug reports to achiwa912+gmail.com (replace '+' with '@').
 8.  Get some rest at the Lakehouse Inn (you might level up)
 
 You can save either at Edge of Town or from the Camp menu.
-You can do resume operation only from Edge of Town.
+You can perform resume operation only from Edge of Town.
 
 
-<a id="orgbd1090c"></a>
+<a id="orgfd9f63e"></a>
 
 # License
 
@@ -156,12 +162,12 @@ Daemon Lord is under [MIT license](https://en.wikipedia.org/wiki/MIT_License).
 Daemon Lord - Copyright (C) 2021 Kyosuke Achiwa
 
 
-<a id="org6734161"></a>
+<a id="org2bb327a"></a>
 
-# Quick Guide to Daemon Lord
+# Quick Tour of Daemon Lord
 
 
-<a id="org9e8440f"></a>
+<a id="orgd8c4ce8"></a>
 
 ## Game start
 
@@ -195,12 +201,12 @@ DL starts with the screen below at the Castle.
 When you first start the game, you need to go to Edge of Town (press `e`) > Training Grounds (press `t`), and then create characters (press `c`).
 
 
-<a id="org8df31d0"></a>
+<a id="org8e62709"></a>
 
 ## Edge of Town
 
 
-<a id="org5ddf009"></a>
+<a id="org1e25c25"></a>
 
 ### Training Grounds
 
@@ -310,7 +316,7 @@ As you have already noticed, DL gives you a guide of which letter you can type w
 Have you created six characters?  Then, you should go to Castle > Hawthorne Tavern to form a party.  Type `l` to leave the Training Grounds and then type `c` to go to Castle.
 
 
-<a id="org9bb964d"></a>
+<a id="org5ec3712"></a>
 
 ## Castle
 
@@ -325,7 +331,7 @@ Have you created six characters?  Then, you should go to Castle > Hawthorne Tave
 From the Castle menu, you can visit several places, but you want to go to Hawthorne Tavern now so type `h`.
 
 
-<a id="org0497c68"></a>
+<a id="org168e246"></a>
 
 ### Hawthorne Tavern
 
@@ -357,11 +363,11 @@ Now, they are shown in the party window at the bottom left of the screen.
 Before heading straight to the dungeon, we need to purchase weapons and armors, and equip them.  So, let's go to Castle > Trader Jay's for some shopping.
 
 
-<a id="orgf673ad5"></a>
+<a id="orgfc705c2"></a>
 
 ### Trader Jay's
 
-Each character is given between 100 and 200 gold upon creation.  You can expect a party with six members would have roughly 600 gold in total.
+Each character is given between 100 and 200 gold upon creation.  You can expect a party with six members would have roughly 900 gold in total.
 
 At Trader Jay's, you'll be asked who in the party to enter the store.  Specify the number of a member in the party.  You can buy, sell, uncurse, identify items.  You can also pool gold here.  Choose `b` for shopping.
 
@@ -371,7 +377,7 @@ At Trader Jay's, you'll be asked who in the party to enter the store.  Specify t
     | *   You have 102 gold.                               |            
     |   b)uy s)ell u)ncurse i)dentify p)ool gold l)eave >  |            
 
-Another window opens for items they sell.  This is the weapon list page.  Use `j, k` keys to move the cursor (`>`).  Let's type `x` and buy a long sword for fighters.
+Another window opens for items they sell.  This is the weapon list page.  Use `j, k` keys to move the cursor (`>`).  Let's type `x` and buy long swords for fighters.
 
     daemon lord - dl - [trader_jays] floor:?? (???/???)                          
     	   | ab has 102 gold                          |                      
@@ -411,16 +417,16 @@ Tip: Recommended shopping list:
 -   priest - sling (if you can still afford it)
 -   mage - (nothing)
 
-sling is a long-range weapon that everyone can use.  You can't expect much from sling and its damage is at best 1, but better than nothing.
+sling is a long-range weapon that everyone can use.  You can't expect much from sling and its damage is at best 1 or 2, but better than nothing.
 
 
-<a id="orgf7b34d9"></a>
+<a id="orgf5d5d69"></a>
 
 ### Equip
 
 You can equip items at Hawthorne Tavern or while camping in the dungeon.  Let's go to Hawthorne Tavern.
 
-At Hatthorne Tavern, choose `i)nspect` > `i)tems` > <item number> > `e)quip` .
+At Hatthorne Tavern, choose `i)nspect` > `i)tems` > item number > `e)quip` .
 
     daemon lord - dl - [hawthorne_tavern] floor:?? (???/???)                     
     
@@ -439,10 +445,10 @@ At Hatthorne Tavern, choose `i)nspect` > `i)tems` > <item number> > `e)quip` .
            |   5)                    6)                                 |        
            |   7)                    8)                                 |
 
-Equipped items will have `*` mark next to the item name.  You need to equip one item at a time for each member.  To change members, type `j, k` .
+Equipped items will have `*` mark next to the item name.  You need to equip one item at a time and for each member.  To change members, type `j, k` .
 
 
-<a id="orgb2f6a3c"></a>
+<a id="org7188287"></a>
 
 ## Save and Resume
 
@@ -458,10 +464,10 @@ To save and quit the game, go to Edge of Town and type `S` (capital-S).
     | * Thank you for playing.                             |            
     | * See you soon.                                      | 
 
-You need to run `python dl.py` again to restart and resume the game.  Go to Edge of Town and choose `R)esume from saved data` .  That is capital-R.
+You need to run `python dl.py` again to restart and resume the game.  After restarting the game, go to Edge of Town and choose `R)esume from saved data` .  That is, capital-R.  Automatic resume is not supported.
 
 
-<a id="orgd3ede3c"></a>
+<a id="org84f234d"></a>
 
 ## Dungeon
 
@@ -494,10 +500,10 @@ Now, you are ready for the Dungeon.  At Edge of Town, choose `m)aze` and voila!
 
 Congratulations!
 You (`@`) are now in the dungeon and on the upstairs to the outside world.
-`^` indicates areas that you have not visited yet.  `.` is a floor that you can walk on.  
+`^` indicates areas that you have not visited yet.  `.` is a floor tile that you can walk on.  
 
 
-<a id="org0417d85"></a>
+<a id="orgc6534b3"></a>
 
 ### Walk around the Dungeon
 
@@ -521,7 +527,7 @@ The dungeon is a little dark and only 3x3 tiles around you are visible.  Let's m
     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-`<` is upstairs.  `#` is a rock wall.  `+` is a door.  Let's move next to a door and type `o` for open > and direction `k` - north.
+You can now see inside a 5x4 room.  `<` is upstairs.  `#` is a stone wall or a rock.  `+` is a door.  Let's move next to a door and type `o` for open > and direction, in this case, `k` - north.
 
     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^###.###^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -554,11 +560,11 @@ Oops, another door.  Let's open again.
     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^###+###^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
-<a id="org6a707a8"></a>
+<a id="orgd287008"></a>
 
 ### Battle
 
-Continue to walk around &#x2026; and, !?  See `*** encounter ***` ?
+Continue to walk around &#x2026; and, !?  See `*** encounter ***` in the message window at the bottom right?
 
     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#####+#####^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#.........#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -581,7 +587,7 @@ Continue to walk around &#x2026; and, !?  See `*** encounter ***` ?
      5 emily      G-PRI  10   13 OK           ^* west                            ^
      6 faun       G-MAG  10    7 OK           ^* *** encounter ***               ^
 
-You encountered a group of blue slimes!
+You encountered a group of blue slimes!  Two new windows will open for a battle.  The upper one is the monster list window.  The lower one is the battle message window.
 
      daemon lord - dl - [battle] floor:?? (???/???) ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -604,7 +610,7 @@ You encountered a group of blue slimes!
     ^^^^^^^^^| > shunmin                                            |^^^^^^^^^^^^^
     ^^^^^^^^^| * Press any key or t)ake back >                      |^^^^^^^^^^^^^
 
-Five members will fight and Faun the mage will cast shunmin spell, which forces a group of enemies into sleep.
+Five members will fight and Faun the mage will cast "shunmin" (spring sleep) spell, which forces a group of enemies into asleep.
 
      daemon lord - dl - [battle] floor:?? (???/???) ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -624,9 +630,9 @@ Five members will fight and Faun the mage will cast shunmin spell, which forces 
     ^^^^^^^^^|   times for 1 damage.                                |^^^^^^^^^^^^^
     ^^^^^^^^^|   blue slime is killed.                              |^^^^^^^^^^^^^
 
-Everybody is fighting.  Umm, shunmin forced to sleep only one out of three.
+Everybody is fighting.  Umm, "shunmin" put only one out of three slimes to sleep.  shunmin is more effective against animal or human type monsters.
 
-Killed one of them.  Notice `1) 2 blue slimes    (1))` ?  Because 2-1=1 is asleep.
+Cam killed one of them.  Notice `1) 2 blue slimes    (1)` ?  Because 1 out of 2 is asleep.
 
     ^^^^^^^^^|   times for 1 damage.                                |^^^^^^^^^^^^^
     ^^^^^^^^^|   blue slime is killed.                              |^^^^^^^^^^^^^
@@ -639,7 +645,7 @@ Killed one of them.  Notice `1) 2 blue slimes    (1))` ?  Because 2-1=1 is aslee
     ^^^^^^^^^|   times for 6 damage.                                |^^^^^^^^^^^^^
     ^^^^^^^^^|   blue slime is killed.                              |^^^^^^^^^^^^^
 
-Killed all three slimes.
+The party killed all three slimes.
 
      daemon lord - dl - [maze] floor:?? (???/???) ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -666,5 +672,277 @@ Killed all three slimes.
      5 emily      G-PRI  10   13 OK           ^  Each survivor gets 27 e.p.      ^
      6 faun       G-MAG  10    7 OK           ^  Each survivor gets 9 gold.      ^
 
-Yeah!  Each survivor received 27 experience points and 9 golds from this battle.
+Yeah!  Each survivor received 27 experience points and 9 gold from this battle.
+
+
+<a id="org1f71867"></a>
+
+### Friendly monsters
+
+Sometimes, you encounter a friendly monster party.  You can choose either leave (`y`) or fight anyway (`n`).  In DL, random alignment reversal is not implemented so you can freely walk away or fight without any penalties.
+
+    ^^^^^^^^^|   1) 5 orcs                     (5)                  |^^^^^^^^^^^^^
+    ^^^^^^^^^|                                                      |^^^^^^^^^^^^^
+    ^^^^^^^^^|                                                      |^^^^^^^^^^^^^
+    ^^^^^^^^^|                                                      |^^^^^^^^^^^^^
+    ^^^^^^^^^^^^#.....#^^^^#....#^^^^^########^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^| * You encountered friendly orcs.                     |^^^^^^^^^^^^^
+    ^^^^^^^^^|   Leave? (y/n) >                                     |^^^^^^^^^^^^^
+
+Of course, you will get no e.p. or gold if you chose to walk away.
+
+    4 dia        N-THI  10    7 OK           ^* *** encounter ***               ^
+    5 emily      G-PRI  10   13 OK           ^  Each survivor gets 0 e.p.       ^
+    6 faun       G-MAG  10    7 OK           ^  Each survivor gets 0 gold.      ^
+
+
+<a id="orgb7dc2b4"></a>
+
+### Get ouf of the Dungeon
+
+     daemon lord - dl - [maze] floor:?? (???/???) #####.#^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#.........#.......#^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#.........#......+#######^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#.........#......#,.....#^^^^^^^^^^#########
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^###.#########.####......#^^^^^^^^^^#........
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^###.###^^#.......#......#^^^^^^^^^^#........
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#.....#^^#.......#......#^^^^^^^^^^#........
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#.....#^^#.........++.###^^^^^^^^^^#........
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#..@..#^^#.......####.#^^^^^^^^###########.#
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#.....#^^#.......#^^#.#^^^^^^^^#...###,....#
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^###.###^^#########^^#.#^^^^^^^^#............
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#.#^^^^^^^^^^^^^^^#.#^^^^^^^^#...###.....#
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^###.###^^^^^^^^^^^^^#.#^^^^^^^^#...#^#######
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#.....#^^^^######^^^#.#^^^^^^#####.#####^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#.....#^^^^#....#^^^#.#^^^^^^#....,....#^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#.....#^^^^#....#####.########.........#^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#.....######....+.+.+.+......+.........#####
+     # name       class  ac   hp status       .* north                           .
+     1 ab         G-FIG   4   13 OK           #* north                           #
+     2 ben        G-FIG   4    7 OK           ^* east                            ^
+     3 cam        G-FIG   4    5 OK           ^* east                            ^
+     4 dia        N-THI  10    7 OK           ^* north                           ^
+     5 emily      G-PRI  10   13 OK           ^* north                           ^
+     6 faun       G-MAG  10    7 OK           ^  Exit from dungeon? (y/n) >      ^
+
+Walked around a lot on this floor, and now mage's MP is exhausted and some are injured.  Let's get back to the outside world.  `<` is the upstairs to outside.
+
+    daemon lord - dl - [edge_of_town] floor:?? (???/???)                         
+    
+    
+    
+    	 | * *** Edge of Town ***                               |            
+    	 |   m)aze                                              |            
+    	 |   t)raining grounds                                  |            
+    	 |   c)astle                                            |            
+    	 |   S)ave and quit game                                |            
+    	 |   R)esume from saved data                            |            
+    	 |   Command?  >                                        |            
+    	 |                                                      |            
+    	 |                                                      |            
+    	 |                                                      |            
+    
+    
+    
+    # name       class  ac   hp status        * east                             
+    1 ab         G-FIG   4   13 OK            * north                            
+    2 ben        G-FIG   4    7 OK            * north                            
+    3 cam        G-FIG   4    5 OK            * south                            
+    4 dia        N-THI  10    7 OK            * west                             
+    5 emily      G-PRI  10   13 OK            * west                             
+    6 faun       G-MAG  10    7 OK              Exit from dungeon? (y/n) > y     
+
+The party is back at Edge of Town.  They are safe again!
+
+
+<a id="org4dc5981"></a>
+
+### A new dungeon!
+
+&#x2026; but wait, you should have healed injuries before geting out!  No worries.  You can go back to the dungeon with `m)aze` again.
+
+     daemon lord - dl - [maze] floor:?? (???/???) ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^...^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^.@.^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^...^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+     # name       class  ac   hp status       ^* east                            ^
+     1 ab         G-FIG   4   13 OK           ^* north                           ^
+     2 ben        G-FIG   4    7 OK           ^* north                           ^
+     3 cam        G-FIG   4    5 OK           ^* south                           ^
+     4 dia        N-THI  10    7 OK           ^* west                            ^
+     5 emily      G-PRI  10   13 OK           ^* west                            ^
+     6 faun       G-MAG  10    7 OK           ^  Exit from dungeon? (y/n) > y    ^
+
+What?  We can only see 3x3 tiles around the party.  Where has the map data gone?  Actually, they are in a different dungeon map.  Dungeon map was regenerated when the party came to the dungeon again.  Let's walk around a little.
+
+     daemon lord - dl - [maze] floor:?? (???/???) ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^##+###^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#....#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#....+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#....#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#....#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^##+.##^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^...@#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^....#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^..<.#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^....#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^....#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#####^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+See the map is different this time?
+
+
+<a id="org37a835d"></a>
+
+### Camp
+
+Anyway, type `c` key for camping.  The camp menu opens.
+
+     daemon lord - dl - [camp] floor:?? (???/???) ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^| * *** Camp ***                                             |^^^^^^
+    ^^^^^^^^^^|   i)nspect                                                 |^^^^^^
+    ^^^^^^^^^^|   r)eorder party                                           |^^^^^^
+    ^^^^^^^^^^|   S)ave and quit game                                      |^^^^^^
+    ^^^^^^^^^^|   l)eave                                                   |^^^^^^
+    ^^^^^^^^^^|   Command? >                                               |^^^^^^
+    ^^^^^^^^^^|                                                            |^^^^^^
+
+At camp, you can `i)nspect` characters, `r)eorder party` or `S)ave and quit game` .  Let's try `i)nspect` .
+
+     daemon lord - dl - [camp] floor:?? (???/???) ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^|   ab               L  1 g-fig dwarf                        |^^^^^^
+    ^^^^^^^^^^|                                                            |^^^^^^
+    ^^^^^^^^^^|   strength 18  gold               21   lvl     1           |^^^^^^
+    ^^^^^^^^^^|       i.q.  7  e.p.              183   rip     0           |^^^^^^
+    ^^^^^^^^^^|      piety 10  next             1000   a.c.    4           |^^^^^^
+    ^^^^^^^^^^|   vitality 13  marks               2                       |^^^^^^
+    ^^^^^^^^^^|    agility 11  h.p.       13/     13                       |^^^^^^
+    ^^^^^^^^^^|       luck  8  status OK                                   |^^^^^^
+    ^^^^^^^^^^|                                                            |^^^^^^
+    ^^^^^^^^^^|   mage  0/0/0/0/0/0/0   priest  0/0/0/0/0/0/0/             |^^^^^^
+    ^^^^^^^^^^|   1) *long sword        2) *chain mail                     |^^^^^^
+    ^^^^^^^^^^|   3) *large shield      4)                                 |^^^^^^
+    ^^^^^^^^^^|   5)                    6)                                 |^^^^^^
+    ^^^^^^^^^^|   7)                    8)                                 |^^^^^^
+    ^^^^^^^^^^|                                                            |^^^^^^
+    ^^^^^^^^^^|   i)tems s)pells jk)change member l)leave >                |^^^^^^
+     # name   |                                                            |     ^
+     1 ab         G-FIG   4   13 OK           ^* south                           ^
+     2 ben        G-FIG   4    7 OK           ^* *** encounter ***               ^
+     3 cam        G-FIG   4    5 OK           ^  Each survivor gets 0 e.p.       ^
+     4 dia        N-THI  10    7 OK           ^  Each survivor gets 0 gold.      ^
+     5 emily      G-PRI  10   13 OK           ^* south                           ^
+     6 faun       G-MAG  10    7 OK           ^* south                           ^
+
+It shows the info of the front member Ab.  You can change member shown with `j, k` keys.
+
+    ^^^^^^^^^^|   emily            L  1 g-pri gnome                        |^^^^^^
+    ^^^^^^^^^^|                                                            |^^^^^^
+    ^^^^^^^^^^|   strength  7  gold               21   lvl     1           |^^^^^^
+    ^^^^^^^^^^|       i.q.  7  e.p.              183   rip     0           |^^^^^^
+    ^^^^^^^^^^|      piety 18  next             1050   a.c.   10           |^^^^^^
+    ^^^^^^^^^^|   vitality 13  marks               0                       |^^^^^^
+    ^^^^^^^^^^|    agility 14  h.p.       13/     13                       |^^^^^^
+    ^^^^^^^^^^|       luck  7  status OK                                   |^^^^^^
+    ^^^^^^^^^^|                                                            |^^^^^^
+    ^^^^^^^^^^|   mage  0/0/0/0/0/0/0   priest  2/0/0/0/0/0/0/             |^^^^^^
+    ^^^^^^^^^^|   1) *sling             2)                                 |^^^^^^
+    ^^^^^^^^^^|   3)                    4)                                 |^^^^^^
+    ^^^^^^^^^^|   5)                    6)                                 |^^^^^^
+    ^^^^^^^^^^|   7)                    8)                                 |^^^^^^
+    ^^^^^^^^^^|                                                            |^^^^^^
+    ^^^^^^^^^^|   i)tems s)pells jk)change member l)leave >                |^^^^^^
+
+Emily is a priest and can cast healing spells.  Type `s)pell` > `c)ast spell` and type "jiai" which heals HP of a member.
+
+    ^^^^^^^^^^|   emily            L  1 g-pri gnome                        |^^^^^^
+    ^^^^^^^^^^|                                                            |^^^^^^
+    ^^^^^^^^^^|   strength  7  gold               21   lvl     1           |^^^^^^
+    ^^^^^^^^^^|   | * Spell memu:                          |   0           |^^^^^^
+    ^^^^^^^^^^|   |   c)ast spell v)iew list l)eave > c    |  10           |^^^^^^
+    ^^^^^^^^^^|   | * What spell to cast?                  |               |^^^^^^
+    ^^^^^^^^^^|   | > jiai                                 |               |^^^^^^
+    ^^^^^^^^^^|   |   Who? - # or l)eave > 2               |               |^^^^^^
+    ^^^^^^^^^^|   |   emily started casting jiai           |               |^^^^^^
+    ^^^^^^^^^^|   |   ben's HP was fully restored.         |0/             |^^^^^^
+    ^^^^^^^^^^|   | * Spell memu:                          |               |^^^^^^
+    ^^^^^^^^^^|   |   c)ast spell v)iew list l)eave >      |               |^^^^^^
+
+Looks like, Ben's HP is fully restored.  Do that again for Cam.
+
+    ^^^^^^^^^^|   |   ben's HP was fully restored.         |               |^^^^^^
+    ^^^^^^^^^^|   | * Spell memu:                          |               |^^^^^^
+    ^^^^^^^^^^|   |   c)ast spell v)iew list l)eave > c    |               |^^^^^^
+    ^^^^^^^^^^|   | * What spell to cast?                  |               |^^^^^^
+    ^^^^^^^^^^|   | > jiai                                 |0/             |^^^^^^
+    ^^^^^^^^^^|   |   Who? - # or l)eave > 3               |               |^^^^^^
+    ^^^^^^^^^^|   |   emily started casting jiai           |               |^^^^^^
+    ^^^^^^^^^^|   |   cam's HP was fully restored.         |               |^^^^^^
+
+Great!
+
+Let's exit from dungeon and head to Edge of Town > Castle > the Lakehouse Inn.
+
+
+<a id="org7e74f1b"></a>
+
+## Castle
+
+
+<a id="org55a40d4"></a>
+
+### The Lakehouse Inn
+
+    | * *** Castle ***                                     |            
+    |   h)awthorne tavern                                  |            
+    |   t)rader jay's                                      |            
+    |   i)lakehouse inn                                    |            
+    |   m)oss general hospital                             |            
+    |   e)dge of town                                      |            
+    |   Command? >                                         |            
+
+Back at Castle, type `i` for Lakehouse Inn.
+
+    | * *** The Lakehouse Inn ***                          |            
+    |   Welcome.  You must be very tired.                  |            
+    |   You have 232 gold in total.                        |            
+    |   c)ots                  12 gold                     |            
+    |   s)tandard rooms       120 gold                     |            
+    |   d)elux rooms          300 gold                     |            
+    |   v)lake view suites   1200 gold                     |            
+    |   p)residential suites 3000 gold                     |            
+    |   or l)eave                                          |            
+    |   Which rooms to stay today? >                       |            
+
+Delux room sounds good, but as we have only 232 gold, let's choose `c)ots` tonight.
+
+    |   Which rooms to stay today? > c                     |            
+    | * Today's dinner is cabbage soup.                    |            
+    | * ab went to bed...                                  |            
+    | * ben went to bed...                                 |            
+    | * cam went to bed...                                 |            
+    | * dia went to bed...                                 |            
+    | * emily went to bed...                               |            
+    | * faun went to bed...                                |            
+
+If their e.p. reach the next level, their level will go up while they are asleep at the inn.
+
+In DL, age doesn't matter.  They can stay at the inn as long as they wish without getting old.  All the party members stay at the same room type.
+
+Magic points are fully restored rgardless of the room they choose.  HPs being restored depend on the room they stay.  More comfortable (and thus expensive) rooms will heal them better.  Dinner is better in those rooms as well.
 
