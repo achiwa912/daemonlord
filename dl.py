@@ -120,6 +120,9 @@ random_messages = [
      "'You are doomed.  Go back while you can.'"],
     ["You found someone's journal.  On the last page, you read:",
      "'I would pay a millon gold if I could see sun light again.'"],
+    ["You heard a voice in your head.",
+     "'Do you know that this dungeon is a playground of the Lord?'",
+     "'Do you think that you know what you are doing?'"],
 ]
 
 
@@ -269,9 +272,7 @@ class Vscr:
         self.display()
         delta = time.time() - start
         try:
-            print(f"\033[{self.height};0H", end='')
-            print(f"\n{party.x:03d}/{party.y:03d}, {delta:.5f}, {self.prev_vscr_view}",
-                  end='', flush=True)
+            print(f"\033[{self.height};0H", end='', flush=True)
         except:
             pass
 
@@ -959,8 +960,8 @@ class Member:
         while True:
             self.disp_character(game)
             mw.print(f"", start=' ')
-            c1 = mw.input_char("i)tems s)pells jk)change member l)leave",
-                               values=['i', 's', 'j', 'k', 'l'])
+            c1 = mw.input_char("i)tems s)pells c)lass jk)change member l)leave",
+                               values=['i', 's', 'c', 'j', 'k', 'l'])
             if c1 == 'l':
                 mw.cls()
                 return 0  # leave
@@ -968,6 +969,8 @@ class Member:
                 self.item_menu(game)
             elif c1 == 's':
                 self.spell_menu(game)
+            elif c1 == 'c' and game.party.place == Place.TRAINING_GROUNDS:
+                self.change_classes(game)
             elif c1 == 'j':
                 return 1  # next member
             elif c1 == 'k':
@@ -1180,6 +1183,73 @@ class Member:
         vscr.disp_scrwin()
         return job
 
+    def change_classes(self, game):
+        """
+        Change classes
+        """
+        v = game.vscr
+        mw = v.meswins[-1]
+        statplus = [0, 0, 0, 0, 0, 0]
+        jobs = [';']
+        jobnames = ''
+        line = ''
+        for jobnum in range(8):
+            if self.job_applicable(statplus, jobnum) and self.job != Job(jobnum):
+                jobnames = ' '.join([jobnames, Job(jobnum).name.lower()])
+                line = '/'.join([line, Job(jobnum).name[:1].lower()])
+                jobs.append(Job(jobnum).name[:1].lower())
+        line = line[1:]  # remove the first '/'
+        mw.print(f"{self.name} can apply for:")
+        mw.print(f"  {jobnames}")
+        c = mw.input_char(f"Which job to apply? ({line} or ;)leave)")
+        if c == ';' or mw.input_char("Are you sure? (y/n)",
+                                     values=['y', 'n']) != 'y':
+            mw.print("Cancelled.")
+            v.disp_scrwin()
+            return
+        for jobnum in range(8):
+            if c == Job(jobnum).name[:1].lower():
+                break
+        self.job = Job(jobnum)
+        self.nextexp = level_table[Job(jobnum)][0]
+        self.exp = 0
+        self.level = 1
+        for item in self.items:
+            item[1] = item[2] = False
+        self.calc_ac(game)
+        for i in range(6):
+            self.stat[i] = race_status[self.race][i]
+        if self.job not in [Job.MAGE, Job.SAMURAI, Job.BISHOP]:
+            for spell_level in range(7):
+                mastered = sum([
+                    1 for spell in game.spelldef
+                    if game.spelldef[spell].level == spell_level+1 and
+                    spell in self.mspells])
+                self.mspell_max[spell_level] = mastered
+                self.mspell_cnt[spell_level] = mastered
+        if self.job not in [Job.PRIEST, Job.LORD, Job.BISHOP]:
+            for spell_level in range(7):
+                mastered = sum([
+                    1 for spell in game.spelldef
+                    if game.spelldef[spell].level == spell_level+1 and
+                    spell in self.pspells])
+                self.pspell_max[spell_level] = mastered
+                self.pspell_cnt[spell_level] = mastered
+        if self.job == Job.MAGE:
+            self.mspells.append('onibi')
+            self.mspells.append('shunmin')
+            self.mspells = list(set(self.mspells))
+            self.mspell_max[0] = self.mspell_cnt[0] = max(
+                2, self.mspell_max[0])
+        elif self.job == Job.PRIEST:
+            self.pspells.append('jiai')
+            self.pspells.append('ikari')
+            self.pspells = list(set(self.pspells))
+            self.pspell_max[0] = self.pspell_cnt[0] = max(
+                2, self.pspell_max[0])
+        mw.print(f"{self.name} has become a novice {self.job.name.lower()}.")
+        v.disp_scrwin()
+
     def distribute_bonus(self, game):
         """
         Bonus assignment and deciding class main routine
@@ -1187,7 +1257,7 @@ class Member:
         v = game.vscr
         newwin = False
         mw = v.meswins[-1]
-        if mw.height < 14:
+        if mw.height < 14:  # if exisiting window is too narrow
             mw = Meswin(v, 13, 2, 55, 14, frame=True)
             v.meswins.append(mw)
             newwin = True
@@ -1819,6 +1889,56 @@ class Floor:
         s = self.floor_data.decode()
         return f"Floor(size: {self.x_size}x{self.y_size}, floor: {self.floor} - {s})"
 
+    def ending(self, game):
+        """
+        Show ending messages
+        """
+        v = game.vscr
+        v.cls()
+        mw = v.meswins[-1]
+        mw.print("Although defeated, the demonic figure looks intact.")
+        mw.print("He talked in a calm voice.")
+        v.disp_scrwin()
+        getch(wait=True)
+        mw.print(
+            "'Good.  You are exceptionally good soldiers.  I am impressed.'",
+            start=' ')
+        v.disp_scrwin()
+        getch(wait=True)
+        mw.print(
+            "'You earthlings have defeated a self of mine.  It was a good battle.'",
+            start=' ')
+        v.disp_scrwin()
+        getch(wait=True)
+        mw.print(
+            "'You have just broken the self of order.  Now, chaos has been brought to your world.  Ancient gods and daemomns are released.  You will see all kinds of plagues and disasters.'",
+            start=' ')
+        v.disp_scrwin()
+        getch(wait=True)
+        mw.print(
+            "'To prevent it from happening, you will need to go further deep.  Look for those gods and daemons, and defeat them.'",
+            start=' ')
+        v.disp_scrwin()
+        getch(wait=True)
+        mw.print(
+            "'But, they are immortals.  You can not just kill them.  You need to defeat them again and again.'",
+            start=' ')
+        v.disp_scrwin()
+        getch(wait=True)
+        mw.print(
+            "'I will also wait for you again.  Meet me at further deep down.  My other selves want to have fun, too.'",
+            start=' ')
+        v.disp_scrwin()
+        getch(wait=True)
+        mw.print(
+            "The demonic figure fell slient.  And before your eyes, he started to become transparent, and disappeared in the air.")
+        v.disp_scrwin()
+        getch(wait=True)
+        mw.print(
+            "You just knew that you have changed something important in a non-reversal way.")
+        v.disp_scrwin()
+        getch(wait=True)
+
     def boss(self, game):
         v = game.vscr
         mw = Meswin(v, v.width//8, v.height//6,
@@ -1859,6 +1979,16 @@ class Floor:
         game.battle.boss = True
         game.battle.battle()
         game.battle.boss = False
+        if not game.party.members:  # lost the battle
+            v.mestins.pop()
+            return
+        if game.party.floor == 10:  # The last boss?
+            self.ending(game)
+        else:
+            mw.print("You won the battle, but it was no ordinary monster.")
+        mw.print("You see downstairs appearing in front of you.")
+        v.disp_scrwin()
+        getch(wait=True)
         v.meswins.pop()
 
     def key(self, game):
@@ -1919,13 +2049,16 @@ class Floor:
         evid = self.events[(x, y)][0]
         if evid == Eventid.RNDMSG:
             self.random_message(game)
+            self.events[(x, y)][1] = True  # processed
+            return True
         elif evid == Eventid.KEY:
             self.key(game)
         elif evid == Eventid.BOSS:
             self.boss(game)
-
-        self.events[(x, y)][1] = True  # processed
-        return True
+            if game.party.members:
+                self.events[(x, y)][1] = True  # processed
+                return True
+        return False  # Will see the event again
 
     def place_events(self, dungeon):
         """
@@ -3913,6 +4046,7 @@ def levelup(game, m):
         else:
             next = level_table[m.job][11] + \
                 level_table[m.job][12]*(m.level-12)
+        m.nextexp = next
         if next > m.exp:
             return levelup, learned
 

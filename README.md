@@ -1,45 +1,45 @@
 
 # Table of Contents
 
-1.  [dl.py - Daemon Lord](#org06b04c6)
-    1.  [Overview](#org542916a)
-        1.  [Wizardry clone](#org4345ce2)
-        2.  [Rogue-like dungeon maps](#orgd17d1a5)
-        3.  [A little more friendly than the original](#org6d19ecf)
-    2.  [Important notice: Under development](#org3034fcd)
-2.  [Installation](#orgdd9aacf)
-3.  [Prerequisites](#org7cf2bca)
-4.  [How to Play](#org6bca894)
-5.  [License](#orgc7d4159)
-6.  [Quick Tour of Daemon Lord](#org48b3b7c)
-    1.  [Game start](#orgcd5c9eb)
-    2.  [Edge of Town](#orgefce5b1)
-        1.  [Training Grounds](#orge6954c6)
-    3.  [Castle](#org66d134b)
-        1.  [Hawthorne Tavern](#org1af445f)
-        2.  [Trader Jay's](#orgb33dd7b)
-        3.  [Equip](#orge1efb02)
-    4.  [Save and Resume](#org264924e)
-    5.  [Dungeon](#org0095314)
-        1.  [Walk around the Dungeon](#orgde09f9e)
-        2.  [Battle](#org85513f6)
-        3.  [Chest](#orgcda3629)
-        4.  [Friendly monsters](#orgc151371)
-        5.  [Get ouf of the Dungeon](#orgebfbac6)
-        6.  [A new dungeon!](#orgd02917f)
-        7.  [Camp](#org89105df)
-        8.  [Save and Resume from camp](#orgba51673)
-    6.  [Castle](#orgd663207)
-        1.  [The Lakehouse Inn](#org4fd4c68)
-7.  [Spells](#org5e5f821)
-    1.  [Overview](#org395b65d)
-    2.  [Usage](#org3370c8c)
-    3.  [Mage Spells](#orgc8690d7)
-    4.  [Priest Spells](#org3141394)
+1.  [dl.py - Daemon Lord](#org7d7472a)
+    1.  [Overview](#orgb4a1f06)
+        1.  [Wizardry clone](#org673b20f)
+        2.  [Rogue-like dungeon maps](#org6f9aea2)
+        3.  [A little more friendly than the original](#org99b5434)
+    2.  [Important notice: Under development](#orgc8cbb7f)
+    3.  [Installation](#org85b3436)
+    4.  [Prerequisites](#orgc718839)
+    5.  [How to Play](#orgdf314fd)
+2.  [License](#org598f90b)
+3.  [Quick Tour of Daemon Lord](#orgcec7d66)
+    1.  [Game start](#org7363447)
+    2.  [Edge of Town](#org86c7b02)
+        1.  [Training Grounds](#org83f1406)
+    3.  [Castle](#orgdc3ff6f)
+        1.  [Hawthorne Tavern](#orge326824)
+        2.  [Trader Jay's](#org2a1f93d)
+        3.  [Equip](#orge9a62ff)
+    4.  [Save and Resume](#org6d0502d)
+    5.  [Dungeon](#org34ebc10)
+        1.  [Walk around the Dungeon](#orgb56c7d4)
+        2.  [Battle](#orge2ed9dc)
+        3.  [Chest](#org33189cc)
+        4.  [Friendly monsters](#org1d4f05f)
+        5.  [Get ouf of the Dungeon](#org0448eda)
+        6.  [A new dungeon!](#orgaadee0e)
+        7.  [Camp](#orga56a162)
+        8.  [Save and Resume from camp](#orgc5a2d9f)
+    6.  [Castle](#org6c1a6aa)
+        1.  [The Lakehouse Inn](#orgc68f91f)
+4.  [Spells](#orgd35dd82)
+    1.  [Overview](#org3823f21)
+    2.  [Usage](#orgbf5e7e9)
+    3.  [Mage Spells](#org63af324)
+    4.  [Priest Spells](#orgaad174a)
 
 
 
-<a id="org06b04c6"></a>
+<a id="org7d7472a"></a>
 
 # dl.py - Daemon Lord
 
@@ -71,12 +71,12 @@ Daemon Lord is a Wizardry-clone RPG with rogue-like (ie, text-based), randomly-c
      6 faun       G-MAG   8  200 taika        .* *** encounter ***               ^
 
 
-<a id="org542916a"></a>
+<a id="orgb4a1f06"></a>
 
 ## Overview
 
 
-<a id="org4345ce2"></a>
+<a id="org673b20f"></a>
 
 ### Wizardry clone
 
@@ -89,7 +89,7 @@ Daemon Lord is a Wizardry-clone RPG with rogue-like (ie, text-based), randomly-c
 -   Need to type spells and chest traps accurately
 
 
-<a id="orgd17d1a5"></a>
+<a id="org6f9aea2"></a>
 
 ### Rogue-like dungeon maps
 
@@ -98,7 +98,7 @@ Daemon Lord is a Wizardry-clone RPG with rogue-like (ie, text-based), randomly-c
 -   Maps are auto-generated.  Every time you go down the dungeon, you will see different maps
 
 
-<a id="org6d19ecf"></a>
+<a id="org99b5434"></a>
 
 ### A little more friendly than the original
 
@@ -111,35 +111,33 @@ Daemon Lord is a Wizardry-clone RPG with rogue-like (ie, text-based), randomly-c
 -   Group heal spells for the entire party
 
 
-<a id="org3034fcd"></a>
+<a id="orgc8cbb7f"></a>
 
 ## Important notice: Under development
 
-Currently, DL (daemon lord) is under development and has tons of bugs and not-yet-implemented features.  It is below alpha quality and not playable yet as of April 6th, 2021.  Please note that your saved file might become obsolete and be invalidated.  Backward compatibility is not supported.  Anything might change anytime.
+Currently, DL (daemon lord) is under development and has tons of bugs and not-yet-implemented features.  It might be below alpha quality and not comfortably playable yet as of April 8th, 2021.  Please note that your saved file might become obsolete and can't load because backward compatibility is not supported yet.  Anything might change anytime.
 
 Please send bug reports to achiwa912+gmail.com (replace '+' with '@').
 
 To-be-implemented features:
 
--   Change classes
--   Game clear
 -   Rescue defeated party members in the dungeon
 -   Monsters and items on floor 11 or deeper
 -   Background story
 
 
-<a id="orgdd9aacf"></a>
+<a id="org85b3436"></a>
 
-# Installation
+## Installation
 
 1.  Setup python 3.8 or later
 2.  Place dl.py, monsters.csv, spells.csv, items.csv in the same directory
 3.  Run "python dl.py"
 
 
-<a id="org7cf2bca"></a>
+<a id="orgc718839"></a>
 
-# Prerequisites
+## Prerequisites
 
 -   macOS, Linux (or Windows)
     -   Developed on macOS BigSur and Fedora 32
@@ -152,9 +150,9 @@ To-be-implemented features:
 -   items.csv - item data file
 
 
-<a id="org6bca894"></a>
+<a id="orgdf314fd"></a>
 
-# How to Play
+## How to Play
 
 1.  Create and register characters at Training Grounds
 2.  Form a party at Hawthorne Tavern
@@ -169,7 +167,7 @@ You can save either at Edge of Town or from the Camp menu.
 You can perform resume operation only from Edge of Town.
 
 
-<a id="orgc7d4159"></a>
+<a id="org598f90b"></a>
 
 # License
 
@@ -177,12 +175,12 @@ Daemon Lord is under [MIT license](https://en.wikipedia.org/wiki/MIT_License).
 Daemon Lord - Copyright (C) 2021 Kyosuke Achiwa
 
 
-<a id="org48b3b7c"></a>
+<a id="orgcec7d66"></a>
 
 # Quick Tour of Daemon Lord
 
 
-<a id="orgcd5c9eb"></a>
+<a id="org7363447"></a>
 
 ## Game start
 
@@ -216,12 +214,12 @@ DL (Daemon Lord) starts with the screen below at the Castle.
 When you first start the game, you need to go to Edge of Town (press `e`) > Training Grounds (press `t`), and then create characters (press `c`).
 
 
-<a id="orgefce5b1"></a>
+<a id="org86c7b02"></a>
 
 ## Edge of Town
 
 
-<a id="orge6954c6"></a>
+<a id="org83f1406"></a>
 
 ### Training Grounds
 
@@ -577,7 +575,7 @@ As you have already noticed, DL gives you a guide of which letter you can type w
 Have you created six characters?  Then, you should go to Castle > Hawthorne Tavern to form a party.  Type `l` to leave the Training Grounds and then type `c` to go to Castle.
 
 
-<a id="org66d134b"></a>
+<a id="orgdc3ff6f"></a>
 
 ## Castle
 
@@ -592,7 +590,7 @@ Have you created six characters?  Then, you should go to Castle > Hawthorne Tave
 From the Castle menu, you can visit several places, but you want to go to Hawthorne Tavern now so type `h`.
 
 
-<a id="org1af445f"></a>
+<a id="orge326824"></a>
 
 ### Hawthorne Tavern
 
@@ -624,7 +622,7 @@ Now, they are shown in the party window at the bottom left of the screen.
     6 faun       G-MAG  10    7 OK
 
 
-<a id="orgb33dd7b"></a>
+<a id="org2a1f93d"></a>
 
 ### Trader Jay's
 
@@ -685,7 +683,7 @@ Basically, the front (ie, the first three) members should equip heavily because 
 sling is a long-range weapon that everyone can use.  You can't expect much from sling and its damage is at best 1 or 2, but better than nothing.  Long-ranged weapons tend to be less powerful and more expensive than short-range ones.
 
 
-<a id="orge1efb02"></a>
+<a id="orge9a62ff"></a>
 
 ### Equip
 
@@ -713,7 +711,7 @@ At Hatthorne Tavern, first `i)nspect` a character and then choose `i)tems` > ite
 Equipped items will have `*` mark next to the item name.  You need to equip one item at a time and for each member.  To change members, type `j, k` .
 
 
-<a id="org264924e"></a>
+<a id="org6d0502d"></a>
 
 ## Save and Resume
 
@@ -732,7 +730,7 @@ To save and quit the game, go to Edge of Town and type `S` (capital-S).
 You need to run `python dl.py` again to restart and resume the game.  After restarting the game, go to Edge of Town and choose `R)esume from saved data` .  That is, capital-R.  Automatic resume is not supported.
 
 
-<a id="org0095314"></a>
+<a id="org34ebc10"></a>
 
 ## Dungeon
 
@@ -768,7 +766,7 @@ You (`@`) are now in the dungeon and on the upstairs to the outside world.
 `^` indicates areas that you have not visited yet.  `.` is a floor tile that you can walk on.  
 
 
-<a id="orgde09f9e"></a>
+<a id="orgb56c7d4"></a>
 
 ### Walk around the Dungeon
 
@@ -967,7 +965,7 @@ Oops, another door.  Let's open again.
     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^###+###^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
-<a id="org85513f6"></a>
+<a id="orge2ed9dc"></a>
 
 ### Battle
 
@@ -1082,7 +1080,7 @@ The party killed all three slimes.
 Yeah!  Each survivor received 27 experience points and 9 gold from this battle.
 
 
-<a id="orgcda3629"></a>
+<a id="org33189cc"></a>
 
 ### Chest
 
@@ -1127,6 +1125,8 @@ You have a few options.
 -   `i)nspect` the trap.  It might activate the trap
 -   `d)isarm` the trap.  You need to type the trap name
 -   `l)eave alone` Give up the chest and walk away
+
+If your party has a thief, `i)dentify` and `d)isarm` the trap is sufficient.  If the floor is 1 or 2 deep, you can just walk away from chests as you won't find good stuff in them on shallow floors.
 
     ^^^^^^^^^^^^^^| * A chest!                             |^^^^^^^^^^^^^^^^^^^^^^
     ^^^^^^^^^^^^^^| * o)pen k)antei i)nspect d)isarm       |^^^^^^^^^^^^^^^^^^^^^^
@@ -1225,7 +1225,7 @@ Here's the trap list.
 </table>
 
 
-<a id="orgc151371"></a>
+<a id="org1d4f05f"></a>
 
 ### Friendly monsters
 
@@ -1246,7 +1246,7 @@ Of course, you will get no e.p. or gold if you chose to walk away.
     6 faun       G-MAG  10    7 OK           ^  Each survivor gets 0 gold.      ^
 
 
-<a id="orgebfbac6"></a>
+<a id="org0448eda"></a>
 
 ### Get ouf of the Dungeon
 
@@ -1305,7 +1305,7 @@ Having walked around a lot on this floor, and now the mage's MP is exhausted and
 The party is back at Edge of Town.  It should take a while to get used to the brightness but they are safe again!
 
 
-<a id="orgd02917f"></a>
+<a id="orgaadee0e"></a>
 
 ### A new dungeon!
 
@@ -1357,7 +1357,7 @@ What?  We can only see 3x3 tiles around the party.  Where has the map data gone?
 See the map is different this time?
 
 
-<a id="org89105df"></a>
+<a id="orga56a162"></a>
 
 ### Camp
 
@@ -1447,7 +1447,7 @@ Looks like, Ben's HP is fully restored.  Do the same for Cam.
 Great!
 
 
-<a id="orgba51673"></a>
+<a id="orgc5a2d9f"></a>
 
 ### Save and Resume from camp
 
@@ -1507,12 +1507,12 @@ And, you are in the dungeon again.
 Let's exit from the dungeon and head to Edge of Town > Castle > Lakehouse Inn for some rest.
 
 
-<a id="orgd663207"></a>
+<a id="org6c1a6aa"></a>
 
 ## Castle
 
 
-<a id="org4fd4c68"></a>
+<a id="orgc68f91f"></a>
 
 ### The Lakehouse Inn
 
@@ -1555,12 +1555,12 @@ If their e.p. reach the next level, their level will go up while they are asleep
 In DL, age doesn't matter.  They can stay at the inn as long as they wish without getting old.  All the party members stay at the same room type.
 
 
-<a id="org5e5f821"></a>
+<a id="orgd35dd82"></a>
 
 # Spells
 
 
-<a id="org395b65d"></a>
+<a id="org3823f21"></a>
 
 ## Overview
 
@@ -1579,7 +1579,7 @@ In this example, she has 2 MPs remaining for level 1 mage spells.  She will acqu
 The maximum MPs for each spell level is 9.  A high level mage/priest will have `9/9/9/9/9/9/9` MPs.
 
 
-<a id="org3370c8c"></a>
+<a id="orgbf5e7e9"></a>
 
 ## Usage
 
@@ -1608,7 +1608,7 @@ To use spells from the camp menu, first `i)nspect` a character who would like to
     ^^^^^^^^^^|   i)tems s)pells jk)change member l)leave > s              |^^^^^^
 
 
-<a id="orgc8690d7"></a>
+<a id="org63af324"></a>
 
 ## Mage Spells
 
@@ -1640,7 +1640,7 @@ One of the most useful spells will be newly introduced "tsubasa".  This spell ca
 <td class="org-right">1</td>
 <td class="org-left">onibi</td>
 <td class="org-left">halito</td>
-<td class="org-left">Fireball to hit a monster for 1-8 damage</td>
+<td class="org-left">Fireball to hit a monster for 1-8 damage. 鬼火</td>
 </tr>
 
 
@@ -1648,7 +1648,7 @@ One of the most useful spells will be newly introduced "tsubasa".  This spell ca
 <td class="org-right">1</td>
 <td class="org-left">tate</td>
 <td class="org-left">mogref</td>
-<td class="org-left">Reduce the caster's AC by 2</td>
+<td class="org-left">Reduce the caster's AC by 2. 盾</td>
 </tr>
 
 
@@ -1656,11 +1656,10 @@ One of the most useful spells will be newly introduced "tsubasa".  This spell ca
 <td class="org-right">1</td>
 <td class="org-left">shunmin</td>
 <td class="org-left">katino</td>
-<td class="org-left">Put one enemy group to asleep</td>
+<td class="org-left">Put one enemy group to asleep. 春眠</td>
 </tr>
-</tbody>
 
-<tbody>
+
 <tr>
 <td class="org-right">2</td>
 <td class="org-left">gps</td>
@@ -1673,7 +1672,7 @@ One of the most useful spells will be newly introduced "tsubasa".  This spell ca
 <td class="org-right">2</td>
 <td class="org-left">kurayami</td>
 <td class="org-left">dilto</td>
-<td class="org-left">Increase AC by 2 for an enemy group</td>
+<td class="org-left">Increase AC by 2 for an enemy group. 暗闇</td>
 </tr>
 
 
@@ -1681,7 +1680,7 @@ One of the most useful spells will be newly introduced "tsubasa".  This spell ca
 <td class="org-right">2</td>
 <td class="org-left">tomei</td>
 <td class="org-left">sopic</td>
-<td class="org-left">Reduce the caster's AC by 4</td>
+<td class="org-left">Reduce the caster's AC by 4. 透明</td>
 </tr>
 
 
@@ -1689,16 +1688,15 @@ One of the most useful spells will be newly introduced "tsubasa".  This spell ca
 <td class="org-right">2</td>
 <td class="org-left">tsubasa</td>
 <td class="org-left">(malor)</td>
-<td class="org-left">Teleport to a known floor</td>
+<td class="org-left">Teleport to a known floor. 翼</td>
 </tr>
-</tbody>
 
-<tbody>
+
 <tr>
 <td class="org-right">3</td>
 <td class="org-left">taika</td>
 <td class="org-left">mahalito</td>
-<td class="org-left">Wall of fire to hit a group of enemies for 4-24 damage</td>
+<td class="org-left">Wall of fire to hit a group of enemies for 4-24 damage. 大火</td>
 </tr>
 
 
@@ -1706,16 +1704,15 @@ One of the most useful spells will be newly introduced "tsubasa".  This spell ca
 <td class="org-right">3</td>
 <td class="org-left">kamaitachi</td>
 <td class="org-left">molito</td>
-<td class="org-left">Sharp wind to inflict 3-18 damage to an enemy group</td>
+<td class="org-left">Sharp wind to inflict 3-18 damage to an enemy group. 鎌鼬</td>
 </tr>
-</tbody>
 
-<tbody>
+
 <tr>
 <td class="org-right">4</td>
 <td class="org-left">kanashibari</td>
 <td class="org-left">morlis</td>
-<td class="org-left">Increase AC by 4 for an enemy group</td>
+<td class="org-left">Increase AC by 4 for an enemy group. 金縛</td>
 </tr>
 
 
@@ -1723,7 +1720,7 @@ One of the most useful spells will be newly introduced "tsubasa".  This spell ca
 <td class="org-right">4</td>
 <td class="org-left">toketsu</td>
 <td class="org-left">dalto</td>
-<td class="org-left">Blizzard to inflict 6-36 damage to an enemy group</td>
+<td class="org-left">Blizzard to inflict 6-36 damage to an enemy group. 凍結</td>
 </tr>
 
 
@@ -1731,16 +1728,15 @@ One of the most useful spells will be newly introduced "tsubasa".  This spell ca
 <td class="org-right">4</td>
 <td class="org-left">gouka</td>
 <td class="org-left">lahalito</td>
-<td class="org-left">Big fire to inflict 6-36 damage to an enemy group</td>
+<td class="org-left">Big fire to inflict 6-36 damage to an enemy group. 業火</td>
 </tr>
-</tbody>
 
-<tbody>
+
 <tr>
 <td class="org-right">5</td>
 <td class="org-left">kyofu</td>
 <td class="org-left">mamorlis</td>
-<td class="org-left">Increase AC by 4 for all enemy groups</td>
+<td class="org-left">Increase AC by 4 for all enemy groups. 恐怖</td>
 </tr>
 
 
@@ -1748,7 +1744,7 @@ One of the most useful spells will be newly introduced "tsubasa".  This spell ca
 <td class="org-right">5</td>
 <td class="org-left">senmetsu</td>
 <td class="org-left">makanito</td>
-<td class="org-left">Eliminate all enemies below Lvl 8</td>
+<td class="org-left">Eliminate all enemies below Lvl 8. 殲滅</td>
 </tr>
 
 
@@ -1756,16 +1752,15 @@ One of the most useful spells will be newly introduced "tsubasa".  This spell ca
 <td class="org-right">5</td>
 <td class="org-left">zettaireido</td>
 <td class="org-left">madalto</td>
-<td class="org-left">Abs. zero to cause 8-64 damage to an enemy group</td>
+<td class="org-left">Abs. zero to cause 8-64 damage to an enemy group. 絶対零度</td>
 </tr>
-</tbody>
 
-<tbody>
+
 <tr>
 <td class="org-right">6</td>
 <td class="org-left">shinoroi</td>
 <td class="org-left">lakanito</td>
-<td class="org-left">Kill all air-breathing enemies in a group</td>
+<td class="org-left">Kill all air-breathing enemies in a group. 死呪</td>
 </tr>
 
 
@@ -1773,7 +1768,7 @@ One of the most useful spells will be newly introduced "tsubasa".  This spell ca
 <td class="org-right">6</td>
 <td class="org-left">butsumetsu</td>
 <td class="org-left">zilwan</td>
-<td class="org-left">Buddha power to inflict 10-2000 damage to an undead</td>
+<td class="org-left">Buddha power to inflict 10-2000 damage to an undead. 仏滅</td>
 </tr>
 
 
@@ -1781,16 +1776,15 @@ One of the most useful spells will be newly introduced "tsubasa".  This spell ca
 <td class="org-right">6</td>
 <td class="org-left">zentomei</td>
 <td class="org-left">masopic</td>
-<td class="org-left">Reduce party's AC by 4</td>
+<td class="org-left">Reduce party's AC by 4. 全透明</td>
 </tr>
-</tbody>
 
-<tbody>
+
 <tr>
 <td class="org-right">7</td>
 <td class="org-left">jigokunohonou</td>
 <td class="org-left">-</td>
-<td class="org-left">Inferno to inflict 20-400 damage to a single enemy</td>
+<td class="org-left">Inferno to inflict 20-400 damage to a single enemy. 地獄の炎</td>
 </tr>
 
 
@@ -1798,13 +1792,13 @@ One of the most useful spells will be newly introduced "tsubasa".  This spell ca
 <td class="org-right">7</td>
 <td class="org-left">kakubaku</td>
 <td class="org-left">tiltowait</td>
-<td class="org-left">Nuclear fusion to inflict 10-150 damage to all enemies</td>
+<td class="org-left">Nuclear fusion to inflict 10-150 damage to all enemies. 核爆</td>
 </tr>
 </tbody>
 </table>
 
 
-<a id="org3141394"></a>
+<a id="orgaad174a"></a>
 
 ## Priest Spells
 
@@ -1834,7 +1828,7 @@ One of the most useful spells will be newly introduced "tsubasa".  This spell ca
 <td class="org-right">1</td>
 <td class="org-left">shukufuku</td>
 <td class="org-left">kalki</td>
-<td class="org-left">Reduce party's AC by 1</td>
+<td class="org-left">Reduce party's AC by 1. 祝福</td>
 </tr>
 
 
@@ -1842,7 +1836,7 @@ One of the most useful spells will be newly introduced "tsubasa".  This spell ca
 <td class="org-right">1</td>
 <td class="org-left">jiai</td>
 <td class="org-left">dios</td>
-<td class="org-left">Restore 1-8 HP to a single target</td>
+<td class="org-left">Restore 1-8 HP to a single target. 慈愛</td>
 </tr>
 
 
@@ -1850,7 +1844,7 @@ One of the most useful spells will be newly introduced "tsubasa".  This spell ca
 <td class="org-right">1</td>
 <td class="org-left">ikari</td>
 <td class="org-left">badios</td>
-<td class="org-left">Angry power to inflict 1-8 damage to an enemy</td>
+<td class="org-left">Angry power to inflict 1-8 damage to an enemy. 怒り</td>
 </tr>
 
 
@@ -1858,7 +1852,7 @@ One of the most useful spells will be newly introduced "tsubasa".  This spell ca
 <td class="org-right">1</td>
 <td class="org-left">akari</td>
 <td class="org-left">milwa</td>
-<td class="org-left">A bright light lets you see further for a while</td>
+<td class="org-left">A bright light lets you see further for a while. 灯り</td>
 </tr>
 
 
@@ -1866,16 +1860,15 @@ One of the most useful spells will be newly introduced "tsubasa".  This spell ca
 <td class="org-right">1</td>
 <td class="org-left">mamori</td>
 <td class="org-left">porfic</td>
-<td class="org-left">Reduce the caster's AC by 4</td>
+<td class="org-left">Reduce the caster's AC by 4. 護り</td>
 </tr>
-</tbody>
 
-<tbody>
+
 <tr>
 <td class="org-right">2</td>
 <td class="org-left">kabe</td>
 <td class="org-left">matu</td>
-<td class="org-left">Reduce party's AC by 2</td>
+<td class="org-left">Reduce party's AC by 2. 壁</td>
 </tr>
 
 
@@ -1883,7 +1876,7 @@ One of the most useful spells will be newly introduced "tsubasa".  This spell ca
 <td class="org-right">2</td>
 <td class="org-left">kantei</td>
 <td class="org-left">calfo</td>
-<td class="org-left">Identify a trap with 95% accuracy</td>
+<td class="org-left">Identify a trap with 95% accuracy. 鑑定</td>
 </tr>
 
 
@@ -1891,7 +1884,7 @@ One of the most useful spells will be newly introduced "tsubasa".  This spell ca
 <td class="org-right">2</td>
 <td class="org-left">nero</td>
 <td class="org-left">manifo</td>
-<td class="org-left">Paralyze a group of enemies</td>
+<td class="org-left">Paralyze a group of enemies. 寝ろ</td>
 </tr>
 
 
@@ -1899,16 +1892,15 @@ One of the most useful spells will be newly introduced "tsubasa".  This spell ca
 <td class="org-right">2</td>
 <td class="org-left">damare</td>
 <td class="org-left">montino</td>
-<td class="org-left">Silence an enemy group</td>
+<td class="org-left">Silence an enemy group. 黙れ</td>
 </tr>
-</tbody>
 
-<tbody>
+
 <tr>
 <td class="org-right">3</td>
 <td class="org-left">hikarinotama</td>
 <td class="org-left">lomilwa</td>
-<td class="org-left">A bright light lets you see further for a long time</td>
+<td class="org-left">A bright light lets you see further for a long time. 光の玉</td>
 </tr>
 
 
@@ -1916,7 +1908,7 @@ One of the most useful spells will be newly introduced "tsubasa".  This spell ca
 <td class="org-right">3</td>
 <td class="org-left">okiro</td>
 <td class="org-left">dialko</td>
-<td class="org-left">Cures a paralyzed or asleep for a single target</td>
+<td class="org-left">Cures a paralyzed or asleep for a single target. 起きろ</td>
 </tr>
 
 
@@ -1924,7 +1916,7 @@ One of the most useful spells will be newly introduced "tsubasa".  This spell ca
 <td class="org-right">3</td>
 <td class="org-left">shikibetsu</td>
 <td class="org-left">latumapic</td>
-<td class="org-left">Identify enemies</td>
+<td class="org-left">Identify enemies. 識別</td>
 </tr>
 
 
@@ -1932,7 +1924,7 @@ One of the most useful spells will be newly introduced "tsubasa".  This spell ca
 <td class="org-right">3</td>
 <td class="org-left">kaminohogo</td>
 <td class="org-left">bamatu</td>
-<td class="org-left">Reduce party's AC by 4</td>
+<td class="org-left">Reduce party's AC by 4. 神の保護</td>
 </tr>
 
 
@@ -1940,16 +1932,15 @@ One of the most useful spells will be newly introduced "tsubasa".  This spell ca
 <td class="org-right">3</td>
 <td class="org-left">iyashi</td>
 <td class="org-left">dial</td>
-<td class="org-left">Restore 4-16 HP to a single target</td>
+<td class="org-left">Restore 4-16 HP to a single target. 癒し</td>
 </tr>
-</tbody>
 
-<tbody>
+
 <tr>
 <td class="org-right">4</td>
 <td class="org-left">gekido</td>
 <td class="org-left">badial</td>
-<td class="org-left">Infuriate power to inflict 2-16 damage to an enemy</td>
+<td class="org-left">Infuriate power to inflict 2-16 damage to an enemy. 激怒</td>
 </tr>
 
 
@@ -1957,7 +1948,7 @@ One of the most useful spells will be newly introduced "tsubasa".  This spell ca
 <td class="org-right">4</td>
 <td class="org-left">gedoku</td>
 <td class="org-left">latumofis</td>
-<td class="org-left">Cure poison to a single target</td>
+<td class="org-left">Cure poison to a single target. 解毒</td>
 </tr>
 
 
@@ -1965,7 +1956,7 @@ One of the most useful spells will be newly introduced "tsubasa".  This spell ca
 <td class="org-right">4</td>
 <td class="org-left">hogo</td>
 <td class="org-left">maporfic</td>
-<td class="org-left">Reduce party's AC by 2 while you are in the dungeon</td>
+<td class="org-left">Reduce party's AC by 2 while you are in the dungeon. 保護</td>
 </tr>
 
 
@@ -1973,16 +1964,15 @@ One of the most useful spells will be newly introduced "tsubasa".  This spell ca
 <td class="org-right">4</td>
 <td class="org-left">zenjiai</td>
 <td class="org-left">-</td>
-<td class="org-left">Heal entire party by 1-8 HP</td>
+<td class="org-left">Heal entire party by 1-8 HP. 全慈愛</td>
 </tr>
-</tbody>
 
-<tbody>
+
 <tr>
 <td class="org-right">5</td>
 <td class="org-left">daikaifuku</td>
 <td class="org-left">dialma</td>
-<td class="org-left">Restore 8-24 HP to a single target</td>
+<td class="org-left">Restore 8-24 HP to a single target. 大回復</td>
 </tr>
 
 
@@ -1990,7 +1980,7 @@ One of the most useful spells will be newly introduced "tsubasa".  This spell ca
 <td class="org-right">5</td>
 <td class="org-left">kaminoikari</td>
 <td class="org-left">litokan</td>
-<td class="org-left">God's fire inflicts 3-24 damage to an enemy group</td>
+<td class="org-left">God's fire inflicts 3-24 damage to an enemy group. 神の怒り</td>
 </tr>
 
 
@@ -1998,7 +1988,7 @@ One of the most useful spells will be newly introduced "tsubasa".  This spell ca
 <td class="org-right">5</td>
 <td class="org-left">sosei</td>
 <td class="org-left">di</td>
-<td class="org-left">Attempt to ressurect a dead character</td>
+<td class="org-left">Attempt to ressurect a dead character. 蘇生</td>
 </tr>
 
 
@@ -2006,16 +1996,15 @@ One of the most useful spells will be newly introduced "tsubasa".  This spell ca
 <td class="org-right">5</td>
 <td class="org-left">shisubeshi</td>
 <td class="org-left">badi</td>
-<td class="org-left">Attempt to kill an enemy</td>
+<td class="org-left">Attempt to kill an enemy. 死すべし</td>
 </tr>
-</tbody>
 
-<tbody>
+
 <tr>
 <td class="org-right">6</td>
 <td class="org-left">tenchu</td>
 <td class="org-left">lorto</td>
-<td class="org-left">Gods power to inflict 6-36 damage to an enemy group</td>
+<td class="org-left">Gods power to inflict 6-36 damage to an enemy group. 天誅</td>
 </tr>
 
 
@@ -2023,7 +2012,7 @@ One of the most useful spells will be newly introduced "tsubasa".  This spell ca
 <td class="org-right">6</td>
 <td class="org-left">kanzen</td>
 <td class="org-left">madi</td>
-<td class="org-left">Complete heal & cure</td>
+<td class="org-left">Complete heal & cure. 完全</td>
 </tr>
 
 
@@ -2031,16 +2020,15 @@ One of the most useful spells will be newly introduced "tsubasa".  This spell ca
 <td class="org-right">6</td>
 <td class="org-left">hinshi</td>
 <td class="org-left">mabadi</td>
-<td class="org-left">Gods power to almost kill a single enemy</td>
+<td class="org-left">Gods power to almost kill a single enemy. 瀕死</td>
 </tr>
-</tbody>
 
-<tbody>
+
 <tr>
 <td class="org-right">7</td>
 <td class="org-left">tenchihokai</td>
 <td class="org-left">malikto</td>
-<td class="org-left">A meteor strike inflicts 12-72 damage to all enemies</td>
+<td class="org-left">A meteor strike inflicts 12-72 damage to all enemies. 天地崩壊</td>
 </tr>
 
 
@@ -2048,7 +2036,7 @@ One of the most useful spells will be newly introduced "tsubasa".  This spell ca
 <td class="org-right">7</td>
 <td class="org-left">fukkatsu</td>
 <td class="org-left">kadorto</td>
-<td class="org-left">Attempt to resurrent an even ashed person</td>
+<td class="org-left">Attempt to resurrent an even ashed person. 復活</td>
 </tr>
 
 
@@ -2056,7 +2044,7 @@ One of the most useful spells will be newly introduced "tsubasa".  This spell ca
 <td class="org-right">7</td>
 <td class="org-left">zenkai</td>
 <td class="org-left">-</td>
-<td class="org-left">8-24 HP group heal to party</td>
+<td class="org-left">8-24 HP group heal to party. 全快</td>
 </tr>
 </tbody>
 </table>
