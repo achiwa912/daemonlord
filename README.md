@@ -1,38 +1,45 @@
 
 # Table of Contents
 
-1.  [dl.py - Daemon Lord](#org532a630)
-    1.  [Overview](#org27cb574)
-        1.  [Wizardry clone](#org795c107)
-        2.  [Rogue-like dungeon maps](#org4af854e)
-        3.  [A little more friendly than the original](#org4e62e9e)
-    2.  [Important notice: Under development](#org882529c)
-2.  [Installation](#org97069f5)
-3.  [Prerequisites](#org0094b6c)
-4.  [How to Play](#orgc3cc554)
-5.  [License](#orgfd9f63e)
-6.  [Quick Tour of Daemon Lord](#org2bb327a)
-    1.  [Game start](#orgd8c4ce8)
-    2.  [Edge of Town](#org8e62709)
-        1.  [Training Grounds](#org1e25c25)
-    3.  [Castle](#org5ec3712)
-        1.  [Hawthorne Tavern](#org168e246)
-        2.  [Trader Jay's](#orgfc705c2)
-        3.  [Equip](#orgf5d5d69)
-    4.  [Save and Resume](#org7188287)
-    5.  [Dungeon](#org84f234d)
-        1.  [Walk around the Dungeon](#orgc6534b3)
-        2.  [Battle](#orgd287008)
-        3.  [Friendly monsters](#org1f71867)
-        4.  [Get ouf of the Dungeon](#orgb7dc2b4)
-        5.  [A new dungeon!](#org4dc5981)
-        6.  [Camp](#org37a835d)
-    6.  [Castle](#org7e74f1b)
-        1.  [The Lakehouse Inn](#org55a40d4)
+1.  [dl.py - Daemon Lord](#org06b04c6)
+    1.  [Overview](#org542916a)
+        1.  [Wizardry clone](#org4345ce2)
+        2.  [Rogue-like dungeon maps](#orgd17d1a5)
+        3.  [A little more friendly than the original](#org6d19ecf)
+    2.  [Important notice: Under development](#org3034fcd)
+2.  [Installation](#orgdd9aacf)
+3.  [Prerequisites](#org7cf2bca)
+4.  [How to Play](#org6bca894)
+5.  [License](#orgc7d4159)
+6.  [Quick Tour of Daemon Lord](#org48b3b7c)
+    1.  [Game start](#orgcd5c9eb)
+    2.  [Edge of Town](#orgefce5b1)
+        1.  [Training Grounds](#orge6954c6)
+    3.  [Castle](#org66d134b)
+        1.  [Hawthorne Tavern](#org1af445f)
+        2.  [Trader Jay's](#orgb33dd7b)
+        3.  [Equip](#orge1efb02)
+    4.  [Save and Resume](#org264924e)
+    5.  [Dungeon](#org0095314)
+        1.  [Walk around the Dungeon](#orgde09f9e)
+        2.  [Battle](#org85513f6)
+        3.  [Chest](#orgcda3629)
+        4.  [Friendly monsters](#orgc151371)
+        5.  [Get ouf of the Dungeon](#orgebfbac6)
+        6.  [A new dungeon!](#orgd02917f)
+        7.  [Camp](#org89105df)
+        8.  [Save and Resume from camp](#orgba51673)
+    6.  [Castle](#orgd663207)
+        1.  [The Lakehouse Inn](#org4fd4c68)
+7.  [Spells](#org5e5f821)
+    1.  [Overview](#org395b65d)
+    2.  [Usage](#org3370c8c)
+    3.  [Mage Spells](#orgc8690d7)
+    4.  [Priest Spells](#org3141394)
 
 
 
-<a id="org532a630"></a>
+<a id="org06b04c6"></a>
 
 # dl.py - Daemon Lord
 
@@ -64,12 +71,12 @@ Daemon Lord is a Wizardry-clone RPG with rogue-like (ie, text-based), randomly-c
      6 faun       G-MAG   8  200 taika        .* *** encounter ***               ^
 
 
-<a id="org27cb574"></a>
+<a id="org542916a"></a>
 
 ## Overview
 
 
-<a id="org795c107"></a>
+<a id="org4345ce2"></a>
 
 ### Wizardry clone
 
@@ -82,7 +89,7 @@ Daemon Lord is a Wizardry-clone RPG with rogue-like (ie, text-based), randomly-c
 -   Need to type spells and chest traps accurately
 
 
-<a id="org4af854e"></a>
+<a id="orgd17d1a5"></a>
 
 ### Rogue-like dungeon maps
 
@@ -91,20 +98,20 @@ Daemon Lord is a Wizardry-clone RPG with rogue-like (ie, text-based), randomly-c
 -   Maps are auto-generated.  Every time you go down the dungeon, you will see different maps
 
 
-<a id="org4e62e9e"></a>
+<a id="org6d19ecf"></a>
 
 ### A little more friendly than the original
 
 -   Re-calculate the bonus value with `.` key when creating a character
 -   Age doesn't matter anymore
 -   "tsubasa" spell (mage level 2) will take your party to known depth
--   Save and resume anywhere in the dungeon, preserving floor maps and effective spells such as identification of monsters or protection
+-   Save and resume anywhere in the dungeon, preserving floor maps and spells in effect such as identification of monsters or protection
 -   HP decrease by poison stops at HP = 1
 -   You don't have to pool gold anymore.  Someone in the party will pay for you
 -   Group heal spells for the entire party
 
 
-<a id="org882529c"></a>
+<a id="org3034fcd"></a>
 
 ## Important notice: Under development
 
@@ -112,8 +119,16 @@ Currently, DL (daemon lord) is under development and has tons of bugs and not-ye
 
 Please send bug reports to achiwa912+gmail.com (replace '+' with '@').
 
+To-be-implemented features:
 
-<a id="org97069f5"></a>
+-   Change classes
+-   Game clear
+-   Rescue defeated party members in the dungeon
+-   Monsters and items on floor 11 or deeper
+-   Background story
+
+
+<a id="orgdd9aacf"></a>
 
 # Installation
 
@@ -122,7 +137,7 @@ Please send bug reports to achiwa912+gmail.com (replace '+' with '@').
 3.  Run "python dl.py"
 
 
-<a id="org0094b6c"></a>
+<a id="org7cf2bca"></a>
 
 # Prerequisites
 
@@ -137,7 +152,7 @@ Please send bug reports to achiwa912+gmail.com (replace '+' with '@').
 -   items.csv - item data file
 
 
-<a id="orgc3cc554"></a>
+<a id="org6bca894"></a>
 
 # How to Play
 
@@ -154,7 +169,7 @@ You can save either at Edge of Town or from the Camp menu.
 You can perform resume operation only from Edge of Town.
 
 
-<a id="orgfd9f63e"></a>
+<a id="orgc7d4159"></a>
 
 # License
 
@@ -162,16 +177,16 @@ Daemon Lord is under [MIT license](https://en.wikipedia.org/wiki/MIT_License).
 Daemon Lord - Copyright (C) 2021 Kyosuke Achiwa
 
 
-<a id="org2bb327a"></a>
+<a id="org48b3b7c"></a>
 
 # Quick Tour of Daemon Lord
 
 
-<a id="orgd8c4ce8"></a>
+<a id="orgcd5c9eb"></a>
 
 ## Game start
 
-DL starts with the screen below at the Castle.
+DL (Daemon Lord) starts with the screen below at the Castle.
 
     daemon lord - dl - [castle] floor:?? (???/???)                               
     
@@ -201,12 +216,12 @@ DL starts with the screen below at the Castle.
 When you first start the game, you need to go to Edge of Town (press `e`) > Training Grounds (press `t`), and then create characters (press `c`).
 
 
-<a id="org8e62709"></a>
+<a id="orgefce5b1"></a>
 
 ## Edge of Town
 
 
-<a id="org1e25c25"></a>
+<a id="orge6954c6"></a>
 
 ### Training Grounds
 
@@ -239,6 +254,95 @@ At Training Grounds, you can create or inspect characters.  You create one chara
 
 To create a character, input its name, choose race (human, elf, dwarf, gnome, hobbit) and alignment (good, neutral, evil).  Race determines base attribute values as in Wizardry.  For example, human's base strength is 8.
 
+Here's base attribute table:
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">race</th>
+<th scope="col" class="org-right">str</th>
+<th scope="col" class="org-right">i.q.</th>
+<th scope="col" class="org-right">pie</th>
+<th scope="col" class="org-right">vit</th>
+<th scope="col" class="org-right">agi</th>
+<th scope="col" class="org-right">luk</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td class="org-left">human</td>
+<td class="org-right">8</td>
+<td class="org-right">8</td>
+<td class="org-right">5</td>
+<td class="org-right">8</td>
+<td class="org-right">8</td>
+<td class="org-right">9</td>
+</tr>
+
+
+<tr>
+<td class="org-left">elf</td>
+<td class="org-right">7</td>
+<td class="org-right">10</td>
+<td class="org-right">10</td>
+<td class="org-right">6</td>
+<td class="org-right">9</td>
+<td class="org-right">6</td>
+</tr>
+
+
+<tr>
+<td class="org-left">dwarf</td>
+<td class="org-right">10</td>
+<td class="org-right">7</td>
+<td class="org-right">10</td>
+<td class="org-right">10</td>
+<td class="org-right">5</td>
+<td class="org-right">6</td>
+</tr>
+
+
+<tr>
+<td class="org-left">gnome</td>
+<td class="org-right">7</td>
+<td class="org-right">7</td>
+<td class="org-right">10</td>
+<td class="org-right">8</td>
+<td class="org-right">10</td>
+<td class="org-right">7</td>
+</tr>
+
+
+<tr>
+<td class="org-left">hobbit</td>
+<td class="org-right">5</td>
+<td class="org-right">7</td>
+<td class="org-right">7</td>
+<td class="org-right">6</td>
+<td class="org-right">10</td>
+<td class="org-right">15</td>
+</tr>
+</tbody>
+</table>
+
     |   Command? > c                                       |            
     | * Enter new name                                     |            
     | > Adrien                                             |            
@@ -256,6 +360,161 @@ Tip: If you don't like the bonus point assigned, you can recalculate one with `.
 Eligible classes are listed at the bottom of the window.  To choose a class, type the first letter of a class.  For example, `f` for fighter, `m` for mage, etc.
 
 Classes have attribute requirements and in some cases alignment requirements as in Wizardry.  For example, fighter requires strength>=11.  Theif requires agility>=11 as well as alignment must be either neutral or evil.
+
+Class requirement table:
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-right" />
+
+<col  class="org-right" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">class</th>
+<th scope="col" class="org-left">str</th>
+<th scope="col" class="org-right">i.q.</th>
+<th scope="col" class="org-right">pie</th>
+<th scope="col" class="org-left">vit</th>
+<th scope="col" class="org-left">agi</th>
+<th scope="col" class="org-left">luk</th>
+<th scope="col" class="org-left">good</th>
+<th scope="col" class="org-left">neutral</th>
+<th scope="col" class="org-left">evil</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td class="org-left">fighter</td>
+<td class="org-left">11</td>
+<td class="org-right">-</td>
+<td class="org-right">-</td>
+<td class="org-left">-</td>
+<td class="org-left">-</td>
+<td class="org-left">-</td>
+<td class="org-left">ok</td>
+<td class="org-left">ok</td>
+<td class="org-left">ok</td>
+</tr>
+
+
+<tr>
+<td class="org-left">mage</td>
+<td class="org-left">-</td>
+<td class="org-right">11</td>
+<td class="org-right">-</td>
+<td class="org-left">-</td>
+<td class="org-left">-</td>
+<td class="org-left">-</td>
+<td class="org-left">ok</td>
+<td class="org-left">ok</td>
+<td class="org-left">ok</td>
+</tr>
+
+
+<tr>
+<td class="org-left">priest</td>
+<td class="org-left">-</td>
+<td class="org-right">-</td>
+<td class="org-right">11</td>
+<td class="org-left">-</td>
+<td class="org-left">-</td>
+<td class="org-left">-</td>
+<td class="org-left">ok</td>
+<td class="org-left">-</td>
+<td class="org-left">ok</td>
+</tr>
+
+
+<tr>
+<td class="org-left">thief</td>
+<td class="org-left">-</td>
+<td class="org-right">-</td>
+<td class="org-right">-</td>
+<td class="org-left">-</td>
+<td class="org-left">11</td>
+<td class="org-left">-</td>
+<td class="org-left">-</td>
+<td class="org-left">ok</td>
+<td class="org-left">ok</td>
+</tr>
+
+
+<tr>
+<td class="org-left">bishop</td>
+<td class="org-left">-</td>
+<td class="org-right">12</td>
+<td class="org-right">12</td>
+<td class="org-left">-</td>
+<td class="org-left">-</td>
+<td class="org-left">-</td>
+<td class="org-left">ok</td>
+<td class="org-left">-</td>
+<td class="org-left">ok</td>
+</tr>
+
+
+<tr>
+<td class="org-left">samurai</td>
+<td class="org-left">15</td>
+<td class="org-right">11</td>
+<td class="org-right">10</td>
+<td class="org-left">14</td>
+<td class="org-left">10</td>
+<td class="org-left">-</td>
+<td class="org-left">ok</td>
+<td class="org-left">ok</td>
+<td class="org-left">-</td>
+</tr>
+
+
+<tr>
+<td class="org-left">ninja</td>
+<td class="org-left">17</td>
+<td class="org-right">17</td>
+<td class="org-right">17</td>
+<td class="org-left">17</td>
+<td class="org-left">17</td>
+<td class="org-left">17</td>
+<td class="org-left">-</td>
+<td class="org-left">-</td>
+<td class="org-left">ok</td>
+</tr>
+
+
+<tr>
+<td class="org-left">lord</td>
+<td class="org-left">15</td>
+<td class="org-right">12</td>
+<td class="org-right">12</td>
+<td class="org-left">15</td>
+<td class="org-left">14</td>
+<td class="org-left">15</td>
+<td class="org-left">ok</td>
+<td class="org-left">-</td>
+<td class="org-left">-</td>
+</tr>
+</tbody>
+</table>
 
     daemon lord - dl - [training_grounds] floor:?? (???/???)                     
     
@@ -292,6 +551,8 @@ You can move cursor with `j, k` key and type `i` to view the character.
     |    >1 ab               Lv  1 dwa-g-fig                 |          
     |     2 ben              Lv  1 hum-g-fig                 |
 
+Also, you can `d)elete` the character from here.  Deleted characters are lost forever and you can't undo a delete operation.
+
     daemon lord - dl - [training_grounds] floor:?? (???/???)                     
     
     	 |   ab               L  1 g-fig dwarf                    |          
@@ -316,7 +577,7 @@ As you have already noticed, DL gives you a guide of which letter you can type w
 Have you created six characters?  Then, you should go to Castle > Hawthorne Tavern to form a party.  Type `l` to leave the Training Grounds and then type `c` to go to Castle.
 
 
-<a id="org5ec3712"></a>
+<a id="org66d134b"></a>
 
 ## Castle
 
@@ -331,14 +592,16 @@ Have you created six characters?  Then, you should go to Castle > Hawthorne Tave
 From the Castle menu, you can visit several places, but you want to go to Hawthorne Tavern now so type `h`.
 
 
-<a id="org168e246"></a>
+<a id="org1af445f"></a>
 
 ### Hawthorne Tavern
 
     | * *** The Hawthorne Tavern ***                             |        
     |   Command? - a)dd r)emove i)nspect d)ivvy gold l)eave >    |
 
-At the Tavern, you can add, remove or inspect characters.  Also, you can equally devide gold among party members.  As you want to form a party, type `a` to add members to the party.
+At the Tavern, you can add, remove or inspect characters.  Also, you can equally divide gold among party members.  As you want to form a party, type `a` to add members to the party.
+
+Use `j, k` keys to choose members and `x` to add.
 
     | * | Add who to the party?                |                 |        
     |   |  - j)down k)up x)choose l)eave       |gold l)eave > a  |        
@@ -349,7 +612,7 @@ At the Tavern, you can add, remove or inspect characters.  Also, you can equally
     |   |   5 emily            Lv  1 GNO-G-PRI |                 |        
     |   |   6 faun             Lv  1 ELF-G-MAG |                 |
 
-You can just type `x` for six times to add these members to the party.
+Here, you can just type `x` for six times to add the six members to the party.
 Now, they are shown in the party window at the bottom left of the screen.
 
     # name       class  ac   hp status                                           
@@ -360,16 +623,16 @@ Now, they are shown in the party window at the bottom left of the screen.
     5 emily      G-PRI  10   13 OK                                               
     6 faun       G-MAG  10    7 OK
 
-Before heading straight to the dungeon, we need to purchase weapons and armors, and equip them.  So, let's go to Castle > Trader Jay's for some shopping.
 
-
-<a id="orgfc705c2"></a>
+<a id="orgb33dd7b"></a>
 
 ### Trader Jay's
 
+Before heading straight to the dungeon, we need to purchase weapons and armors, and equip them.  So, let's go to Castle > Trader Jay's for some shopping.
+
 Each character is given between 100 and 200 gold upon creation.  You can expect a party with six members would have roughly 900 gold in total.
 
-At Trader Jay's, you'll be asked who in the party to enter the store.  Specify the number of a member in the party.  You can buy, sell, uncurse, identify items.  You can also pool gold here.  Choose `b` for shopping.
+At Trader Jay's, you'll be asked who in the party to enter the store.  Specify the number of a member in the party.  You can buy, sell, uncurse, identify items.  You can also pool gold here.  Choose `b)uy` for shopping.
 
     | * *** Trader Jay's ***                               |            
     |   Who? - # or l)eave > 1                             |            
@@ -377,7 +640,7 @@ At Trader Jay's, you'll be asked who in the party to enter the store.  Specify t
     | *   You have 102 gold.                               |            
     |   b)uy s)ell u)ncurse i)dentify p)ool gold l)eave >  |            
 
-Another window opens for items they sell.  This is the weapon list page.  Use `j, k` keys to move the cursor (`>`).  Let's type `x` and buy long swords for fighters.
+Another window opens for items they sell.  This is the weapon list page.  Use `j, k` keys to move the cursor (`>`).  Let's type `x` and buy a long sword for Ab.
 
     daemon lord - dl - [trader_jays] floor:?? (???/???)                          
     	   | ab has 102 gold                          |                      
@@ -393,7 +656,7 @@ Another window opens for items they sell.  This is the weapon list page.  Use `j
     	 | |   9 anointed flail              150      |         |            
     	 | |  10 wand                         10 $    |)eave >  |
 
-To change item categories, use `h, l` keys.  Below is the armor list page.  Let's buy a chain mail.
+To change item categories, use `h, l` keys.  Below is the armor list page.  Let's buy a chain mail for him.
 
     daemon lord - dl - [trader_jays] floor:?? (???/???)                          
     	   | Sorry, you can't afford it.              |                      
@@ -408,25 +671,27 @@ To change item categories, use `h, l` keys.  Below is the armor list page.  Let'
     	 | |   8 plate mail                  750      |         |            
     	 | |   9 plate +1                   1500      |         | 
 
-Oops, he doesn't have the money.  But, no worries, you can pay as the party.  Type `y`.  This way, you don't have to pool gold to the current shopper anymore.
+Oops, he doesn't have the money.  But, no worries, you can pay as the party.  Type `y` to the question "Will someone else pay? (y/n)".  This way, you don't have to pool gold first to the current shopper anymore.
 
 Tip: Recommended shopping list:
 
--   fighters - long sword, chain mail, large shield
+-   fighter - long sword, chain mail, large shield
 -   thief - sling
 -   priest - sling (if you can still afford it)
 -   mage - (nothing)
 
-sling is a long-range weapon that everyone can use.  You can't expect much from sling and its damage is at best 1 or 2, but better than nothing.
+Basically, the front (ie, the first three) members should equip heavily because monsters mostly aim at front members when physically attack.  Short-range wepons can't be used by the 4th to 6th members.
+
+sling is a long-range weapon that everyone can use.  You can't expect much from sling and its damage is at best 1 or 2, but better than nothing.  Long-ranged weapons tend to be less powerful and more expensive than short-range ones.
 
 
-<a id="orgf5d5d69"></a>
+<a id="orge1efb02"></a>
 
 ### Equip
 
 You can equip items at Hawthorne Tavern or while camping in the dungeon.  Let's go to Hawthorne Tavern.
 
-At Hatthorne Tavern, choose `i)nspect` > `i)tems` > item number > `e)quip` .
+At Hatthorne Tavern, first `i)nspect` a character and then choose `i)tems` > item number > `e)quip` .
 
     daemon lord - dl - [hawthorne_tavern] floor:?? (???/???)                     
     
@@ -448,7 +713,7 @@ At Hatthorne Tavern, choose `i)nspect` > `i)tems` > item number > `e)quip` .
 Equipped items will have `*` mark next to the item name.  You need to equip one item at a time and for each member.  To change members, type `j, k` .
 
 
-<a id="org7188287"></a>
+<a id="org264924e"></a>
 
 ## Save and Resume
 
@@ -467,7 +732,7 @@ To save and quit the game, go to Edge of Town and type `S` (capital-S).
 You need to run `python dl.py` again to restart and resume the game.  After restarting the game, go to Edge of Town and choose `R)esume from saved data` .  That is, capital-R.  Automatic resume is not supported.
 
 
-<a id="org84f234d"></a>
+<a id="org0095314"></a>
 
 ## Dungeon
 
@@ -503,11 +768,74 @@ You (`@`) are now in the dungeon and on the upstairs to the outside world.
 `^` indicates areas that you have not visited yet.  `.` is a floor tile that you can walk on.  
 
 
-<a id="orgc6534b3"></a>
+<a id="orgde09f9e"></a>
 
 ### Walk around the Dungeon
 
-The dungeon is a little dark and only 3x3 tiles around you are visible.  Let's move around a little with `h, j, k, l` keys.
+The dungeon is a little dark and only 3x3 tiles around you are visible.  Let's move around a little with `h, j, k, l` keys.  The key bindings should be familiar to those who use vi/vim and have played rogue-like games.
+
+The party (`@`) is always shown in the center of the map scroll window.
+
+Here's the key operations on dungeon maps
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">key</th>
+<th scope="col" class="org-left">action</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td class="org-left">h</td>
+<td class="org-left">move left (west)</td>
+</tr>
+
+
+<tr>
+<td class="org-left">j</td>
+<td class="org-left">move up (north)</td>
+</tr>
+
+
+<tr>
+<td class="org-left">k</td>
+<td class="org-left">move down (south)</td>
+</tr>
+
+
+<tr>
+<td class="org-left">l</td>
+<td class="org-left">move right (east)</td>
+</tr>
+
+
+<tr>
+<td class="org-left">c</td>
+<td class="org-left">camp menu</td>
+</tr>
+
+
+<tr>
+<td class="org-left">o + direction</td>
+<td class="org-left">(unlock and) open door</td>
+</tr>
+
+
+<tr>
+<td class="org-left">.</td>
+<td class="org-left">stay/stomp?</td>
+</tr>
+</tbody>
+</table>
 
      daemon lord - dl - [maze] floor:?? (???/???) ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -528,6 +856,85 @@ The dungeon is a little dark and only 3x3 tiles around you are visible.  Let's m
     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 You can now see inside a 5x4 room.  `<` is upstairs.  `#` is a stone wall or a rock.  `+` is a door.  Let's move next to a door and type `o` for open > and direction, in this case, `k` - north.
+
+Here's map tile table for your convenience.
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">tile</th>
+<th scope="col" class="org-left">description</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td class="org-left">`.`</td>
+<td class="org-left">floor tile you can walk on</td>
+</tr>
+
+
+<tr>
+<td class="org-left">`^`</td>
+<td class="org-left">unknown area (not visited yet)</td>
+</tr>
+
+
+<tr>
+<td class="org-left">`#`</td>
+<td class="org-left">stone wall/rock</td>
+</tr>
+
+
+<tr>
+<td class="org-left">`<`</td>
+<td class="org-left">upstairs</td>
+</tr>
+
+
+<tr>
+<td class="org-left">`>`</td>
+<td class="org-left">downstaris</td>
+</tr>
+
+
+<tr>
+<td class="org-left">`+`</td>
+<td class="org-left">door (need to open)</td>
+</tr>
+
+
+<tr>
+<td class="org-left">`*`</td>
+<td class="org-left">locked door</td>
+</tr>
+
+
+<tr>
+<td class="org-left">`%`</td>
+<td class="org-left">locked door (need special key)</td>
+</tr>
+
+
+<tr>
+<td class="org-left">`,`</td>
+<td class="org-left">message or event</td>
+</tr>
+</tbody>
+</table>
+
+For locked doors (`*`), you can try to unlock until succeed.  Your party needs a thief or a ninja for that.  A low level theif might find difficult to unlock a locked door.
+
+For special locked doors (`%`), you first need to find the key.  Hint: The key should be somewhere on the same floor.  Look for an event tile (`,`).
+
+Note that there's no elevator/lift in the dungeon.  Use "tsubasa" spell instead.
 
     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^###.###^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -560,7 +967,7 @@ Oops, another door.  Let's open again.
     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^###+###^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
-<a id="orgd287008"></a>
+<a id="org85513f6"></a>
 
 ### Battle
 
@@ -675,7 +1082,150 @@ The party killed all three slimes.
 Yeah!  Each survivor received 27 experience points and 9 gold from this battle.
 
 
-<a id="org1f71867"></a>
+<a id="orgcda3629"></a>
+
+### Chest
+
+Sometimes, you encounter a monster party on entering a room.  They are room guardians.
+
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^####.^^^^...^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^....#^^^^.@.^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^....######.#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^..<........#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^....########^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^##+##^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+     # name       class  ac   hp status       ^* north                           ^
+     1 ab         G-FIG   4   13 OK           ^* *** encounter ***               ^
+     2 ben        G-FIG   4   12 OK           ^                                  ^
+
+And after you defeated room guardians, you may find a chest.
+
+     daemon lord - dl - [maze] floor:?? (???/???) ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^| * A chest!                             |^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^| * o)pen k)antei i)nspect d)isarm       |^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^|   l)eave alone                         |^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^|   Option? >                            |^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^|                                        |^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^|                                        |^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^|                                        |^^^^^^^^^^^^^^^^^^^^^^
+
+Chests are usually protected with traps.  You need first to identify the trap and then disarm it before opening a chest.  And this is when a thief is quite usuful.
+
+You have a few options.
+
+-   `o)pen` without disarming the trap.
+-   `k)antei` use "kantei" spell to identify the trap
+-   `i)nspect` the trap.  It might activate the trap
+-   `d)isarm` the trap.  You need to type the trap name
+-   `l)eave alone` Give up the chest and walk away
+
+    ^^^^^^^^^^^^^^| * A chest!                             |^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^| * o)pen k)antei i)nspect d)isarm       |^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^|   l)eave alone                         |^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^|   Option? > i                          |^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^|   Who? - # or l)eave > 4               |^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^|   It is poison needle.                 |^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^| * o)pen k)antei i)nspect d)isarm       |^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^|   l)eave alone                         |^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^|   Option? >                            |^^^^^^^^^^^^^^^^^^^^^^
+
+Dia the theif identified the trap as "poison needle".  To disarm it, you need to type the trap name accurately.
+
+    ^^^^^^^^^^^^^^| * o)pen k)antei i)nspect d)isarm       |^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^|   l)eave alone                         |^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^|   Option? > d                          |^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^|   Who? - # or l)eave > 4               |^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^| * Trap name?                           |^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^| > poison needle                        |^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^|   Disarmed the trap.                   |^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^| * There was no interesting item.       |^^^^^^^^^^^^^^^^^^^^^^
+
+He disarmed the poison needle trap and opened the chest.  Unfortunately, there was nothing interesting in it this time.
+
+Here's the trap list.
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">trap</th>
+<th scope="col" class="org-left">effect</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td class="org-left">poison needle</td>
+<td class="org-left">poision the member who tried to identify/disarm</td>
+</tr>
+
+
+<tr>
+<td class="org-left">crossbow bolt</td>
+<td class="org-left">inflict damages to a random member</td>
+</tr>
+
+
+<tr>
+<td class="org-left">stunner</td>
+<td class="org-left">paralyze the member who tried to identify/disarm</td>
+</tr>
+
+
+<tr>
+<td class="org-left">exploding box</td>
+<td class="org-left">inflict damages to entire party members</td>
+</tr>
+
+
+<tr>
+<td class="org-left">gas bomb</td>
+<td class="org-left">poison entire party members</td>
+</tr>
+
+
+<tr>
+<td class="org-left">mage blaster</td>
+<td class="org-left">paralyze members who use mage spells</td>
+</tr>
+
+
+<tr>
+<td class="org-left">priest blaster</td>
+<td class="org-left">paralyze members who use priest spells</td>
+</tr>
+
+
+<tr>
+<td class="org-left">teleporter</td>
+<td class="org-left">teleport party to random location (could be in rock)</td>
+</tr>
+
+
+<tr>
+<td class="org-left">alarm</td>
+<td class="org-left">summon nearby monsters</td>
+</tr>
+</tbody>
+</table>
+
+
+<a id="orgc151371"></a>
 
 ### Friendly monsters
 
@@ -696,7 +1246,7 @@ Of course, you will get no e.p. or gold if you chose to walk away.
     6 faun       G-MAG  10    7 OK           ^  Each survivor gets 0 gold.      ^
 
 
-<a id="orgb7dc2b4"></a>
+<a id="orgebfbac6"></a>
 
 ### Get ouf of the Dungeon
 
@@ -725,7 +1275,7 @@ Of course, you will get no e.p. or gold if you chose to walk away.
      5 emily      G-PRI  10   13 OK           ^* north                           ^
      6 faun       G-MAG  10    7 OK           ^  Exit from dungeon? (y/n) >      ^
 
-Walked around a lot on this floor, and now mage's MP is exhausted and some are injured.  Let's get back to the outside world.  `<` is the upstairs to outside.
+Having walked around a lot on this floor, and now the mage's MP is exhausted and some are injured.  Let's get back to the outside world.  `<` is the upstairs to outside.  Answer `y` to the question: "Exit from dungeon? (y/n)"
 
     daemon lord - dl - [edge_of_town] floor:?? (???/???)                         
     
@@ -752,14 +1302,14 @@ Walked around a lot on this floor, and now mage's MP is exhausted and some are i
     5 emily      G-PRI  10   13 OK            * west                             
     6 faun       G-MAG  10    7 OK              Exit from dungeon? (y/n) > y     
 
-The party is back at Edge of Town.  They are safe again!
+The party is back at Edge of Town.  It should take a while to get used to the brightness but they are safe again!
 
 
-<a id="org4dc5981"></a>
+<a id="orgd02917f"></a>
 
 ### A new dungeon!
 
-&#x2026; but wait, you should have healed injuries before geting out!  No worries.  You can go back to the dungeon with `m)aze` again.
+&#x2026; but wait, you should have healed injuries before geting out!  No worries.  You can go back to the dungeon with `m)aze` again.  Let's go back.
 
      daemon lord - dl - [maze] floor:?? (???/???) ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -786,7 +1336,7 @@ The party is back at Edge of Town.  They are safe again!
      5 emily      G-PRI  10   13 OK           ^* west                            ^
      6 faun       G-MAG  10    7 OK           ^  Exit from dungeon? (y/n) > y    ^
 
-What?  We can only see 3x3 tiles around the party.  Where has the map data gone?  Actually, they are in a different dungeon map.  Dungeon map was regenerated when the party came to the dungeon again.  Let's walk around a little.
+What?  We can only see 3x3 tiles around the party.  Where has the map data gone?  Actually, they are in a different dungeon map.  Due to some magical power, dungeon maps are regenerated every time the party comes to the dungeon.  Let's walk around a little to confirm the theory.
 
      daemon lord - dl - [maze] floor:?? (???/???) ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -807,7 +1357,7 @@ What?  We can only see 3x3 tiles around the party.  Where has the map data gone?
 See the map is different this time?
 
 
-<a id="org37a835d"></a>
+<a id="org89105df"></a>
 
 ### Camp
 
@@ -822,7 +1372,7 @@ Anyway, type `c` key for camping.  The camp menu opens.
     ^^^^^^^^^^|   Command? >                                               |^^^^^^
     ^^^^^^^^^^|                                                            |^^^^^^
 
-At camp, you can `i)nspect` characters, `r)eorder party` or `S)ave and quit game` .  Let's try `i)nspect` .
+At camp, you can `i)nspect` characters, `r)eorder party` or `S)ave and quit game` .  Choose `i)nspect` for spells.
 
      daemon lord - dl - [camp] floor:?? (???/???) ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     ^^^^^^^^^^|   ab               L  1 g-fig dwarf                        |^^^^^^
@@ -849,7 +1399,7 @@ At camp, you can `i)nspect` characters, `r)eorder party` or `S)ave and quit game
      5 emily      G-PRI  10   13 OK           ^* south                           ^
      6 faun       G-MAG  10    7 OK           ^* south                           ^
 
-It shows the info of the front member Ab.  You can change member shown with `j, k` keys.
+It shows the info of the front member Ab.  You can change the member shown with `j, k` keys.
 
     ^^^^^^^^^^|   emily            L  1 g-pri gnome                        |^^^^^^
     ^^^^^^^^^^|                                                            |^^^^^^
@@ -868,7 +1418,7 @@ It shows the info of the front member Ab.  You can change member shown with `j, 
     ^^^^^^^^^^|                                                            |^^^^^^
     ^^^^^^^^^^|   i)tems s)pells jk)change member l)leave >                |^^^^^^
 
-Emily is a priest and can cast healing spells.  Type `s)pell` > `c)ast spell` and type "jiai" which heals HP of a member.
+Emily is a priest and can cast healing spells.  Type `s)pells` > `c)ast spell` and type "jiai" which heals HP of a member.
 
     ^^^^^^^^^^|   emily            L  1 g-pri gnome                        |^^^^^^
     ^^^^^^^^^^|                                                            |^^^^^^
@@ -883,7 +1433,7 @@ Emily is a priest and can cast healing spells.  Type `s)pell` > `c)ast spell` an
     ^^^^^^^^^^|   | * Spell memu:                          |               |^^^^^^
     ^^^^^^^^^^|   |   c)ast spell v)iew list l)eave >      |               |^^^^^^
 
-Looks like, Ben's HP is fully restored.  Do that again for Cam.
+Looks like, Ben's HP is fully restored.  Do the same for Cam.
 
     ^^^^^^^^^^|   |   ben's HP was fully restored.         |               |^^^^^^
     ^^^^^^^^^^|   | * Spell memu:                          |               |^^^^^^
@@ -896,15 +1446,73 @@ Looks like, Ben's HP is fully restored.  Do that again for Cam.
 
 Great!
 
-Let's exit from dungeon and head to Edge of Town > Castle > the Lakehouse Inn.
+
+<a id="orgba51673"></a>
+
+### Save and Resume from camp
+
+Now, try to save and resume in the dungeon.  From the camp menu, choose `S)ave and quit game` .
+
+    ^^^^^^^^^^| * *** Camp ***                                             |^^^^^^
+    ^^^^^^^^^^|   i)nspect                                                 |^^^^^^
+    ^^^^^^^^^^|   r)eorder party                                           |^^^^^^
+    ^^^^^^^^^^|   S)ave and quit game                                      |^^^^^^
+    ^^^^^^^^^^|   l)eave                                                   |^^^^^^
+    ^^^^^^^^^^|   Command? > S                                             |^^^^^^
+    ^^^^^^^^^^| * Thank you for playing.                                   |^^^^^^
+    ^^^^^^^^^^| * See you again soon.                                      |^^^^^^
+    ^^^^^^^^^^|                                                            |^^^^^^
+
+And run the python script.
+
+    $ python dl.py
+
+Choose `e)dge of town` > `R)esume from saved data`
+
+    | * *** Edge of Town ***                               |            
+    |   m)aze                                              |            
+    |   t)raining grounds                                  |            
+    |   c)astle                                            |            
+    |   S)ave and quit game                                |            
+    |   R)esume from saved data                            |            
+    |   Command?  >                                        |        
+
+And, you are in the dungeon again.
+
+     daemon lord - dl - [maze] floor:?? (???/???) ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^##+###^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#....#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#....+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#....#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#....#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^##+.##^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^...@#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^....#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^..<.#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^....#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^....#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#####^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+     # name       class  ac   hp status       ^                                  ^
+     1 ab         G-FIG   4   13 OK           ^                                  ^
+     2 ben        G-FIG   4   12 OK           ^                                  ^
+     3 cam        G-FIG   4   10 OK           ^                                  ^
+     4 dia        N-THI  10    7 OK           ^                                  ^
+     5 emily      G-PRI  10   13 OK           ^                                  ^
+     6 faun       G-MAG  10    7 OK           ^                                  ^
+
+Let's exit from the dungeon and head to Edge of Town > Castle > Lakehouse Inn for some rest.
 
 
-<a id="org7e74f1b"></a>
+<a id="orgd663207"></a>
 
 ## Castle
 
 
-<a id="org55a40d4"></a>
+<a id="org4fd4c68"></a>
 
 ### The Lakehouse Inn
 
@@ -929,7 +1537,7 @@ Back at Castle, type `i` for Lakehouse Inn.
     |   or l)eave                                          |            
     |   Which rooms to stay today? >                       |            
 
-Delux room sounds good, but as we have only 232 gold, let's choose `c)ots` tonight.
+Delux room sounds good, but as we have only 232 gold, let's choose `c)ots` tonight.  Maybe we can stay in standard rooms tomorrow.
 
     |   Which rooms to stay today? > c                     |            
     | * Today's dinner is cabbage soup.                    |            
@@ -940,9 +1548,516 @@ Delux room sounds good, but as we have only 232 gold, let's choose `c)ots` tonig
     | * emily went to bed...                               |            
     | * faun went to bed...                                |            
 
+Magic points are fully restored regardless of the room they choose.  HPs being restored depend on the room they stay.  More comfortable (and thus expensive) rooms will heal them better.  Dinner is better in those rooms as well.
+
 If their e.p. reach the next level, their level will go up while they are asleep at the inn.
 
 In DL, age doesn't matter.  They can stay at the inn as long as they wish without getting old.  All the party members stay at the same room type.
 
-Magic points are fully restored rgardless of the room they choose.  HPs being restored depend on the room they stay.  More comfortable (and thus expensive) rooms will heal them better.  Dinner is better in those rooms as well.
+
+<a id="org5e5f821"></a>
+
+# Spells
+
+
+<a id="org395b65d"></a>
+
+## Overview
+
+As in Wizardry, spells in DL are divided into two categories: mage spells and priest spells.  Very roughly speaking, mage spells are for battles with monsters and priest spells are to heal and cure.
+
+There are magic points (MPs) for each category and spell level.  You can check their remaining MPs in the character inspection window.
+
+    ^^^^^^^^^^|       luck 11  status OK                                   |^^^^^^
+    ^^^^^^^^^^|                                                            |^^^^^^
+    ^^^^^^^^^^|   mage  2/0/0/0/0/0/0   priest  0/0/0/0/0/0/0/             |^^^^^^
+    ^^^^^^^^^^|   1)                    2)                                 |^^^^^^
+    ^^^^^^^^^^|   3)                    4)                                 |^^^^^^
+
+In this example, she has 2 MPs remaining for level 1 mage spells.  She will acquire more MPs as her level goes up.
+
+The maximum MPs for each spell level is 9.  A high level mage/priest will have `9/9/9/9/9/9/9` MPs.
+
+
+<a id="org3370c8c"></a>
+
+## Usage
+
+Spells can be used only in the dungeon.  More specifically, during a battle or while they are camping.  The only exception is "kantei" which can be used for identifying a chest trap.
+
+Some spells such as mage's "shunmin" or "taika" can be used only in battles.  Some other spells such as mage's "gps" or "tsubasa" are only available while they are camping.
+
+To use spells from the camp menu, first `i)nspect` a character who would like to cast a spell.  To change characters in the inspect menu, use `j, k` keys until it shows the member to cast the spell.  Then, type `s)pells` > `c)ast spell` > enter the spell name (> choose target member).
+
+     daemon lord - dl - [camp] floor:?? (???/???) ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^|   faun             L  1 g-mag elf                          |^^^^^^
+    ^^^^^^^^^^|                                                            |^^^^^^
+    ^^^^^^^^^^|   strength  7  gold              100   lvl     1           |^^^^^^
+    ^^^^^^^^^^|   | * Spell memu:                          |   0           |^^^^^^
+    ^^^^^^^^^^|   |   c)ast spell v)iew list l)eave > c    |  10           |^^^^^^
+    ^^^^^^^^^^|   | * What spell to cast?                  |               |^^^^^^
+    ^^^^^^^^^^|   | > gps                                  |               |^^^^^^
+    ^^^^^^^^^^|   |                                        |               |^^^^^^
+    ^^^^^^^^^^|   |                                        |               |^^^^^^
+    ^^^^^^^^^^|   |                                        |0/             |^^^^^^
+    ^^^^^^^^^^|   |                                        |               |^^^^^^
+    ^^^^^^^^^^|   |                                        |               |^^^^^^
+    ^^^^^^^^^^|   |                                        |               |^^^^^^
+    ^^^^^^^^^^|   |                                        |               |^^^^^^
+    ^^^^^^^^^^|   |                                        |               |^^^^^^
+    ^^^^^^^^^^|   i)tems s)pells jk)change member l)leave > s              |^^^^^^
+
+
+<a id="orgc8690d7"></a>
+
+## Mage Spells
+
+One of the most useful spells will be newly introduced "tsubasa".  This spell can take the party to the upstairs of a known depth floor for the caster.  It can be used to get out of the dungeon (ie, choose depth=1) or to start an adventure from the deepest floor they experienced.
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-right">lv</th>
+<th scope="col" class="org-left">name</th>
+<th scope="col" class="org-left">wiz (FYI)</th>
+<th scope="col" class="org-left">description</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td class="org-right">1</td>
+<td class="org-left">onibi</td>
+<td class="org-left">halito</td>
+<td class="org-left">Fireball to hit a monster for 1-8 damage</td>
+</tr>
+
+
+<tr>
+<td class="org-right">1</td>
+<td class="org-left">tate</td>
+<td class="org-left">mogref</td>
+<td class="org-left">Reduce the caster's AC by 2</td>
+</tr>
+
+
+<tr>
+<td class="org-right">1</td>
+<td class="org-left">shunmin</td>
+<td class="org-left">katino</td>
+<td class="org-left">Put one enemy group to asleep</td>
+</tr>
+</tbody>
+
+<tbody>
+<tr>
+<td class="org-right">2</td>
+<td class="org-left">gps</td>
+<td class="org-left">(dumapic)</td>
+<td class="org-left">Locate the precise position in the dungeon</td>
+</tr>
+
+
+<tr>
+<td class="org-right">2</td>
+<td class="org-left">kurayami</td>
+<td class="org-left">dilto</td>
+<td class="org-left">Increase AC by 2 for an enemy group</td>
+</tr>
+
+
+<tr>
+<td class="org-right">2</td>
+<td class="org-left">tomei</td>
+<td class="org-left">sopic</td>
+<td class="org-left">Reduce the caster's AC by 4</td>
+</tr>
+
+
+<tr>
+<td class="org-right">2</td>
+<td class="org-left">tsubasa</td>
+<td class="org-left">(malor)</td>
+<td class="org-left">Teleport to a known floor</td>
+</tr>
+</tbody>
+
+<tbody>
+<tr>
+<td class="org-right">3</td>
+<td class="org-left">taika</td>
+<td class="org-left">mahalito</td>
+<td class="org-left">Wall of fire to hit a group of enemies for 4-24 damage</td>
+</tr>
+
+
+<tr>
+<td class="org-right">3</td>
+<td class="org-left">kamaitachi</td>
+<td class="org-left">molito</td>
+<td class="org-left">Sharp wind to inflict 3-18 damage to an enemy group</td>
+</tr>
+</tbody>
+
+<tbody>
+<tr>
+<td class="org-right">4</td>
+<td class="org-left">kanashibari</td>
+<td class="org-left">morlis</td>
+<td class="org-left">Increase AC by 4 for an enemy group</td>
+</tr>
+
+
+<tr>
+<td class="org-right">4</td>
+<td class="org-left">toketsu</td>
+<td class="org-left">dalto</td>
+<td class="org-left">Blizzard to inflict 6-36 damage to an enemy group</td>
+</tr>
+
+
+<tr>
+<td class="org-right">4</td>
+<td class="org-left">gouka</td>
+<td class="org-left">lahalito</td>
+<td class="org-left">Big fire to inflict 6-36 damage to an enemy group</td>
+</tr>
+</tbody>
+
+<tbody>
+<tr>
+<td class="org-right">5</td>
+<td class="org-left">kyofu</td>
+<td class="org-left">mamorlis</td>
+<td class="org-left">Increase AC by 4 for all enemy groups</td>
+</tr>
+
+
+<tr>
+<td class="org-right">5</td>
+<td class="org-left">senmetsu</td>
+<td class="org-left">makanito</td>
+<td class="org-left">Eliminate all enemies below Lvl 8</td>
+</tr>
+
+
+<tr>
+<td class="org-right">5</td>
+<td class="org-left">zettaireido</td>
+<td class="org-left">madalto</td>
+<td class="org-left">Abs. zero to cause 8-64 damage to an enemy group</td>
+</tr>
+</tbody>
+
+<tbody>
+<tr>
+<td class="org-right">6</td>
+<td class="org-left">shinoroi</td>
+<td class="org-left">lakanito</td>
+<td class="org-left">Kill all air-breathing enemies in a group</td>
+</tr>
+
+
+<tr>
+<td class="org-right">6</td>
+<td class="org-left">butsumetsu</td>
+<td class="org-left">zilwan</td>
+<td class="org-left">Buddha power to inflict 10-2000 damage to an undead</td>
+</tr>
+
+
+<tr>
+<td class="org-right">6</td>
+<td class="org-left">zentomei</td>
+<td class="org-left">masopic</td>
+<td class="org-left">Reduce party's AC by 4</td>
+</tr>
+</tbody>
+
+<tbody>
+<tr>
+<td class="org-right">7</td>
+<td class="org-left">jigokunohonou</td>
+<td class="org-left">-</td>
+<td class="org-left">Inferno to inflict 20-400 damage to a single enemy</td>
+</tr>
+
+
+<tr>
+<td class="org-right">7</td>
+<td class="org-left">kakubaku</td>
+<td class="org-left">tiltowait</td>
+<td class="org-left">Nuclear fusion to inflict 10-150 damage to all enemies</td>
+</tr>
+</tbody>
+</table>
+
+
+<a id="org3141394"></a>
+
+## Priest Spells
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-right" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-right">lv</th>
+<th scope="col" class="org-left">name</th>
+<th scope="col" class="org-left">wiz (FYI)</th>
+<th scope="col" class="org-left">description</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td class="org-right">1</td>
+<td class="org-left">shukufuku</td>
+<td class="org-left">kalki</td>
+<td class="org-left">Reduce party's AC by 1</td>
+</tr>
+
+
+<tr>
+<td class="org-right">1</td>
+<td class="org-left">jiai</td>
+<td class="org-left">dios</td>
+<td class="org-left">Restore 1-8 HP to a single target</td>
+</tr>
+
+
+<tr>
+<td class="org-right">1</td>
+<td class="org-left">ikari</td>
+<td class="org-left">badios</td>
+<td class="org-left">Angry power to inflict 1-8 damage to an enemy</td>
+</tr>
+
+
+<tr>
+<td class="org-right">1</td>
+<td class="org-left">akari</td>
+<td class="org-left">milwa</td>
+<td class="org-left">A bright light lets you see further for a while</td>
+</tr>
+
+
+<tr>
+<td class="org-right">1</td>
+<td class="org-left">mamori</td>
+<td class="org-left">porfic</td>
+<td class="org-left">Reduce the caster's AC by 4</td>
+</tr>
+</tbody>
+
+<tbody>
+<tr>
+<td class="org-right">2</td>
+<td class="org-left">kabe</td>
+<td class="org-left">matu</td>
+<td class="org-left">Reduce party's AC by 2</td>
+</tr>
+
+
+<tr>
+<td class="org-right">2</td>
+<td class="org-left">kantei</td>
+<td class="org-left">calfo</td>
+<td class="org-left">Identify a trap with 95% accuracy</td>
+</tr>
+
+
+<tr>
+<td class="org-right">2</td>
+<td class="org-left">nero</td>
+<td class="org-left">manifo</td>
+<td class="org-left">Paralyze a group of enemies</td>
+</tr>
+
+
+<tr>
+<td class="org-right">2</td>
+<td class="org-left">damare</td>
+<td class="org-left">montino</td>
+<td class="org-left">Silence an enemy group</td>
+</tr>
+</tbody>
+
+<tbody>
+<tr>
+<td class="org-right">3</td>
+<td class="org-left">hikarinotama</td>
+<td class="org-left">lomilwa</td>
+<td class="org-left">A bright light lets you see further for a long time</td>
+</tr>
+
+
+<tr>
+<td class="org-right">3</td>
+<td class="org-left">okiro</td>
+<td class="org-left">dialko</td>
+<td class="org-left">Cures a paralyzed or asleep for a single target</td>
+</tr>
+
+
+<tr>
+<td class="org-right">3</td>
+<td class="org-left">shikibetsu</td>
+<td class="org-left">latumapic</td>
+<td class="org-left">Identify enemies</td>
+</tr>
+
+
+<tr>
+<td class="org-right">3</td>
+<td class="org-left">kaminohogo</td>
+<td class="org-left">bamatu</td>
+<td class="org-left">Reduce party's AC by 4</td>
+</tr>
+
+
+<tr>
+<td class="org-right">3</td>
+<td class="org-left">iyashi</td>
+<td class="org-left">dial</td>
+<td class="org-left">Restore 4-16 HP to a single target</td>
+</tr>
+</tbody>
+
+<tbody>
+<tr>
+<td class="org-right">4</td>
+<td class="org-left">gekido</td>
+<td class="org-left">badial</td>
+<td class="org-left">Infuriate power to inflict 2-16 damage to an enemy</td>
+</tr>
+
+
+<tr>
+<td class="org-right">4</td>
+<td class="org-left">gedoku</td>
+<td class="org-left">latumofis</td>
+<td class="org-left">Cure poison to a single target</td>
+</tr>
+
+
+<tr>
+<td class="org-right">4</td>
+<td class="org-left">hogo</td>
+<td class="org-left">maporfic</td>
+<td class="org-left">Reduce party's AC by 2 while you are in the dungeon</td>
+</tr>
+
+
+<tr>
+<td class="org-right">4</td>
+<td class="org-left">zenjiai</td>
+<td class="org-left">-</td>
+<td class="org-left">Heal entire party by 1-8 HP</td>
+</tr>
+</tbody>
+
+<tbody>
+<tr>
+<td class="org-right">5</td>
+<td class="org-left">daikaifuku</td>
+<td class="org-left">dialma</td>
+<td class="org-left">Restore 8-24 HP to a single target</td>
+</tr>
+
+
+<tr>
+<td class="org-right">5</td>
+<td class="org-left">kaminoikari</td>
+<td class="org-left">litokan</td>
+<td class="org-left">God's fire inflicts 3-24 damage to an enemy group</td>
+</tr>
+
+
+<tr>
+<td class="org-right">5</td>
+<td class="org-left">sosei</td>
+<td class="org-left">di</td>
+<td class="org-left">Attempt to ressurect a dead character</td>
+</tr>
+
+
+<tr>
+<td class="org-right">5</td>
+<td class="org-left">shisubeshi</td>
+<td class="org-left">badi</td>
+<td class="org-left">Attempt to kill an enemy</td>
+</tr>
+</tbody>
+
+<tbody>
+<tr>
+<td class="org-right">6</td>
+<td class="org-left">tenchu</td>
+<td class="org-left">lorto</td>
+<td class="org-left">Gods power to inflict 6-36 damage to an enemy group</td>
+</tr>
+
+
+<tr>
+<td class="org-right">6</td>
+<td class="org-left">kanzen</td>
+<td class="org-left">madi</td>
+<td class="org-left">Complete heal & cure</td>
+</tr>
+
+
+<tr>
+<td class="org-right">6</td>
+<td class="org-left">hinshi</td>
+<td class="org-left">mabadi</td>
+<td class="org-left">Gods power to almost kill a single enemy</td>
+</tr>
+</tbody>
+
+<tbody>
+<tr>
+<td class="org-right">7</td>
+<td class="org-left">tenchihokai</td>
+<td class="org-left">malikto</td>
+<td class="org-left">A meteor strike inflicts 12-72 damage to all enemies</td>
+</tr>
+
+
+<tr>
+<td class="org-right">7</td>
+<td class="org-left">fukkatsu</td>
+<td class="org-left">kadorto</td>
+<td class="org-left">Attempt to resurrent an even ashed person</td>
+</tr>
+
+
+<tr>
+<td class="org-right">7</td>
+<td class="org-left">zenkai</td>
+<td class="org-left">-</td>
+<td class="org-left">8-24 HP group heal to party</td>
+</tr>
+</tbody>
+</table>
 

@@ -877,6 +877,8 @@ class Member:
         self.poisoned = False
         self.inspected = False  # valid only for inspecting chest
         self.deepest = 1  # deepest floor visited at least once
+        self.floor = 0  # for defeated party member
+        self.in_maze = False  # for defeated party member
         self.gold = random.randrange(100, 200)
         self.exp = 0
         self.nextexp = 0
@@ -2389,13 +2391,15 @@ class Battle:
                     self.entities.append(
                         Entity(mon, mong.name, mong, agi, 'breath', None))
                 elif action == 'atk':
-                    if len(party.members) > 3:
+                    targets = [mem for mem in party.members
+                               if mem.state in [State.OK, State.ASLEEP]]
+                    if len(targets) > 3:
                         if party.floor > 3 and random.randrange(100) < 40:
-                            target = random.choice(party.members)
+                            target = random.choice(targets)
                         else:
-                            target = party.members[random.randrange(3)]
+                            target = targets[random.randrange(3)]
                     else:
-                        target = random.choice(party.members)
+                        target = random.choice(targets)
                     self.entities.append(
                         Entity(mon, mong.name, mong, agi, 'fight', target))
                 else:
@@ -2415,14 +2419,14 @@ class Battle:
         for mem in self.game.party.members:
             mem.action = '????????????'
         while True:
-            self.mw.print(f"Options - f)ight s)pell")
-            self.mw.print(f"u)se p)arry r)un t)ake back", start=' ')
+            self.mw.print(f"Options - f)ight s)pell u)se")
+            self.mw.print(f"d)ispell p)arry r)un t)ake back", start=' ')
             for idx, mem in enumerate(self.game.party.members, 1):
                 if mem.state not in [State.OK]:
                     continue
                 while True:
                     c = self.mw.input_char(f"{mem.name}'s action?",
-                                           values=['f', 's', 'u', 'p', 'r', 't'])
+                                           values=['f', 's', 'u', 'p', 'r', 't', 'd'])
                     agi = mem.stat[4] + random.randrange(5)
                     if c == 'r':
                         if self.canrun(mem):
@@ -2457,6 +2461,15 @@ class Battle:
                         self.entities.append(
                             Entity(mem, mem.name, None, agi, 'fight', mong))
                         mem.action = 'fight'
+                        self.game.vscr.disp_scrwin()
+                        break
+                    elif c == 'd':
+                        if mem.job not in [Job.PRIEST, Job.BISHOP, Job.LORD]:
+                            continue
+                        mong = self.monp[self.choose_group()]
+                        self.entities.append(
+                            Entity(mem, mem.name, None, agi, 'dispell', mong))
+                        mem.action = 'dispell'
                         self.game.vscr.disp_scrwin()
                         break
                     elif c == 's':
@@ -2679,6 +2692,37 @@ class Battle:
                         e.target.hp = 0
                         self.mw.print(f"{e.target.name} is decapitated.")
 
+    def dispell(self, e):
+        """
+        Party member dispells a monster group
+        """
+        mondef = self.game.mondef[e.target.name]
+        if e.target.identified:
+            dispname = e.target.name
+        else:
+            dispname = mondef.unident
+        self.mw.print(f"{e.name} tried to dispell.")
+        if mondef.type != 'undead':
+            self.mw.print("Not undead.", start=' ')
+            return
+        dspl_power = e.entity.level * 5 + 50
+        dspl_regist = 10 * mondef.level
+        if dspl_power > 255:
+            chance = 100
+        else:
+            chance = max(5, dspl_power - dspl_regist)
+        target_cp = e.target.monsters[:]
+        for mon in target_cp:
+            if random.randrange(100) < chance:
+                mon.state = State.DEAD
+                mon.hp = 0
+                self.mw.print(f"{dispname} is dispelled.", start=' ')
+                e.target.monsters.remove(mon)
+                if not e.target.monsters:
+                    self.game.battle.monp.remove(e.target)
+            else:
+                self.mw.print(f"{dispname} registed to dispell.", start=' ')
+
     def member_attack(self, e):
         """
         Party member attacks a monster
@@ -2870,6 +2914,8 @@ class Battle:
                         self.member_attack(e)
                     else:
                         self.monster_attack(e)
+                elif e.action == 'dispell':
+                    self.dispell(e)
                 elif e.action == 'run':  # monster only
                     if self.canrun(e.entity):
                         e.group.monsters.remove(e.entity)
@@ -2941,13 +2987,38 @@ class Battle:
                 getch(wait=True)
 
             # Battle end?
+            party = self.game.party
             if not self.monp:
-                party = self.game.party
                 for idx, room in enumerate(party.floor_obj.rooms):
                     if room.in_room(party.x, party.y):
                         party.floor_obj.battled[idx] = True
                         break
                 v.disp_scrwin()
+                break
+            defeated = True
+            for mem in party.members:
+                if mem.state in [State.OK, State.ASLEEP]:
+                    defeated = False
+                    break
+            if defeated:
+                self.mw.print("The party lost the battle and defeated.")
+                self.mw.input_char(" - press space bar", values=[' '])
+                party.place = Place.EDGE_OF_TOWN
+                members = party.members[:]
+                for mem in members:
+                    mem.hp = 0
+                    if mem.state in [State.PARALYZED, State.STONED]:
+                        mem.state = State.DEAD
+                    mem.in_maze = True
+                    mem.floor = party.floor  # last known place for him/her
+                    party.members.remove(mem)
+                party.floor = 0
+                party.floor_move = 2
+                party.light_cnt = 0
+                party.ac = 0
+                party.silenced = False
+                party.identify = False
+                party.gps = False
                 break
 
         v.disp_scrwin()
@@ -3516,7 +3587,8 @@ def tavern_add(game):
         chlines = []
         i = 0
         charlist = [
-            ch for ch in game.characters if ch not in game.party.members]
+            ch for ch in game.characters
+            if (ch not in game.party.members and not ch.in_maze)]
         for i, ch in enumerate(charlist):
             cur = ' '
             if i == idx:
@@ -4294,7 +4366,8 @@ def maze(game):
 
         party.calc_hpplus(game)
         for mem in party.members:
-            mem.hp = max(1, mem.hp+mem.hpplus)
+            if mem.state not in [State.DEAD, State.ASHED, State.LOST]:
+                mem.hp = max(1, mem.hp+mem.hpplus)
 
         rt = floor_obj.check_event(game)
         if not rt:
@@ -4304,12 +4377,16 @@ def maze(game):
                 vscr.disp_scrwin(floor_obj)
                 getch()
                 game.battle.battle()
+                if not game.party.members:  # party defeated
+                    break
                 if rtn == 2 and game.battle.treasure:  # room battle
                     game.chest.chest()
                     game.battle.gold *= 2  # Twice the gold for a chest.
                 survnum = sum(1 for m in game.party.members
                               if m.state in [State.OK, State.ASLEEP,
                                              State.PARALYZED, State.STONED])
+                if not survnum:  # party defeated
+                    break
                 if not game.battle.treasure:
                     game.battle.exp = 0
                     game.battle.gold = 0
@@ -4323,7 +4400,6 @@ def maze(game):
                     if mem.state in [State.OK, State.PARALYZED, State.STONED]:
                         mem.exp += game.battle.exp//survnum
                         mem.gold += game.battle.gold//survnum
-                #meswin.print("battle ended.")
         vscr.disp_scrwin(floor_obj)
 
         c = getch(wait=True)
