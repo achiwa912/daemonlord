@@ -123,6 +123,17 @@ random_messages = [
     ["You heard a voice in your head.",
      "'Do you know that this dungeon is a playground of the Lord?'",
      "'Do you think that you know what you are doing?'"],
+    ["It's frigid in this area.",
+     "Is there an icy monster around here?"],
+    ["There should be other adventurers in this dungeon.",
+     "Why we don't see anyone other than us?"],
+    ["You just wish you could stay in a better room tonight.",
+     "You are fed up with cabbage soup for dinner."],
+    ["You find a message board saying:",
+     "'From north west to south east.  Just keep walking to south east, fool!'"],
+    ["You heard a voice in your head:",
+     "'You are penetrating the Lords territory.'",
+     "'It will cost you your lives.'"],
 ]
 
 
@@ -709,12 +720,10 @@ class Game:
 class Party:
     # Represents a party
     def __init__(self, x, y, floor):
-        self.x = x
-        self.y = y
-        self.px = x
-        self.py = x
-        self.floor = floor
-        self.pfloor = floor
+        self.x = self.px = x
+        self.y = self.py = y
+        self.floor = self.pfloor = floor
+        self.tsubasa_floor = 1  # to which floor? (valid when floor_move=3)
         self.floor_move = 0  # floor move flag
         self.place = Place.EDGE_OF_TOWN
         self.floor_obj = ''
@@ -724,6 +733,18 @@ class Party:
         self.silenced = False  # can't cast spell
         self.identify = False  # latumapic
         self.gps = False  # eternal dumapic
+
+    def move(self, x, y, floor=None):
+        """
+        Move party to the specified (x, y) and optional floor
+        """
+        self.px = self.x
+        self.py = self.y
+        self.x = x
+        self.y = y
+        self.pfloor = self.floor
+        if floor:
+            self.floor = floor
 
     def calc_hpplus(self, game):
         for mem in self.members:
@@ -957,7 +978,7 @@ class Member:
         Show the character info and dispatch item or spell menus
         """
         mw = game.vscr.meswins[-1]
-        while True:
+        while not game.party.floor_move:
             self.disp_character(game)
             mw.print(f"", start=' ')
             c1 = mw.input_char("i)tems s)pells c)lass jk)change member l)leave",
@@ -975,6 +996,7 @@ class Member:
                 return 1  # next member
             elif c1 == 'k':
                 return -1  # previous member
+        return 0
 
     def view_spells(self, game):
         """
@@ -1029,7 +1051,7 @@ class Member:
         v = game.vscr
         mw = Meswin(v, 14, 4, 44, 12, frame=True)
         v.meswins.append(mw)
-        while True:
+        while not game.party.floor_move:  # tsubasa
             mw.print("Spell memu:")
             c = mw.input_char("c)ast spell v)iew list l)eave",
                               values=['c', 'v', 'l'])
@@ -1438,8 +1460,8 @@ class Spell:
             try:
                 fl = int(fl)
                 if 0 < fl <= invoker.deepest:
-                    party.floor_move = 1  # on the upstairs
-                    party.floor = fl
+                    party.floor_move = 3  # tsubasa; on the upstairs
+                    party.tsubasa_floor = fl
                     return
             except:
                 pass
@@ -1787,6 +1809,48 @@ class Dungeon:
         self.events.append((Evloctype.DOWNSTAIRS, 9, Eventid.BOSS))
         self.events.append((Evloctype.DOWNSTAIRS, 10, Eventid.BOSS))
 
+    def generate_move_floors(self):
+        """
+        Check if floor_move, generate floors if not generated yet,
+        and place party on the upstairs or the downstairs
+        """
+        party = self.game.party
+        if not party.floor_move:
+            return
+
+        floor = party.floor
+        if party.floor_move == 1:
+            floor += 1
+        elif party.floor_move == 3:
+            floor = party.tsubasa_floor
+        for idx in range(floor):
+            if len(self.floors) < idx+1:
+                floor_obj = self.generate_floor(idx+1)
+                self.floors.append(floor_obj)
+
+        if party.floor_move == 1:  # down; on the upstairs
+            floor_obj = self.floors[party.floor]
+            party.floor_obj = floor_obj
+            party.move(floor_obj.rooms[0].center_x,
+                       floor_obj.rooms[0].center_y,
+                       floor=party.floor+1)
+        elif party.floor_move == 2:  # 2: up; on the downstairs
+            floor_obj = self.floors[party.floor-2]
+            party.floor_obj = floor_obj
+            party.move(floor_obj.rooms[-1].center_x,
+                       floor_obj.rooms[-1].center_y,
+                       floor=party.floor-1)
+        else:  # tsubasa; on the upstairs
+            floor_obj = self.floors[party.tsubasa_floor-1]
+            party.floor_obj = floor_obj
+            party.move(floor_obj.rooms[0].center_x,
+                       floor_obj.rooms[0].center_y,
+                       floor=party.tsubasa_floor)
+        party.floor_move = 0
+
+        for m in party.members:
+            m.deepest = max(m.deepest, party.floor)
+
     def generate_floor(self, floor):
         """
         Generate a dungeon floor.
@@ -1811,64 +1875,39 @@ class Dungeon:
         floor_obj.floor_data = bytearray(b'^' * floor_x_size * floor_y_size)
         return floor_obj
 
-    def move_floor(self, floor_obj):
+    def check_move_floor(self, floor_obj):
         """
-        Check and move to a upper/lower floor.  Generate floor_obj if
-        not created yet.  Exit from dungeon.
-
-        Return floor_obj.  Return None if exit from dungeon.
+        Check if move to upper/lower floor.
+        Return True if exit, False not.
         """
         game = self.game
         party = game.party
         vscr = game.vscr
         meswin = vscr.meswins[0]
 
-        if floor_obj:
-            if floor_obj.get_tile(party.x, party.y) == b'<':  # upstairs
-                vscr.disp_scrwin(floor_obj)
-                if party.floor == 1:
-                    c = meswin.input_char("Exit from dungeon? (y/n)",
-                                          values=['y', 'n'])
-                else:
-                    c = meswin.input_char(
-                        "Stairs.  Go up? (y/n)", values=['y', 'n'])
-                if c == 'y':
-                    party.floor -= 1
-                    party.floor_move = 2  # go up
-                    if party.floor > 0:
-                        vscr.disp_scrwin(floor_obj)
-            elif floor_obj.get_tile(party.x, party.y) == b'>':  # downstairs
-                vscr.disp_scrwin(floor_obj)
-                c = meswin.input_char(
-                    "Stairs.  Go down? (y/n)", values=['y', 'n'])
-                if c == 'y':
-                    party.floor += 1
-                    party.floor_move = 1  # go down
-                    for m in party.members:
-                        m.deepest = max(m.deepest, party.floor)
-                    vscr.disp_scrwin(floor_obj)
+        if floor_obj.get_tile(party.x, party.y) == b'<':  # upstairs
             vscr.disp_scrwin(floor_obj)
+            if party.floor == 1:
+                c = meswin.input_char("Exit from dungeon? (y/n)",
+                                      values=['y', 'n'])
+            else:
+                c = meswin.input_char(
+                    "Stairs.  Go up? (y/n)", values=['y', 'n'])
+            if c == 'y':
+                party.floor_move = 2  # go up
+        elif floor_obj.get_tile(party.x, party.y) == b'>':  # downstairs
+            vscr.disp_scrwin(floor_obj)
+            c = meswin.input_char(
+                "Stairs.  Go down? (y/n)", values=['y', 'n'])
+            if c == 'y':
+                party.floor_move = 1  # go down
 
         if party.floor_move:
-            if party.floor <= 0:  # exit from dungeon
+            if party.floor <= 1 and party.floor_move == 2:  # exit from dungeon
                 party.place = Place.EDGE_OF_TOWN
-                return None  # Exit from dungeon
+                return True  # Exit from dungeon
 
-            for idx in range(party.floor):
-                if len(self.floors) < idx+1:
-                    floor_obj = self.generate_floor(idx+1)
-                    self.floors.append(floor_obj)
-            floor_obj = self.floors[party.floor-1]
-            if party.floor_move == 1:  # down
-                party.x = floor_obj.up_x
-                party.y = floor_obj.up_y
-            elif party.floor_move == 2:  # up
-                party.x = floor_obj.down_x
-                party.y = floor_obj.down_y
-            party.floor_move = 0
-            vscr.disp_scrwin(self.floors[party.floor-1])
-
-        return floor_obj
+        return False
 
 
 class Floor:
@@ -1942,7 +1981,7 @@ class Floor:
     def boss(self, game):
         v = game.vscr
         mw = Meswin(v, v.width//8, v.height//6,
-                    v.width*3//4, 8, frame=True)
+                    v.width*3//4, 4, frame=True)
         v.meswins.append(mw)
         if game.party.floor == 3:
             mw.print("You saw a small child standing on downstairs.")
@@ -1979,9 +2018,11 @@ class Floor:
         game.battle.boss = True
         game.battle.battle()
         game.battle.boss = False
-        if not game.party.members:  # lost the battle
-            v.mestins.pop()
+        if not game.battle.treasure or \
+           not game.party.members:  # lost the battle
+            v.meswins.pop()
             return
+        mw.cls()
         if game.party.floor == 10:  # The last boss?
             self.ending(game)
         else:
@@ -2055,7 +2096,7 @@ class Floor:
             self.key(game)
         elif evid == Eventid.BOSS:
             self.boss(game)
-            if game.party.members:
+            if game.party.members and not game.battle.ran:
                 self.events[(x, y)][1] = True  # processed
                 return True
         return False  # Will see the event again
@@ -2081,7 +2122,7 @@ class Floor:
                 self.events[(x, y)] = [ev[2], False]  # eventid
 
         # place random messages
-        for _ in range(2 + random.randrange(3)):  # 2 to 5 messages
+        for _ in range(1 + random.randrange(2)):  # 1 to 3 messages
             while True:
                 x = random.randrange(self.x_size)
                 y = random.randrange(self.y_size)
@@ -2356,6 +2397,7 @@ class Battle:
     def __init__(self, game):
         self.game = game
         self.boss = False
+        self.ran = False  # ran from the battle flag
         v = game.vscr
         self.mw = Meswin(v, v.width//8, v.height//8+4,
                          v.width*3//4, 10, frame=True)
@@ -2373,6 +2415,7 @@ class Battle:
         self.monp = []  # includes monster group(s)
         self.entities = []  # includes party member or monster
         self.treasure = True  # treasure
+        self.ran = False  # ran flag
         for m in self.game.party.members:
             m.action = '????????????'
             m.drained = False
@@ -2997,7 +3040,8 @@ class Battle:
             self.draw_ew()
             v.disp_scrwin()
             if self.input_action():
-                self.mw.print("Ran away from the battle.")
+                self.ran = True
+                v.meswins[0].print("Ran away from the battle.")
                 v.disp_scrwin()
                 self.game.party.x, self.game.party.px =\
                     self.game.party.px, self.game.party.x
@@ -3005,6 +3049,8 @@ class Battle:
                     self.game.party.py, self.game.party.y
                 self.game.party.floor, self.game.party.pfloor =\
                     self.game.party.pfloor, self.game.party.floor
+                self.game.party.floor_obj =\
+                    self.game.dungeon.floors[self.game.party.floor-1]
                 self.treasure = False
                 break  # ran successfully
             self.enemy_action()
@@ -3450,8 +3496,8 @@ class Chest:
             mw.print(f"{m.name} got stunned.", start=' ')
             v.disp_scrwin()
         elif self.trap == Trap.TELEPORTER:
-            party.x = random.randrange(game.party.floor.x_size)
-            party.y = random.randrange(game.party.floor.y_size)
+            party.move(random.randrange(game.party.floor.x_size),
+                       random.randrange(game.party.floor.y_size))
         elif self.trap == Trap.ALARM:
             party.alarm = True
         elif self.trap == Trap.MAGE_BLASTER:
@@ -4156,6 +4202,15 @@ def levelup(game, m):
                        game.spelldef[spl].level == game.spelldef[sname].level) == 0:
                     m.pspells.append(sname)
                     learned = True
+        mspells = []
+        pspells = []
+        for sname in game.spelldef:  # reorder
+            if sname in m.mspells:
+                mspells.append(sname)
+            elif sname in m.pspells:
+                pspells.append(sname)
+        m.mspells = mspells
+        m.pspells = pspells
 
         for idx in range(7):
             know = sum(1 for s in m.mspells if
@@ -4415,7 +4470,7 @@ def camp(game, floor_obj):
     mw = Meswin(v, 10, 1, 64, 17, frame=True)
     v.meswins.append(mw)
 
-    while True:
+    while not game.party.floor_move:  # tsubasa?
         mw.print(
             "*** Camp ***\ni)nspect\nr)eorder party\nS)ave and quit game\nl)eave")
         c = mw.input_char("Command?", values=['i', 'r', 'S', 'l'])
@@ -4432,7 +4487,7 @@ def camp(game, floor_obj):
             sys.exit()
         elif c == 'i':
             idx = 1
-            while True:
+            while not game.party.floor_move:  # tsubasa?
                 mem = game.party.members[idx-1]
                 rtn = mem.inspect_character(game)
                 if rtn == 0:
@@ -4461,21 +4516,122 @@ def maze(game):
     dungeon = game.dungeon
     party = game.party
 
-    if not party.floor_obj:
-        party.place = Place.MAZE
-        party.floor = 1
-        party.floor_move = 1  # 0: no, 1: down, 2: up
+    party.place = Place.MAZE
+    party.floor = 0
+    party.floor_move = 1  # 0: no, 1: down, 2: up
 
-        game.dungeon.floors = []
-        floor_obj = None
-        party.floor_obj = floor_obj
-    else:
-        floor_obj = party.floor_obj
+    dungeon.floors = []  # initialize every time
+    party.floor_obj = floor_obj = None
 
     while True:
-        floor_obj = dungeon.move_floor(floor_obj)
-        party.floor_obj = floor_obj
-        if not floor_obj:  # Exit from dungeon
+        dungeon.generate_move_floors()
+        floor_obj = party.floor_obj
+
+        if party.light_cnt > 0:  # milwa/lomilwa counter
+            party.light_cnt -= 1
+
+        party.calc_hpplus(game)
+        for mem in party.members:
+            if mem.state not in [State.DEAD, State.ASHED, State.LOST]:
+                mem.hp = max(1, mem.hp+mem.hpplus)
+
+        vscr.disp_scrwin()
+
+        rt = floor_obj.check_event(game)
+        if not rt:
+            rtn = game.battle.check_battle()
+            if rtn:  # 1: random or 2: room (or 3?) if battle
+                meswin.print("*** encounter ***")
+                vscr.disp_scrwin(floor_obj)
+                getch()
+                game.battle.battle()
+                if not party.members:  # party defeated
+                    break
+                if rtn == 2 and game.battle.treasure:  # room battle
+                    game.chest.chest()
+                    game.battle.gold *= 2  # Twice the gold for a chest.
+                survnum = sum(1 for m in party.members
+                              if m.state in [State.OK, State.ASLEEP,
+                                             State.PARALYZED, State.STONED])
+                if not survnum:  # party defeated
+                    break
+                if not game.battle.treasure:
+                    game.battle.exp = 0
+                    game.battle.gold = 0
+                meswin.print(f"Each survivor gets {game.battle.exp//survnum} e.p.",
+                             start=' ')
+                meswin.print(f"Each survivor gets {game.battle.gold//survnum} gold.",
+                             start=' ')
+                for mem in party.members:
+                    if mem.state == State.ASLEEP:
+                        mem.state = State.OK
+                    if mem.state in [State.OK, State.PARALYZED, State.STONED]:
+                        mem.exp += game.battle.exp//survnum
+                        mem.gold += game.battle.gold//survnum
+        if game.battle.ran:  # ran?
+            if floor_obj != party.floor_obj:
+                floor_obj = party.floor_obj
+        vscr.disp_scrwin(floor_obj)
+
+        c = getch(wait=True)
+        draw = True
+        if c:
+            if c == 'c':
+                camp(game, floor_obj)
+                if game.party.floor_move:
+                    continue
+            elif c in 'hH' and party.x > 0:
+                if (c == 'H' and config['debug']) or \
+                   floor_obj.can_move(party.x-1, party.y):
+                    party.move(party.x-1, party.y)
+                    meswin.print("west")
+            elif c in 'kK' and party.y > 0:
+                if (c == 'K' and config['debug']) or \
+                   floor_obj.can_move(party.x, party.y-1):
+                    party.move(party.x, party.y-1)
+                    meswin.print("north")
+            elif c in 'jJ' and party.y < floor_obj.y_size-1:
+                if (c == 'J' and config['debug']) or \
+                   floor_obj.can_move(party.x, party.y+1):
+                    party.move(party.x, party.y+1)
+                    meswin.print("south")
+            elif c in 'lL' and party.x < floor_obj.x_size-1:
+                if (c == 'L' and config['debug']) or \
+                   floor_obj.can_move(party.x+1, party.y):
+                    party.move(party.x+1, party.y)
+                    meswin.print("east")
+            elif c == 'o':  # open or unlock door
+                vscr.disp_scrwin(floor_obj)
+                floor_obj.open_door(game, meswin)
+            elif c == '*' and config['debug']:
+                breakpoint()
+            elif c == '.':
+                meswin.print('.')
+                vscr.disp_scrwin()
+            elif c == '>' and config['debug']:
+                party.floor_move = 1  # go down
+                for m in party.members:
+                    m.deepest = max(m.deepest, party.floor)
+            elif c == '<' and config['debug']:
+                party.floor_move = 2  # go up
+            elif c == 'S' and config['debug']:
+                game.save()
+                meswin.print("saved.")
+                vscr.disp_scrwin()
+            elif c == '#' and config['debug']:
+                for y in range(party.y-10, party.y+10+1):
+                    for x in range(party.x-32, party.x+32+1):
+                        floor_obj.put_tile(
+                            x, y, floor_obj.get_tile(x, y), orig=False)
+            else:
+                pass  # draw = False
+        else:
+            draw = False
+        if draw:
+            vscr.disp_scrwin(floor_obj)
+
+        exit = dungeon.check_move_floor(floor_obj)
+        if exit:  # Exit from dungeon
             mlist = party.members[:]
             for mem in mlist:
                 if mem.poisoned:
@@ -4495,117 +4651,6 @@ def maze(game):
 
             break
 
-        if party.light_cnt > 0:  # milwa/lomilwa counter
-            party.light_cnt -= 1
-
-        party.calc_hpplus(game)
-        for mem in party.members:
-            if mem.state not in [State.DEAD, State.ASHED, State.LOST]:
-                mem.hp = max(1, mem.hp+mem.hpplus)
-
-        rt = floor_obj.check_event(game)
-        if not rt:
-            rtn = game.battle.check_battle()
-            if rtn:  # 1: random or 2: room (or 3?) if battle
-                meswin.print("*** encounter ***")
-                vscr.disp_scrwin(floor_obj)
-                getch()
-                game.battle.battle()
-                if not game.party.members:  # party defeated
-                    break
-                if rtn == 2 and game.battle.treasure:  # room battle
-                    game.chest.chest()
-                    game.battle.gold *= 2  # Twice the gold for a chest.
-                survnum = sum(1 for m in game.party.members
-                              if m.state in [State.OK, State.ASLEEP,
-                                             State.PARALYZED, State.STONED])
-                if not survnum:  # party defeated
-                    break
-                if not game.battle.treasure:
-                    game.battle.exp = 0
-                    game.battle.gold = 0
-                meswin.print(f"Each survivor gets {game.battle.exp//survnum} e.p.",
-                             start=' ')
-                meswin.print(f"Each survivor gets {game.battle.gold//survnum} gold.",
-                             start=' ')
-                for mem in game.party.members:
-                    if mem.state == State.ASLEEP:
-                        mem.state = State.OK
-                    if mem.state in [State.OK, State.PARALYZED, State.STONED]:
-                        mem.exp += game.battle.exp//survnum
-                        mem.gold += game.battle.gold//survnum
-        vscr.disp_scrwin(floor_obj)
-
-        c = getch(wait=True)
-        draw = True
-        if c:
-            if c == 'c':
-                camp(game, floor_obj)
-            elif c in 'hH' and party.x > 0:
-                if (c == 'H' and config['debug']) or \
-                   floor_obj.can_move(party.x-1, party.y):
-                    party.px = party.x
-                    party.py = party.y
-                    party.pfloor = party.floor
-                    party.x -= 1
-                    meswin.print("west")
-            elif c in 'kK' and party.y > 0:
-                if (c == 'K' and config['debug']) or \
-                   floor_obj.can_move(party.x, party.y-1):
-                    party.px = party.x
-                    party.py = party.y
-                    party.pfloor = party.floor
-                    party.y -= 1
-                    meswin.print("north")
-            elif c in 'jJ' and party.y < floor_obj.y_size-1:
-                if (c == 'J' and config['debug']) or \
-                   floor_obj.can_move(party.x, party.y+1):
-                    party.px = party.x
-                    party.py = party.y
-                    party.pfloor = party.floor
-                    party.y += 1
-                    meswin.print("south")
-            elif c in 'lL' and party.x < floor_obj.x_size-1:
-                if (c == 'L' and config['debug']) or \
-                   floor_obj.can_move(party.x+1, party.y):
-                    party.px = party.x
-                    party.py = party.y
-                    party.pfloor = party.floor
-                    party.x += 1
-                    meswin.print("east")
-            elif c == 'o':  # open or unlock door
-                vscr.disp_scrwin(floor_obj)
-                floor_obj.open_door(game, meswin)
-            elif c == '*' and config['debug']:
-                breakpoint()
-            elif c == '.':
-                meswin.print('.')
-                vscr.disp_scrwin()
-            elif c == '>' and config['debug']:
-                party.floor += 1
-                party.pfloor = party.floor
-                party.floor_move = 1  # go down
-                for m in party.members:
-                    m.deepest = max(m.deepest, party.floor)
-            elif c == '<' and config['debug']:
-                party.floor = min(party.floor-1, 1)
-                party.pfloor = party.floor
-                party.floor_move = 2  # go up
-            elif c == 'S' and config['debug']:
-                game.save()
-                meswin.print("saved.")
-                vscr.disp_scrwin()
-            elif c == '#' and config['debug']:
-                for y in range(party.y-10, party.y+10+1):
-                    for x in range(party.x-32, party.x+32+1):
-                        floor_obj.put_tile(
-                            x, y, floor_obj.get_tile(x, y), orig=False)
-            else:
-                pass  # draw = False
-        else:
-            draw = False
-        if draw:
-            vscr.disp_scrwin(floor_obj)
     vscr.meswins = meswins_save
     vscr.cls()
     party.place = Place.EDGE_OF_TOWN
