@@ -1,45 +1,49 @@
 
 # Table of Contents
 
-1.  [dl.py - Daemon Lord](#org7d7472a)
-    1.  [Overview](#orgb4a1f06)
-        1.  [Wizardry clone](#org673b20f)
-        2.  [Rogue-like dungeon maps](#org6f9aea2)
-        3.  [A little more friendly than the original](#org99b5434)
-    2.  [Important notice: Under development](#orgc8cbb7f)
-    3.  [Installation](#org85b3436)
-    4.  [Prerequisites](#orgc718839)
-    5.  [How to Play](#orgdf314fd)
-2.  [License](#org598f90b)
-3.  [Quick Tour of Daemon Lord](#orgcec7d66)
-    1.  [Game start](#org7363447)
-    2.  [Edge of Town](#org86c7b02)
-        1.  [Training Grounds](#org83f1406)
-    3.  [Castle](#orgdc3ff6f)
-        1.  [Hawthorne Tavern](#orge326824)
-        2.  [Trader Jay's](#org2a1f93d)
-        3.  [Equip](#orge9a62ff)
-    4.  [Save and Resume](#org6d0502d)
-    5.  [Dungeon](#org34ebc10)
-        1.  [Walk around the Dungeon](#orgb56c7d4)
-        2.  [Battle](#orge2ed9dc)
-        3.  [Chest](#org33189cc)
-        4.  [Friendly monsters](#org1d4f05f)
-        5.  [Get ouf of the Dungeon](#org0448eda)
-        6.  [A new dungeon!](#orgaadee0e)
-        7.  [Camp](#orga56a162)
-        8.  [Save and Resume from camp](#orgc5a2d9f)
-    6.  [Castle](#org6c1a6aa)
-        1.  [The Lakehouse Inn](#orgc68f91f)
-4.  [Spells](#orgd35dd82)
-    1.  [Overview](#org3823f21)
-    2.  [Usage](#orgbf5e7e9)
-    3.  [Mage Spells](#org63af324)
-    4.  [Priest Spells](#orgaad174a)
+1.  [dl.py - Daemon Lord](#org502f8b4)
+    1.  [Overview](#orgd89273b)
+        1.  [Wizardry clone](#org47b5a60)
+        2.  [Rogue-like dungeon maps](#orgfe9d7db)
+        3.  [A little more friendly than the original](#org0655fa0)
+    2.  [Important notice: Under development](#org59071e6)
+    3.  [Installation](#org05c02e4)
+    4.  [Prerequisites](#org9fa94b6)
+    5.  [How to Play](#org05d6337)
+2.  [License](#org934d7ed)
+3.  [Quick Tour of Daemon Lord](#orgbebd702)
+    1.  [Game start](#org5da2209)
+    2.  [Edge of Town](#org34a70e3)
+        1.  [Training Grounds](#org66860b3)
+    3.  [Castle](#org58173ed)
+        1.  [Hawthorne Tavern](#org51dfb32)
+        2.  [Trader Jay's](#orgaff9ada)
+        3.  [Equip](#orgbd9c09e)
+    4.  [Save and Resume](#org816b071)
+    5.  [Dungeon](#org41c2812)
+        1.  [Walk around the Dungeon](#org603544c)
+        2.  [Battle](#orge29556b)
+        3.  [Chest](#org18aaa10)
+        4.  [Friendly monsters](#orgf1d6374)
+        5.  [Get ouf of the Dungeon](#org17ff292)
+        6.  [A new dungeon!](#org794fb6c)
+        7.  [Camp](#orgadb632b)
+        8.  [Save and Resume from camp](#orgaf770c1)
+    6.  [Castle](#orgb6f6712)
+        1.  [The Lakehouse Inn](#org8f3c373)
+4.  [Spells](#org507ca0c)
+    1.  [Overview](#orgc9900cf)
+    2.  [Usage](#org7e38ea7)
+    3.  [Mage Spells](#org3a581b5)
+    4.  [Priest Spells](#org4275901)
+5.  [Monsters](#org5ce2d17)
+    1.  [Shallow floors](#org2770a32)
+    2.  [Middle depth floors](#org0c5cc78)
+    3.  [Deep floors](#org4c28642)
 
 
 
-<a id="org7d7472a"></a>
+<a id="org502f8b4"></a>
 
 # dl.py - Daemon Lord
 
@@ -71,12 +75,12 @@ Daemon Lord is a Wizardry-clone RPG with rogue-like (ie, text-based), randomly-c
      6 faun       G-MAG   8  200 taika        .* *** encounter ***               ^
 
 
-<a id="orgb4a1f06"></a>
+<a id="orgd89273b"></a>
 
 ## Overview
 
 
-<a id="org673b20f"></a>
+<a id="org47b5a60"></a>
 
 ### Wizardry clone
 
@@ -89,7 +93,7 @@ Daemon Lord is a Wizardry-clone RPG with rogue-like (ie, text-based), randomly-c
 -   Need to type spells and chest traps accurately
 
 
-<a id="org6f9aea2"></a>
+<a id="orgfe9d7db"></a>
 
 ### Rogue-like dungeon maps
 
@@ -98,7 +102,7 @@ Daemon Lord is a Wizardry-clone RPG with rogue-like (ie, text-based), randomly-c
 -   Maps are auto-generated.  Every time you go down the dungeon, you will see different maps
 
 
-<a id="org99b5434"></a>
+<a id="org0655fa0"></a>
 
 ### A little more friendly than the original
 
@@ -111,7 +115,7 @@ Daemon Lord is a Wizardry-clone RPG with rogue-like (ie, text-based), randomly-c
 -   Group heal spells for the entire party
 
 
-<a id="orgc8cbb7f"></a>
+<a id="org59071e6"></a>
 
 ## Important notice: Under development
 
@@ -126,7 +130,7 @@ To-be-implemented features:
 -   Background story
 
 
-<a id="org85b3436"></a>
+<a id="org05c02e4"></a>
 
 ## Installation
 
@@ -135,7 +139,7 @@ To-be-implemented features:
 3.  Run "python dl.py"
 
 
-<a id="orgc718839"></a>
+<a id="org9fa94b6"></a>
 
 ## Prerequisites
 
@@ -150,7 +154,7 @@ To-be-implemented features:
 -   items.csv - item data file
 
 
-<a id="orgdf314fd"></a>
+<a id="org05d6337"></a>
 
 ## How to Play
 
@@ -167,7 +171,7 @@ You can save either at Edge of Town or from the Camp menu.
 You can perform resume operation only from Edge of Town.
 
 
-<a id="org598f90b"></a>
+<a id="org934d7ed"></a>
 
 # License
 
@@ -175,12 +179,12 @@ Daemon Lord is under [MIT license](https://en.wikipedia.org/wiki/MIT_License).
 Daemon Lord - Copyright (C) 2021 Kyosuke Achiwa
 
 
-<a id="orgcec7d66"></a>
+<a id="orgbebd702"></a>
 
 # Quick Tour of Daemon Lord
 
 
-<a id="org7363447"></a>
+<a id="org5da2209"></a>
 
 ## Game start
 
@@ -214,12 +218,12 @@ DL (Daemon Lord) starts with the screen below at the Castle.
 When you first start the game, you need to go to Edge of Town (press `e`) > Training Grounds (press `t`), and then create characters (press `c`).
 
 
-<a id="org86c7b02"></a>
+<a id="org34a70e3"></a>
 
 ## Edge of Town
 
 
-<a id="org83f1406"></a>
+<a id="org66860b3"></a>
 
 ### Training Grounds
 
@@ -575,7 +579,7 @@ As you have already noticed, DL gives you a guide of which letter you can type w
 Have you created six characters?  Then, you should go to Castle > Hawthorne Tavern to form a party.  Type `l` to leave the Training Grounds and then type `c` to go to Castle.
 
 
-<a id="orgdc3ff6f"></a>
+<a id="org58173ed"></a>
 
 ## Castle
 
@@ -590,7 +594,7 @@ Have you created six characters?  Then, you should go to Castle > Hawthorne Tave
 From the Castle menu, you can visit several places, but you want to go to Hawthorne Tavern now so type `h`.
 
 
-<a id="orge326824"></a>
+<a id="org51dfb32"></a>
 
 ### Hawthorne Tavern
 
@@ -622,7 +626,7 @@ Now, they are shown in the party window at the bottom left of the screen.
     6 faun       G-MAG  10    7 OK
 
 
-<a id="org2a1f93d"></a>
+<a id="orgaff9ada"></a>
 
 ### Trader Jay's
 
@@ -683,7 +687,7 @@ Basically, the front (ie, the first three) members should equip heavily because 
 sling is a long-range weapon that everyone can use.  You can't expect much from sling and its damage is at best 1 or 2, but better than nothing.  Long-ranged weapons tend to be less powerful and more expensive than short-range ones.
 
 
-<a id="orge9a62ff"></a>
+<a id="orgbd9c09e"></a>
 
 ### Equip
 
@@ -711,7 +715,7 @@ At Hatthorne Tavern, first `i)nspect` a character and then choose `i)tems` > ite
 Equipped items will have `*` mark next to the item name.  You need to equip one item at a time and for each member.  To change members, type `j, k` .
 
 
-<a id="org6d0502d"></a>
+<a id="org816b071"></a>
 
 ## Save and Resume
 
@@ -730,7 +734,7 @@ To save and quit the game, go to Edge of Town and type `S` (capital-S).
 You need to run `python dl.py` again to restart and resume the game.  After restarting the game, go to Edge of Town and choose `R)esume from saved data` .  That is, capital-R.  Automatic resume is not supported.
 
 
-<a id="org34ebc10"></a>
+<a id="org41c2812"></a>
 
 ## Dungeon
 
@@ -766,7 +770,7 @@ You (`@`) are now in the dungeon and on the upstairs to the outside world.
 `^` indicates areas that you have not visited yet.  `.` is a floor tile that you can walk on.  
 
 
-<a id="orgb56c7d4"></a>
+<a id="org603544c"></a>
 
 ### Walk around the Dungeon
 
@@ -965,7 +969,7 @@ Oops, another door.  Let's open again.
     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^###+###^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
-<a id="orge2ed9dc"></a>
+<a id="orge29556b"></a>
 
 ### Battle
 
@@ -1080,7 +1084,7 @@ The party killed all three slimes.
 Yeah!  Each survivor received 27 experience points and 9 gold from this battle.
 
 
-<a id="org33189cc"></a>
+<a id="org18aaa10"></a>
 
 ### Chest
 
@@ -1225,7 +1229,7 @@ Here's the trap list.
 </table>
 
 
-<a id="org1d4f05f"></a>
+<a id="orgf1d6374"></a>
 
 ### Friendly monsters
 
@@ -1246,7 +1250,7 @@ Of course, you will get no e.p. or gold if you chose to walk away.
     6 faun       G-MAG  10    7 OK           ^  Each survivor gets 0 gold.      ^
 
 
-<a id="org0448eda"></a>
+<a id="org17ff292"></a>
 
 ### Get ouf of the Dungeon
 
@@ -1305,7 +1309,7 @@ Having walked around a lot on this floor, and now the mage's MP is exhausted and
 The party is back at Edge of Town.  It should take a while to get used to the brightness but they are safe again!
 
 
-<a id="orgaadee0e"></a>
+<a id="org794fb6c"></a>
 
 ### A new dungeon!
 
@@ -1357,7 +1361,7 @@ What?  We can only see 3x3 tiles around the party.  Where has the map data gone?
 See the map is different this time?
 
 
-<a id="orga56a162"></a>
+<a id="orgadb632b"></a>
 
 ### Camp
 
@@ -1447,7 +1451,7 @@ Looks like, Ben's HP is fully restored.  Do the same for Cam.
 Great!
 
 
-<a id="orgc5a2d9f"></a>
+<a id="orgaf770c1"></a>
 
 ### Save and Resume from camp
 
@@ -1507,12 +1511,12 @@ And, you are in the dungeon again.
 Let's exit from the dungeon and head to Edge of Town > Castle > Lakehouse Inn for some rest.
 
 
-<a id="org6c1a6aa"></a>
+<a id="orgb6f6712"></a>
 
 ## Castle
 
 
-<a id="orgc68f91f"></a>
+<a id="org8f3c373"></a>
 
 ### The Lakehouse Inn
 
@@ -1555,12 +1559,12 @@ If their e.p. reach the next level, their level will go up while they are asleep
 In DL, age doesn't matter.  They can stay at the inn as long as they wish without getting old.  All the party members stay at the same room type.
 
 
-<a id="orgd35dd82"></a>
+<a id="org507ca0c"></a>
 
 # Spells
 
 
-<a id="org3823f21"></a>
+<a id="orgc9900cf"></a>
 
 ## Overview
 
@@ -1579,7 +1583,7 @@ In this example, she has 2 MPs remaining for level 1 mage spells.  She will acqu
 The maximum MPs for each spell level is 9.  A high level mage/priest will have `9/9/9/9/9/9/9` MPs.
 
 
-<a id="orgbf5e7e9"></a>
+<a id="org7e38ea7"></a>
 
 ## Usage
 
@@ -1608,7 +1612,7 @@ To use spells from the camp menu, first `i)nspect` a character who would like to
     ^^^^^^^^^^|   i)tems s)pells jk)change member l)leave > s              |^^^^^^
 
 
-<a id="org63af324"></a>
+<a id="org3a581b5"></a>
 
 ## Mage Spells
 
@@ -1798,7 +1802,7 @@ One of the most useful spells will be newly introduced "tsubasa".  This spell ca
 </table>
 
 
-<a id="orgaad174a"></a>
+<a id="org4275901"></a>
 
 ## Priest Spells
 
@@ -2045,6 +2049,933 @@ One of the most useful spells will be newly introduced "tsubasa".  This spell ca
 <td class="org-left">zenkai</td>
 <td class="org-left">-</td>
 <td class="org-left">8-24 HP group heal to party. 全快</td>
+</tr>
+</tbody>
+</table>
+
+
+<a id="org5ce2d17"></a>
+
+# Monsters
+
+
+<a id="org2770a32"></a>
+
+## Shallow floors
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-right" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">name</th>
+<th scope="col" class="org-left">unidentified</th>
+<th scope="col" class="org-right">flr</th>
+<th scope="col" class="org-left">slp</th>
+<th scope="col" class="org-left">regist</th>
+<th scope="col" class="org-left">Comment</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td class="org-left">blue slime</td>
+<td class="org-left">slime</td>
+<td class="org-right">1</td>
+<td class="org-left">-</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">The weakest monster in DL</td>
+</tr>
+
+
+<tr>
+<td class="org-left">orc</td>
+<td class="org-left">small humanoid</td>
+<td class="org-right">1</td>
+<td class="org-left">yes</td>
+<td class="org-left">fire</td>
+<td class="org-left">Weak monster. Don't bother</td>
+</tr>
+
+
+<tr>
+<td class="org-left">goblin</td>
+<td class="org-left">small humanoid</td>
+<td class="org-right">1</td>
+<td class="org-left">yes</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">High e.p. but a little strong</td>
+</tr>
+
+
+<tr>
+<td class="org-left">orc skeleton</td>
+<td class="org-left">skeleton</td>
+<td class="org-right">1</td>
+<td class="org-left">-</td>
+<td class="org-left">fire,cold</td>
+<td class="org-left">Low e.p. but a little strong</td>
+</tr>
+
+
+<tr>
+<td class="org-left">ripper</td>
+<td class="org-left">scruffy man</td>
+<td class="org-right">1</td>
+<td class="org-left">yes</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">Average</td>
+</tr>
+
+
+<tr>
+<td class="org-left">cop</td>
+<td class="org-left">man in uniform</td>
+<td class="org-right">1</td>
+<td class="org-left">yes</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">Most powerful.  High e.p.</td>
+</tr>
+
+
+<tr>
+<td class="org-left">yakuza</td>
+<td class="org-left">scary man</td>
+<td class="org-right">2</td>
+<td class="org-left">yes</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">High e.p. but can behead</td>
+</tr>
+
+
+<tr>
+<td class="org-left">zombie</td>
+<td class="org-left">weird humanoid</td>
+<td class="org-right">2</td>
+<td class="org-left">-</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">Could paralyze you</td>
+</tr>
+
+
+<tr>
+<td class="org-left">wild turkey</td>
+<td class="org-left">bird</td>
+<td class="org-right">2</td>
+<td class="org-left">yes</td>
+<td class="org-left">cold</td>
+<td class="org-left">Scary looking big bird</td>
+</tr>
+
+
+<tr>
+<td class="org-left">pink cloud</td>
+<td class="org-left">pink cloud</td>
+<td class="org-right">2</td>
+<td class="org-left">-</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">Use mage spells and paralyze</td>
+</tr>
+
+
+<tr>
+<td class="org-left">lvl1 mage</td>
+<td class="org-left">man in robes</td>
+<td class="org-right">2</td>
+<td class="org-left">yes</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">Be careful of "shunmin"</td>
+</tr>
+
+
+<tr>
+<td class="org-left">lvl1 priest</td>
+<td class="org-left">priest</td>
+<td class="org-right">2</td>
+<td class="org-left">yes</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">Use priest lvl1 spells</td>
+</tr>
+
+
+<tr>
+<td class="org-left">coffee bean</td>
+<td class="org-left">dot</td>
+<td class="org-right">2</td>
+<td class="org-left">-</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">Bonus monster.  High e.p.</td>
+</tr>
+
+
+<tr>
+<td class="org-left">lvl1 ninja</td>
+<td class="org-left">black belt</td>
+<td class="org-right">2</td>
+<td class="org-left">yes</td>
+<td class="org-left">fire,cold</td>
+<td class="org-left">Could behaed you</td>
+</tr>
+
+
+<tr>
+<td class="org-left">bobcat</td>
+<td class="org-left">cat</td>
+<td class="org-right">2,3</td>
+<td class="org-left">-</td>
+<td class="org-left">cold</td>
+<td class="org-left">Could behead you</td>
+</tr>
+
+
+<tr>
+<td class="org-left">killer mouse</td>
+<td class="org-left">giant rodent</td>
+<td class="org-right">3</td>
+<td class="org-left">-</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">Could poison you</td>
+</tr>
+
+
+<tr>
+<td class="org-left">comodo dragon</td>
+<td class="org-left">lizard</td>
+<td class="org-right">3</td>
+<td class="org-left">-</td>
+<td class="org-left">fire</td>
+<td class="org-left">Could poison you. Good e.p.</td>
+</tr>
+
+
+<tr>
+<td class="org-left">hyena</td>
+<td class="org-left">mangy dog</td>
+<td class="org-right">3</td>
+<td class="org-left">-</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">Not bad but a little strong</td>
+</tr>
+
+
+<tr>
+<td class="org-left">lvl3 priest</td>
+<td class="org-left">priest</td>
+<td class="org-right">3</td>
+<td class="org-left">yes</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">Be careful of "damare"</td>
+</tr>
+
+
+<tr>
+<td class="org-left">lvl3 samurai</td>
+<td class="org-left">kimonoed man</td>
+<td class="org-right">3</td>
+<td class="org-left">-</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">Be careful of "shunmin"</td>
+</tr>
+
+
+<tr>
+<td class="org-left">lvl3 ninja</td>
+<td class="org-left">kimonoed man</td>
+<td class="org-right">3,4</td>
+<td class="org-left">-</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">High e.p. Critical & poison</td>
+</tr>
+
+
+<tr>
+<td class="org-left">were bear</td>
+<td class="org-left">bear</td>
+<td class="org-right">3,4</td>
+<td class="org-left">-</td>
+<td class="org-left">cold</td>
+<td class="org-left">High e.p. Poison and paraly</td>
+</tr>
+
+
+<tr>
+<td class="org-left">humming dragon</td>
+<td class="org-left">tiny dragon</td>
+<td class="org-right">3,4</td>
+<td class="org-left">yes</td>
+<td class="org-left">fire</td>
+<td class="org-left">Fire breath</td>
+</tr>
+
+
+<tr>
+<td class="org-left">rotting corpose</td>
+<td class="org-left">weird humanoid</td>
+<td class="org-right">3,4</td>
+<td class="org-left">-</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">Paralyze</td>
+</tr>
+
+
+<tr>
+<td class="org-left">akaoni</td>
+<td class="org-left">ogre</td>
+<td class="org-right">3,4</td>
+<td class="org-left">yes</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">Average or weak</td>
+</tr>
+
+
+<tr>
+<td class="org-left">huge spider</td>
+<td class="org-left">insect</td>
+<td class="org-right">3,4</td>
+<td class="org-left">yes</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">Poison</td>
+</tr>
+
+
+<tr>
+<td class="org-left">wererbbit</td>
+<td class="org-left">animal</td>
+<td class="org-right">3,4</td>
+<td class="org-left">yes</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">Weak</td>
+</tr>
+
+
+<tr>
+<td class="org-left">iron beetle</td>
+<td class="org-left">insect</td>
+<td class="org-right">3,4</td>
+<td class="org-left">-</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">Strong attack</td>
+</tr>
+
+
+<tr>
+<td class="org-left">green dragon</td>
+<td class="org-left">dragon</td>
+<td class="org-right">3,4</td>
+<td class="org-left">-</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">Breath and "shunmin"</td>
+</tr>
+
+
+<tr>
+<td class="org-left">priestess</td>
+<td class="org-left">priest</td>
+<td class="org-right">3,4</td>
+<td class="org-left">yes</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">Often with green dragon</td>
+</tr>
+</tbody>
+</table>
+
+
+<a id="org0c5cc78"></a>
+
+## Middle depth floors
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">name</th>
+<th scope="col" class="org-left">unidentified</th>
+<th scope="col" class="org-left">flr</th>
+<th scope="col" class="org-left">slp</th>
+<th scope="col" class="org-left">regist</th>
+<th scope="col" class="org-left">Comment</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td class="org-left">swordsman</td>
+<td class="org-left">man in armor</td>
+<td class="org-left">4,5</td>
+<td class="org-left">yes</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">Attack only</td>
+</tr>
+
+
+<tr>
+<td class="org-left">killer hornet</td>
+<td class="org-left">insect</td>
+<td class="org-left">4,5</td>
+<td class="org-left">yes</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">Poison</td>
+</tr>
+
+
+<tr>
+<td class="org-left">robot dog</td>
+<td class="org-left">animal</td>
+<td class="org-left">4,5</td>
+<td class="org-left">yes</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">Robot dog could sleep</td>
+</tr>
+
+
+<tr>
+<td class="org-left">kokopelli</td>
+<td class="org-left">kokopellis</td>
+<td class="org-left">4,5</td>
+<td class="org-left">-</td>
+<td class="org-left">spell</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+
+<tr>
+<td class="org-left">ghost</td>
+<td class="org-left">thin figure</td>
+<td class="org-left">4,5</td>
+<td class="org-left">-</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+
+<tr>
+<td class="org-left">ice dragon</td>
+<td class="org-left">dragon</td>
+<td class="org-left">4,5</td>
+<td class="org-left">-</td>
+<td class="org-left">senmetsu</td>
+<td class="org-left">Breath</td>
+</tr>
+
+
+<tr>
+<td class="org-left">python</td>
+<td class="org-left">snake</td>
+<td class="org-left">4,5</td>
+<td class="org-left">-</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+
+<tr>
+<td class="org-left">prince</td>
+<td class="org-left">unseen entity</td>
+<td class="org-left">4,5</td>
+<td class="org-left">-</td>
+<td class="org-left">senmetsu</td>
+<td class="org-left">Drain</td>
+</tr>
+
+
+<tr>
+<td class="org-left">bishop</td>
+<td class="org-left">priest</td>
+<td class="org-left">4,5</td>
+<td class="org-left">yes</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+
+<tr>
+<td class="org-left">honcho</td>
+<td class="org-left">man in armor</td>
+<td class="org-left">4,5</td>
+<td class="org-left">yes</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+
+<tr>
+<td class="org-left">magician</td>
+<td class="org-left">man in robes</td>
+<td class="org-left">5,6</td>
+<td class="org-left">yes</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+
+<tr>
+<td class="org-left">lvl4 thief</td>
+<td class="org-left">man in leather</td>
+<td class="org-left">5,6</td>
+<td class="org-left">-</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+
+<tr>
+<td class="org-left">snow lerpard</td>
+<td class="org-left">animal</td>
+<td class="org-left">5,6</td>
+<td class="org-left">-</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+
+<tr>
+<td class="org-left">mononoke</td>
+<td class="org-left">unseen entity</td>
+<td class="org-left">5,6</td>
+<td class="org-left">-</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">Poison</td>
+</tr>
+
+
+<tr>
+<td class="org-left">ancient spider</td>
+<td class="org-left">insect</td>
+<td class="org-left">5,6</td>
+<td class="org-left">-</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">Poison</td>
+</tr>
+
+
+<tr>
+<td class="org-left">werewolf</td>
+<td class="org-left">animal</td>
+<td class="org-left">5,6,7</td>
+<td class="org-left">yes</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">Poison</td>
+</tr>
+
+
+<tr>
+<td class="org-left">medusa hair</td>
+<td class="org-left">snake</td>
+<td class="org-left">5,6,7</td>
+<td class="org-left">-</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">Stone</td>
+</tr>
+
+
+<tr>
+<td class="org-left">lvl5 priest</td>
+<td class="org-left">priest</td>
+<td class="org-left">5,6,7</td>
+<td class="org-left">-</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+
+<tr>
+<td class="org-left">lvl6 ninja</td>
+<td class="org-left">man in black</td>
+<td class="org-left">5,6,7</td>
+<td class="org-left">-</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">No critical</td>
+</tr>
+
+
+<tr>
+<td class="org-left">lvl7 mage</td>
+<td class="org-left">man in robe</td>
+<td class="org-left">5,6,7</td>
+<td class="org-left">yes</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">'gouka', 'toketsu'</td>
+</tr>
+
+
+<tr>
+<td class="org-left">kasipian wind</td>
+<td class="org-left">sailor</td>
+<td class="org-left">6,7,8</td>
+<td class="org-left">yes</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+
+<tr>
+<td class="org-left">tycoon</td>
+<td class="org-left">man in armor</td>
+<td class="org-left">6,7,8</td>
+<td class="org-left">-</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+
+<tr>
+<td class="org-left">high priest</td>
+<td class="org-left">priest</td>
+<td class="org-left">6,7,8</td>
+<td class="org-left">-</td>
+<td class="org-left">senmetsu</td>
+<td class="org-left">'shisubeshi'</td>
+</tr>
+
+
+<tr>
+<td class="org-left">ronin</td>
+<td class="org-left">man in kimono</td>
+<td class="org-left">6,7,8</td>
+<td class="org-left">-</td>
+<td class="org-left">senmetsu</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+
+<tr>
+<td class="org-left">arch mage</td>
+<td class="org-left">man in robes</td>
+<td class="org-left">6,7,8</td>
+<td class="org-left">-</td>
+<td class="org-left">senmetsu</td>
+<td class="org-left">'shunmin'</td>
+</tr>
+
+
+<tr>
+<td class="org-left">lupin the 3rd</td>
+<td class="org-left">man in jacket</td>
+<td class="org-left">7,8,9</td>
+<td class="org-left">-</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+
+<tr>
+<td class="org-left">hell dog</td>
+<td class="org-left">animal</td>
+<td class="org-left">7,8,9</td>
+<td class="org-left">-</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+
+<tr>
+<td class="org-left">aooni</td>
+<td class="org-left">ogre</td>
+<td class="org-left">7,8,9</td>
+<td class="org-left">-</td>
+<td class="org-left">senmetsu</td>
+<td class="org-left">'taika'</td>
+</tr>
+
+
+<tr>
+<td class="org-left">troll</td>
+<td class="org-left">strange animal</td>
+<td class="org-left">7,8,9</td>
+<td class="org-left">-</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+
+<tr>
+<td class="org-left">prince</td>
+<td class="org-left">unseen entity</td>
+<td class="org-left">7,8,9</td>
+<td class="org-left">-</td>
+<td class="org-left">senmetsu</td>
+<td class="org-left">Drain level 2</td>
+</tr>
+
+
+<tr>
+<td class="org-left">moon walker</td>
+<td class="org-left">unseen entity</td>
+<td class="org-left">7,8,9</td>
+<td class="org-left">-</td>
+<td class="org-left">senmetsu</td>
+<td class="org-left">Drain</td>
+</tr>
+
+
+<tr>
+<td class="org-left">serpent</td>
+<td class="org-left">snake</td>
+<td class="org-left">7,8,9</td>
+<td class="org-left">-</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">Poison</td>
+</tr>
+
+
+<tr>
+<td class="org-left">lvl8 priest</td>
+<td class="org-left">priest</td>
+<td class="org-left">7,8,9</td>
+<td class="org-left">-</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">'gekido', 'zenjiai'</td>
+</tr>
+
+
+<tr>
+<td class="org-left">lvl10 fighter</td>
+<td class="org-left">man in armor</td>
+<td class="org-left">7,8,9</td>
+<td class="org-left">-</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+
+<tr>
+<td class="org-left">wizard</td>
+<td class="org-left">man in robes</td>
+<td class="org-left">7,8,9</td>
+<td class="org-left">-</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">'zettaireido'</td>
+</tr>
+
+
+<tr>
+<td class="org-left">lvl7 thief</td>
+<td class="org-left">man in leather</td>
+<td class="org-left">7,8,9</td>
+<td class="org-left">-</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+
+<tr>
+<td class="org-left">lvl8 ninja</td>
+<td class="org-left">monk</td>
+<td class="org-left">7,8,9</td>
+<td class="org-left">-</td>
+<td class="org-left">senmetsu</td>
+<td class="org-left">Critical</td>
+</tr>
+
+
+<tr>
+<td class="org-left">desert golem</td>
+<td class="org-left">giant</td>
+<td class="org-left">7,8,9</td>
+<td class="org-left">-</td>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+
+<tr>
+<td class="org-left">petit demon</td>
+<td class="org-left">demon</td>
+<td class="org-left">7,8,9</td>
+<td class="org-left">-</td>
+<td class="org-left">senmetsu</td>
+<td class="org-left">'taika'</td>
+</tr>
+
+
+<tr>
+<td class="org-left">kerberos</td>
+<td class="org-left">strange animal</td>
+<td class="org-left">7,8,9</td>
+<td class="org-left">-</td>
+<td class="org-left">fire,sen</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+</tbody>
+</table>
+
+
+<a id="org4c28642"></a>
+
+## Deep floors
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">name</th>
+<th scope="col" class="org-left">unidentified</th>
+<th scope="col" class="org-left">flr</th>
+<th scope="col" class="org-left">slp</th>
+<th scope="col" class="org-left">regist</th>
+<th scope="col" class="org-left">Comment</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td class="org-left">stone giant</td>
+<td class="org-left">giant</td>
+<td class="org-left">8,9,10</td>
+<td class="org-left">-</td>
+<td class="org-left">fire,sen</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+
+<tr>
+<td class="org-left">darkbull</td>
+<td class="org-left">strange animal</td>
+<td class="org-left">8,9,10</td>
+<td class="org-left">-</td>
+<td class="org-left">senmetsu</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+
+<tr>
+<td class="org-left">lvl8 bishop</td>
+<td class="org-left">priest</td>
+<td class="org-left">8,9,10</td>
+<td class="org-left">-</td>
+<td class="org-left">senmetsu</td>
+<td class="org-left">'taika'</td>
+</tr>
+
+
+<tr>
+<td class="org-left">lvl8 fighter</td>
+<td class="org-left">man in armor</td>
+<td class="org-left">8,9,10</td>
+<td class="org-left">-</td>
+<td class="org-left">senmetsu</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+
+<tr>
+<td class="org-left">lvl10 mage</td>
+<td class="org-left">man in robes</td>
+<td class="org-left">8,9,10</td>
+<td class="org-left">-</td>
+<td class="org-left">senmetsu</td>
+<td class="org-left">'zettaireido'</td>
+</tr>
+
+
+<tr>
+<td class="org-left">pirate</td>
+<td class="org-left">man in leather</td>
+<td class="org-left">8,9,10</td>
+<td class="org-left">-</td>
+<td class="org-left">senmetsu</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+
+<tr>
+<td class="org-left">master ninja</td>
+<td class="org-left">man in robes</td>
+<td class="org-left">8,9,10</td>
+<td class="org-left">-</td>
+<td class="org-left">senmetsu</td>
+<td class="org-left">Critical</td>
+</tr>
+
+
+<tr>
+<td class="org-left">shy ghost</td>
+<td class="org-left">unseen entity</td>
+<td class="org-left">8,9,10</td>
+<td class="org-left">-</td>
+<td class="org-left">spells</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+
+<tr>
+<td class="org-left">moon phantom</td>
+<td class="org-left">unseen entity</td>
+<td class="org-left">8,9,10</td>
+<td class="org-left">-</td>
+<td class="org-left">spells</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+
+<tr>
+<td class="org-left">demon cat</td>
+<td class="org-left">strange animal</td>
+<td class="org-left">8,9,10</td>
+<td class="org-left">-</td>
+<td class="org-left">fi,co,sen</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+
+<tr>
+<td class="org-left">golem</td>
+<td class="org-left">giant</td>
+<td class="org-left">9,10</td>
+<td class="org-left">-</td>
+<td class="org-left">spells</td>
+<td class="org-left">weak to 'senmetsu'</td>
+</tr>
+
+
+<tr>
+<td class="org-left">flame dragon</td>
+<td class="org-left">dragon</td>
+<td class="org-left">9,10</td>
+<td class="org-left">-</td>
+<td class="org-left">senmetsu</td>
+<td class="org-left">&#xa0;</td>
 </tr>
 </tbody>
 </table>

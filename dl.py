@@ -126,7 +126,7 @@ random_messages = [
     ["It's frigid in this area.",
      "Is there an icy monster around here?"],
     ["There should be other adventurers in this dungeon.",
-     "Why we don't see anyone other than us?"],
+     "You wondered why you don't see anyone else."],
     ["You just wish you could stay in a better room tonight.",
      "You are fed up with cabbage soup for dinner."],
     ["You find a message board saying:",
@@ -2067,9 +2067,11 @@ class Floor:
         for i, message in enumerate(messages):
             if i == 0:
                 mw.print(message)
+                v.disp_scrwin()
             else:
                 getch(wait=True)
                 mw.print(message, start=' ')
+                v.disp_scrwin()
         mw.print(" - press space bar")
         v.disp_scrwin()
         while True:
