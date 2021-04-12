@@ -464,6 +464,8 @@ class Game:
         p = self.party
         p.x, p.y, p.px, p.py, p.floor, p.pfloor, p.light_cnt, p.ac, p.gps, \
             p.place, p.silenced, p.identify = ptup
+        if p.place in [Place.MAZE, Place.CAMP, Place.BATTLE]:
+            p.resumed = True  # resume flag
 
     def load_monsterdef(self):
         """
@@ -725,6 +727,7 @@ class Party:
         self.floor = self.pfloor = floor
         self.tsubasa_floor = 1  # to which floor? (valid when floor_move=3)
         self.floor_move = 0  # floor move flag
+        self.resumed = False  # resume flag
         self.place = Place.EDGE_OF_TOWN
         self.floor_obj = ''
         self.members = []
@@ -978,7 +981,9 @@ class Member:
         Show the character info and dispatch item or spell menus
         """
         mw = game.vscr.meswins[-1]
-        while not game.party.floor_move:
+        while game.party.members:
+            if game.party.floor_move and game.party.place == Place.CAMP:
+                break
             self.disp_character(game)
             mw.print(f"", start=' ')
             c1 = mw.input_char("i)tems s)pells c)lass jk)change member l)leave",
@@ -1401,7 +1406,7 @@ class Spell:
 
         if sdef.target == 'member':
             target = self.game.party.choose_character(self.game)
-            if target is False:
+            if not target:
                 mw = self.game.vscr.meswins[-1]
                 mw.print("Aborted.", start=' ')
                 return
@@ -1760,7 +1765,7 @@ class Spell:
         sdef = self.game.spelldef[spell]
         if not isinstance(invoker, Member):
             if sdef.target == 'party':
-                for mon in self.monp[0]:
+                for mon in self.game.battle.monp[0]:
                     self.heal_single(spell, sdef, mon)
             else:
                 self.heal_single(spell, sdef, invoker)
@@ -2300,7 +2305,7 @@ class Floor:
             dc = b'+'  # door character
             if random.randrange(10) == 0:  # 10%
                 dc = b'*'  # locked door
-            if game.party.floor in [3, 6, 9, 10] and r is rooms[-1]:
+            if self.floor in [3, 6, 9, 10] and r is rooms[-1]:
                 dc = b'%'  # special locked door that requires a key
             for x in range(r.x_size):  # top and bottom edges
                 self.place_door(r.x+x, r.y-1, dc)
@@ -2455,7 +2460,7 @@ class Battle:
         if self.boss:
             bosses = {
                 3: 'daemon kid',
-                6: 'the lday',
+                6: 'the lady',
                 9: 'atlas',
                 10: 'daemon lord',
             }
@@ -2659,7 +2664,7 @@ class Battle:
                         break
                     elif c == 'u':
                         item, target = self.choose_item(mem)
-                        if item is False:
+                        if not item:
                             continue
                         self.entities.append(
                             Entity(mem, mem.name, None, agi, item, target))
@@ -2752,7 +2757,7 @@ class Battle:
             target = self.game.spelldef[spell].target
             if target == 'member':
                 m = self.game.party.choose_character(self.game)
-                if m is False:
+                if not m:
                     return False, None
                 return iname, m
             elif target in ['group', 'enemy']:
@@ -2841,11 +2846,21 @@ class Battle:
                     e.target.state = State.STONED
                     self.mw.print(f"{e.target.name} is petrified.")
 
-        if e.target.drained is False and self.game.mondef[e.name].drain > 0:
+        if not e.target.drained and self.game.mondef[e.name].drain > 0:
             if (e.target.stat[5]+1)*100//20 < random.randrange(100):
                 if 'drain' not in regist:
                     prevlevel = e.target.level
                     e.target.level -= self.game.mondef[e.name].drain
+                    if e.target.level-1 < 13:
+                        e.target.exp = level_table[e.target.job][e.target.level-2]
+                    else:
+                        e.target.exp = level_table[e.target.job][11] +\
+                            level_table[e.target.job][12]*(e.target.level-13)
+                    if e.target.level < 13:
+                        e.target.nextexp = level_table[e.target.job][e.target.level-1]
+                    else:
+                        e.target.nextexp = level_table[e.target.job][11] +\
+                            level_table[e.target.job][12]*(e.target.level-12)
                     self.mw.print(
                         f"{e.target.name} is drained by {self.game.mondef[e.name].drain} level.")
                     if e.target.level < 1:
@@ -2853,10 +2868,10 @@ class Battle:
                         e.target.state = State.LOST
                         self.mw.print(f"{e.target.name} is lost.")
                         return
-                    e.target.maxhp -= \
+                    e.target.maxhp = \
                         e.target.maxhp * \
                         (prevlevel - self.game.mondef[e.name].drain) \
-                        // prelevel
+                        // prevlevel
                     if e.target.hp > e.target.maxhp:
                         e.target.hp = e.target.maxhp
                     e.target.drained = True
@@ -3243,7 +3258,7 @@ class Battle:
             if idx == 0:
                 continue
             if room.in_room(party.x, party.y) \
-               and party.floor_obj.battled[idx] is False:
+               and not party.floor_obj.battled[idx]:
                 if random.randrange(100) < min(95, party.floor*10):
                     self.room_index = idx
                     return 2  # with room guardian
@@ -3306,7 +3321,7 @@ class Chest:
                 return
             elif c == 'o':
                 mem = game.party.choose_character(game)
-                if mem is False:
+                if not mem:
                     continue
                 self.trap_activated(mem)
                 self.treasure()
@@ -3314,7 +3329,7 @@ class Chest:
                 return
             elif c == 'd':  # disarm
                 mem = game.party.choose_character(game)
-                if mem is False:
+                if not mem:
                     continue
                 ans = mw.input("Trap name?")
                 if ans == self.trap.name.lower().replace('_', ' '):
@@ -3342,7 +3357,7 @@ class Chest:
                 return
             elif c == 'k':  # calfo
                 mem = game.party.choose_character(game)
-                if mem is False:
+                if not mem:
                     continue
                 if 'kantei' in mem.pspells and mem.pspell_cnt[1]:
                     mem.pspell_cnt[1] -= 1
@@ -3359,7 +3374,7 @@ class Chest:
                 getch(wait=True)
             elif c == 'i':  # inspect
                 mem = game.party.choose_character(game)
-                if mem is False:
+                if not mem:
                     continue
                 if mem.inspected:
                     mw.print("Already inspected.", start=' ')
@@ -4089,7 +4104,7 @@ def levelup(game, m):
     levelup = 0
     learned = False
     while True:
-        if m.level <= 13:
+        if m.level < 13:
             next = level_table[m.job][m.level-1]
         else:
             next = level_table[m.job][11] + \
@@ -4307,9 +4322,9 @@ def inn(game):
     mw.print(f"You have {gold} gold in total.", start=' ')
     mw.print(f"c)ots                {2*num:4d} gold", start=' ')
     mw.print(f"s)tandard rooms      {20*num:4d} gold", start=' ')
-    mw.print(f"d)elux rooms         {50*num:4d} gold", start=' ')
-    mw.print(f"v)lake view suites   {200*num:4d} gold", start=' ')
-    mw.print(f"p)residential suites {500*num:4d} gold", start=' ')
+    mw.print(f"d)elux rooms         {100*num:4d} gold", start=' ')
+    mw.print(f"v)lake view suites   {500*num:4d} gold", start=' ')
+    mw.print(f"p)residential suites {2000*num:4d} gold", start=' ')
     mw.print(f"or l)eave", start=' ')
     c = mw.input_char("Which rooms to stay today?",
                       values=['c', 's', 'd', 'v', 'p', 'l'])
@@ -4321,17 +4336,24 @@ def inn(game):
     elif c == 's':
         uprice = 20
         dinner = random.choice(['juicy hamburgers', 'pork and scallion',
-                                'chiken pho', 'dana masala'])
+                                'chiken pho', 'dana masala',
+                                'beef and broccoli', 'pizza slices'])
     elif c == 'd':
-        uprice = 50
+        uprice = 100
         dinner = random.choice(['grilled sword fish', 'ribeye steak',
-                                'sushi', 'lamb chops', 'fillet mignon'])
+                                'temaki sushi', 'lamb chops', 'fillet mignon',
+                                'maine lobster roll', 'juicy white asparagus'])
     elif c == 'v':
-        uprice = 200
-        dinner = "wine and chef's special"
-    else:  # presidential suites
         uprice = 500
-        dinner = 'supreme course w/ champagne'
+        dinner = random.choice(["wine and dry-aged beef fillet mignon",
+                                "california wine and kobe beef NY strip steak",
+                                "ooma kuromaguro toro tuna sushi"])
+    else:  # presidential suites
+        uprice = 2000
+        dinner = random.choice(['supreme course w/ champagne',
+                                "chef's special w/ vintage wine",
+                                "jiro sushi w/ daiginjyo sake",
+                                "manchu-han imperial feast course"])
     if not game.party.pay(uprice*num):
         mw.print("You can't afford the room.")
         v.disp_scrwin()
@@ -4518,12 +4540,14 @@ def maze(game):
     dungeon = game.dungeon
     party = game.party
 
-    party.place = Place.MAZE
-    party.floor = 0
-    party.floor_move = 1  # 0: no, 1: down, 2: up
+    if not party.resumed and\
+       party.place in [Place.MAZE, Place.CAMP, Place.BATTLE]:
+        party.place = Place.MAZE
+        party.floor = 0
+        party.floor_move = 1  # 0: no, 1: down, 2: up
 
-    dungeon.floors = []  # initialize every time
-    party.floor_obj = floor_obj = None
+        dungeon.floors = []  # initialize every time
+        party.floor_obj = floor_obj = None
 
     while True:
         dungeon.generate_move_floors()
@@ -4574,6 +4598,29 @@ def maze(game):
             if floor_obj != party.floor_obj:
                 floor_obj = party.floor_obj
         vscr.disp_scrwin(floor_obj)
+
+        exit = dungeon.check_move_floor(floor_obj)
+        if exit:  # Exit from dungeon
+            mlist = party.members[:]
+            for mem in mlist:
+                if mem.poisoned:
+                    mem.poisoned = False
+                    mem.hpplus = 0
+                if mem.state in [State.PARALYZED, State.STONED, State.DEAD,
+                                 State.ASHED]:
+                    party.members.remove(mem)
+                    # Carried away in an ambulance
+                    game.hospitalized.append(mem)
+
+            party.light_cnt = 0
+            party.ac = 0
+            party.silenced = False
+            party.identify = False
+            party.gps = False
+
+            break
+        if party.floor_move:
+            continue
 
         c = getch(wait=True)
         draw = True
@@ -4631,27 +4678,6 @@ def maze(game):
             draw = False
         if draw:
             vscr.disp_scrwin(floor_obj)
-
-        exit = dungeon.check_move_floor(floor_obj)
-        if exit:  # Exit from dungeon
-            mlist = party.members[:]
-            for mem in mlist:
-                if mem.poisoned:
-                    mem.poisoned = False
-                    mem.hpplus = 0
-                if mem.state in [State.PARALYZED, State.STONED, State.DEAD,
-                                 State.ASHED]:
-                    party.members.remove(mem)
-                    # Carried away in an ambulance
-                    game.hospitalized.append(mem)
-
-            party.light_cnt = 0
-            party.ac = 0
-            party.silenced = False
-            party.identify = False
-            party.gps = False
-
-            break
 
     vscr.meswins = meswins_save
     vscr.cls()

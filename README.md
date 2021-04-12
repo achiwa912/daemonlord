@@ -1,49 +1,50 @@
 
 # Table of Contents
 
-1.  [dl.py - Daemon Lord](#org502f8b4)
-    1.  [Overview](#orgd89273b)
-        1.  [Wizardry clone](#org47b5a60)
-        2.  [Rogue-like dungeon maps](#orgfe9d7db)
-        3.  [A little more friendly than the original](#org0655fa0)
-    2.  [Important notice: Under development](#org59071e6)
-    3.  [Installation](#org05c02e4)
-    4.  [Prerequisites](#org9fa94b6)
-    5.  [How to Play](#org05d6337)
-2.  [License](#org934d7ed)
-3.  [Quick Tour of Daemon Lord](#orgbebd702)
-    1.  [Game start](#org5da2209)
-    2.  [Edge of Town](#org34a70e3)
-        1.  [Training Grounds](#org66860b3)
-    3.  [Castle](#org58173ed)
-        1.  [Hawthorne Tavern](#org51dfb32)
-        2.  [Trader Jay's](#orgaff9ada)
-        3.  [Equip](#orgbd9c09e)
-    4.  [Save and Resume](#org816b071)
-    5.  [Dungeon](#org41c2812)
-        1.  [Walk around the Dungeon](#org603544c)
-        2.  [Battle](#orge29556b)
-        3.  [Chest](#org18aaa10)
-        4.  [Friendly monsters](#orgf1d6374)
-        5.  [Get ouf of the Dungeon](#org17ff292)
-        6.  [A new dungeon!](#org794fb6c)
-        7.  [Camp](#orgadb632b)
-        8.  [Save and Resume from camp](#orgaf770c1)
-    6.  [Castle](#orgb6f6712)
-        1.  [The Lakehouse Inn](#org8f3c373)
-4.  [Spells](#org507ca0c)
-    1.  [Overview](#orgc9900cf)
-    2.  [Usage](#org7e38ea7)
-    3.  [Mage Spells](#org3a581b5)
-    4.  [Priest Spells](#org4275901)
-5.  [Monsters](#org5ce2d17)
-    1.  [Shallow floors](#org2770a32)
-    2.  [Middle depth floors](#org0c5cc78)
-    3.  [Deep floors](#org4c28642)
+1.  [dl.py - Daemon Lord](#org115dab2)
+    1.  [Overview](#org9d1bb7c)
+        1.  [Wizardry clone](#orge9feacc)
+        2.  [Rogue-like dungeon maps](#org193d47b)
+        3.  [Auto-generated maps w/o resetting levels and items of characters](#org9d610df)
+        4.  [A little more user friendly than Wizardry](#org202cd51)
+    2.  [Important notice: Under development](#org12d0e38)
+    3.  [Installation](#orga68e41a)
+    4.  [Prerequisites](#org28cbd7d)
+    5.  [How to Play](#org9570d72)
+2.  [License](#org22637c0)
+3.  [Quick Tour of Daemon Lord](#orgc2fce59)
+    1.  [Game start](#org2930680)
+    2.  [Edge of Town](#orgef1a1f8)
+        1.  [Training Grounds](#orgba733c4)
+    3.  [Castle](#org270a249)
+        1.  [Hawthorne Tavern](#org4d3e874)
+        2.  [Trader Jay's](#orgdc3b7fc)
+        3.  [Equip](#org14712da)
+    4.  [Save and Resume](#org6d1a39f)
+    5.  [Dungeon](#org7051525)
+        1.  [Walk around the Dungeon](#org24e1878)
+        2.  [Battle](#org919c056)
+        3.  [Chest](#org0b1c942)
+        4.  [Friendly monsters](#org233e1f3)
+        5.  [Get ouf of the Dungeon](#org4a5691a)
+        6.  [A new dungeon!](#org3059109)
+        7.  [Camp](#org0708c9d)
+        8.  [Save and Resume from camp](#org6d0d924)
+    6.  [Castle](#orgb33a8d8)
+        1.  [The Lakehouse Inn](#orgf1876ee)
+4.  [Spells](#orgd1c4d42)
+    1.  [Overview](#org3f5742f)
+    2.  [Usage](#org218b1a8)
+    3.  [Mage Spells](#orgb76b9d1)
+    4.  [Priest Spells](#org3970694)
+5.  [Monsters](#org33f9e34)
+    1.  [Shallow floors](#orgd8cb8d8)
+    2.  [Middle depth floors](#org56b6361)
+    3.  [Deep floors](#org5eebd68)
 
 
 
-<a id="org502f8b4"></a>
+<a id="org115dab2"></a>
 
 # dl.py - Daemon Lord
 
@@ -75,12 +76,12 @@ Daemon Lord is a Wizardry-clone RPG with rogue-like (ie, text-based), randomly-c
      6 faun       G-MAG   8  200 taika        .* *** encounter ***               ^
 
 
-<a id="orgd89273b"></a>
+<a id="org9d1bb7c"></a>
 
 ## Overview
 
 
-<a id="org47b5a60"></a>
+<a id="orge9feacc"></a>
 
 ### Wizardry clone
 
@@ -93,29 +94,41 @@ Daemon Lord is a Wizardry-clone RPG with rogue-like (ie, text-based), randomly-c
 -   Need to type spells and chest traps accurately
 
 
-<a id="orgfe9d7db"></a>
+<a id="org193d47b"></a>
 
 ### Rogue-like dungeon maps
 
 -   Text-based, 2D dungeon maps
+-   Move with `h, j, k, l` keys
 -   10 (or more) layers deep
--   Maps are auto-generated.  Every time you go down the dungeon, you will see different maps
+-   Maps are auto-generated.
 
 
-<a id="org0655fa0"></a>
+<a id="org9d610df"></a>
 
-### A little more friendly than the original
+### Auto-generated maps w/o resetting levels and items of characters
+
+-   Every time you go down the dungeon, you will see different maps
+-   No elevator but you have 'tsubasa' (mage level 2) spell.
+-   'tsubasa' allows you to teleport to the deepest floor the caster has visited
+    -   You will be landed on the upstairs of the floor
+    -   You still need to look for the downstairs which should be far away from where you land
+-   You can restart your adventure from a floor that should match your character levels
+
+
+<a id="org202cd51"></a>
+
+### A little more user friendly than Wizardry
 
 -   Re-calculate the bonus value with `.` key when creating a character
 -   Age doesn't matter anymore
--   "tsubasa" spell (mage level 2) will take your party to known depth
 -   Save and resume anywhere in the dungeon, preserving floor maps and spells in effect such as identification of monsters or protection
--   HP decrease by poison stops at HP = 1
--   You don't have to pool gold anymore.  Someone in the party will pay for you
+-   Poison effect stops at HP = 1
+-   You don't have to pool gold anymore.  You can pay as a party.
 -   Group heal spells for the entire party
 
 
-<a id="org59071e6"></a>
+<a id="org12d0e38"></a>
 
 ## Important notice: Under development
 
@@ -130,7 +143,7 @@ To-be-implemented features:
 -   Background story
 
 
-<a id="org05c02e4"></a>
+<a id="orga68e41a"></a>
 
 ## Installation
 
@@ -139,7 +152,7 @@ To-be-implemented features:
 3.  Run "python dl.py"
 
 
-<a id="org9fa94b6"></a>
+<a id="org28cbd7d"></a>
 
 ## Prerequisites
 
@@ -154,7 +167,7 @@ To-be-implemented features:
 -   items.csv - item data file
 
 
-<a id="org05d6337"></a>
+<a id="org9570d72"></a>
 
 ## How to Play
 
@@ -171,7 +184,7 @@ You can save either at Edge of Town or from the Camp menu.
 You can perform resume operation only from Edge of Town.
 
 
-<a id="org934d7ed"></a>
+<a id="org22637c0"></a>
 
 # License
 
@@ -179,12 +192,12 @@ Daemon Lord is under [MIT license](https://en.wikipedia.org/wiki/MIT_License).
 Daemon Lord - Copyright (C) 2021 Kyosuke Achiwa
 
 
-<a id="orgbebd702"></a>
+<a id="orgc2fce59"></a>
 
 # Quick Tour of Daemon Lord
 
 
-<a id="org5da2209"></a>
+<a id="org2930680"></a>
 
 ## Game start
 
@@ -218,12 +231,12 @@ DL (Daemon Lord) starts with the screen below at the Castle.
 When you first start the game, you need to go to Edge of Town (press `e`) > Training Grounds (press `t`), and then create characters (press `c`).
 
 
-<a id="org34a70e3"></a>
+<a id="orgef1a1f8"></a>
 
 ## Edge of Town
 
 
-<a id="org66860b3"></a>
+<a id="orgba733c4"></a>
 
 ### Training Grounds
 
@@ -579,7 +592,7 @@ As you have already noticed, DL gives you a guide of which letter you can type w
 Have you created six characters?  Then, you should go to Castle > Hawthorne Tavern to form a party.  Type `l` to leave the Training Grounds and then type `c` to go to Castle.
 
 
-<a id="org58173ed"></a>
+<a id="org270a249"></a>
 
 ## Castle
 
@@ -594,7 +607,7 @@ Have you created six characters?  Then, you should go to Castle > Hawthorne Tave
 From the Castle menu, you can visit several places, but you want to go to Hawthorne Tavern now so type `h`.
 
 
-<a id="org51dfb32"></a>
+<a id="org4d3e874"></a>
 
 ### Hawthorne Tavern
 
@@ -626,7 +639,7 @@ Now, they are shown in the party window at the bottom left of the screen.
     6 faun       G-MAG  10    7 OK
 
 
-<a id="orgaff9ada"></a>
+<a id="orgdc3b7fc"></a>
 
 ### Trader Jay's
 
@@ -687,7 +700,7 @@ Basically, the front (ie, the first three) members should equip heavily because 
 sling is a long-range weapon that everyone can use.  You can't expect much from sling and its damage is at best 1 or 2, but better than nothing.  Long-ranged weapons tend to be less powerful and more expensive than short-range ones.
 
 
-<a id="orgbd9c09e"></a>
+<a id="org14712da"></a>
 
 ### Equip
 
@@ -715,7 +728,7 @@ At Hatthorne Tavern, first `i)nspect` a character and then choose `i)tems` > ite
 Equipped items will have `*` mark next to the item name.  You need to equip one item at a time and for each member.  To change members, type `j, k` .
 
 
-<a id="org816b071"></a>
+<a id="org6d1a39f"></a>
 
 ## Save and Resume
 
@@ -734,7 +747,7 @@ To save and quit the game, go to Edge of Town and type `S` (capital-S).
 You need to run `python dl.py` again to restart and resume the game.  After restarting the game, go to Edge of Town and choose `R)esume from saved data` .  That is, capital-R.  Automatic resume is not supported.
 
 
-<a id="org41c2812"></a>
+<a id="org7051525"></a>
 
 ## Dungeon
 
@@ -770,7 +783,7 @@ You (`@`) are now in the dungeon and on the upstairs to the outside world.
 `^` indicates areas that you have not visited yet.  `.` is a floor tile that you can walk on.  
 
 
-<a id="org603544c"></a>
+<a id="org24e1878"></a>
 
 ### Walk around the Dungeon
 
@@ -969,7 +982,7 @@ Oops, another door.  Let's open again.
     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^###+###^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
-<a id="orge29556b"></a>
+<a id="org919c056"></a>
 
 ### Battle
 
@@ -1084,7 +1097,7 @@ The party killed all three slimes.
 Yeah!  Each survivor received 27 experience points and 9 gold from this battle.
 
 
-<a id="org18aaa10"></a>
+<a id="org0b1c942"></a>
 
 ### Chest
 
@@ -1229,7 +1242,7 @@ Here's the trap list.
 </table>
 
 
-<a id="orgf1d6374"></a>
+<a id="org233e1f3"></a>
 
 ### Friendly monsters
 
@@ -1250,7 +1263,7 @@ Of course, you will get no e.p. or gold if you chose to walk away.
     6 faun       G-MAG  10    7 OK           ^  Each survivor gets 0 gold.      ^
 
 
-<a id="org17ff292"></a>
+<a id="org4a5691a"></a>
 
 ### Get ouf of the Dungeon
 
@@ -1309,7 +1322,7 @@ Having walked around a lot on this floor, and now the mage's MP is exhausted and
 The party is back at Edge of Town.  It should take a while to get used to the brightness but they are safe again!
 
 
-<a id="org794fb6c"></a>
+<a id="org3059109"></a>
 
 ### A new dungeon!
 
@@ -1361,7 +1374,7 @@ What?  We can only see 3x3 tiles around the party.  Where has the map data gone?
 See the map is different this time?
 
 
-<a id="orgadb632b"></a>
+<a id="org0708c9d"></a>
 
 ### Camp
 
@@ -1451,7 +1464,7 @@ Looks like, Ben's HP is fully restored.  Do the same for Cam.
 Great!
 
 
-<a id="orgaf770c1"></a>
+<a id="org6d0d924"></a>
 
 ### Save and Resume from camp
 
@@ -1511,12 +1524,12 @@ And, you are in the dungeon again.
 Let's exit from the dungeon and head to Edge of Town > Castle > Lakehouse Inn for some rest.
 
 
-<a id="orgb6f6712"></a>
+<a id="orgb33a8d8"></a>
 
 ## Castle
 
 
-<a id="org8f3c373"></a>
+<a id="orgf1876ee"></a>
 
 ### The Lakehouse Inn
 
@@ -1559,12 +1572,12 @@ If their e.p. reach the next level, their level will go up while they are asleep
 In DL, age doesn't matter.  They can stay at the inn as long as they wish without getting old.  All the party members stay at the same room type.
 
 
-<a id="org507ca0c"></a>
+<a id="orgd1c4d42"></a>
 
 # Spells
 
 
-<a id="orgc9900cf"></a>
+<a id="org3f5742f"></a>
 
 ## Overview
 
@@ -1583,7 +1596,7 @@ In this example, she has 2 MPs remaining for level 1 mage spells.  She will acqu
 The maximum MPs for each spell level is 9.  A high level mage/priest will have `9/9/9/9/9/9/9` MPs.
 
 
-<a id="org7e38ea7"></a>
+<a id="org218b1a8"></a>
 
 ## Usage
 
@@ -1612,7 +1625,7 @@ To use spells from the camp menu, first `i)nspect` a character who would like to
     ^^^^^^^^^^|   i)tems s)pells jk)change member l)leave > s              |^^^^^^
 
 
-<a id="org3a581b5"></a>
+<a id="orgb76b9d1"></a>
 
 ## Mage Spells
 
@@ -1802,7 +1815,7 @@ One of the most useful spells will be newly introduced "tsubasa".  This spell ca
 </table>
 
 
-<a id="org4275901"></a>
+<a id="org3970694"></a>
 
 ## Priest Spells
 
@@ -2054,12 +2067,12 @@ One of the most useful spells will be newly introduced "tsubasa".  This spell ca
 </table>
 
 
-<a id="org5ce2d17"></a>
+<a id="org33f9e34"></a>
 
 # Monsters
 
 
-<a id="org2770a32"></a>
+<a id="orgd8cb8d8"></a>
 
 ## Shallow floors
 
@@ -2393,7 +2406,7 @@ One of the most useful spells will be newly introduced "tsubasa".  This spell ca
 </table>
 
 
-<a id="org0c5cc78"></a>
+<a id="org56b6361"></a>
 
 ## Middle depth floors
 
@@ -2827,7 +2840,7 @@ One of the most useful spells will be newly introduced "tsubasa".  This spell ca
 </table>
 
 
-<a id="org4c28642"></a>
+<a id="org5eebd68"></a>
 
 ## Deep floors
 
