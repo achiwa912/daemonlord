@@ -737,6 +737,15 @@ class Party:
         self.identify = False  # latumapic
         self.gps = False  # eternal dumapic
 
+    def defeated(self):
+        """
+        Party defeat check after a battle, a boss battle or a chest
+        """
+        if sum(1 for m in self.members
+               if m.state in [State.OK, State.ASLEEP]):
+            return False  # at least one survives
+        return True  # defeated
+
     def move(self, x, y, floor=None):
         """
         Move party to the specified (x, y) and optional floor
@@ -1056,7 +1065,9 @@ class Member:
         v = game.vscr
         mw = Meswin(v, 14, 4, 44, 12, frame=True)
         v.meswins.append(mw)
-        while not game.party.floor_move:  # tsubasa
+        while not game.party.floor_move or \
+                game.party.place not in \
+                [Place.MAZE, Place.CAMP, Place.BATTLE]:  # if not tsubasa
             mw.print("Spell memu:")
             c = mw.input_char("c)ast spell v)iew list l)eave",
                               values=['c', 'v', 'l'])
@@ -1499,8 +1510,12 @@ class Spell:
                 if mondef.weakmaka:
                     self.game.battle.exp += len(mong.monsters) * \
                         mondef.exp
+                    monsterg = mong.monsters
+                    for mon in monsterg:
+                        mon.state = State.DEAD
+                        # mong.monsters.remove(mon)
                     mw.print(f"{dispname} are perished.", start=' ')
-                    self.game.battle.monp.remove(mong)
+                    # self.game.battle.monp.remove(mong)
                     v.disp_scrwin()
         elif spell == 'hinshi':
             if isinstance(invoker, Member):
@@ -1510,13 +1525,16 @@ class Spell:
                 else:
                     disptarget = mondef.unident
                 if random.randrange(100) >= mondef.regspellp:
-                    damage = max(target.hp - random.randint(7) - 1, 0)
-                    target.hp -= damage
+                    damage = max(
+                        target.monsters[0].hp - random.randrange(7) - 1, 0)
+                    target.monsters[0].hp -= damage
                     mw.print(
                         f"{disptarget} incurred {damage} damage.", start=' ')
                 else:
                     mw.print(f"{disptarget} registed the spell.", start=' ')
             else:
+                target = random.choice([mem for mem in self.game.party.members
+                                        if mem.state in [State.OK, State.ASLEEP]])
                 regspellp = target.stat[5] * 100/20  # luck
                 if random.randrange(100) >= regspellp:
                     damage = max(target.hp - random.randint(7) - 1, 0)
@@ -1700,7 +1718,7 @@ class Spell:
                 disptarget = self.game.mondef[target.name].unident
             if spell == 'shinoroi':  # lakanito
                 for mon in target.monsters:
-                    self.death_single(invoker, mon, disptarget)
+                    self.death_single(mon, disptarget)
             else:
                 for mon in target.monsters:
                     self.attack_single(
@@ -1721,7 +1739,7 @@ class Spell:
             else:
                 disptarget = self.game.mondef[target.name].unident
             if spelldef.type == 'death':
-                self.death_single(invoker, target, disptarget)
+                self.death_single(target, disptarget)
             elif spell != 'butsumetsu' or \
                     self.game.mondef[target.name].type != 'undead':
                 self.attack_single(target.monsters[0], disptarget,
@@ -1742,6 +1760,9 @@ class Spell:
         mw = v.meswins[-1]
         damage = dice(value)
         mondef = self.game.mondef[mon.name]
+        if mondef.regspellp > random.randrange(100):
+            mw.print(f"{dispname} registed.")
+            return
         if 'fire' in attr:
             if mondef.regfire:
                 damage = damage // 2
@@ -1861,8 +1882,8 @@ class Dungeon:
         Generate a dungeon floor.
         Create rooms, connect among them and place doors
         """
-        floor_x_size = min(256, 48 + 24*self.game.party.floor)
-        floor_y_size = min(128, 20 + 10*self.game.party.floor)
+        floor_x_size = min(256, 48 + 24*floor)
+        floor_y_size = min(128, 20 + 10*floor)
         floor_data = bytearray(b'#' * floor_x_size *
                                floor_y_size)  # rock only floor
         floor_obj = Floor(floor_x_size, floor_y_size, floor, floor_data)
@@ -3073,7 +3094,10 @@ class Battle:
             self.enemy_action()
 
             self.entities.sort(key=attrgetter('agi'), reverse=True)
-            for e in self.entities:
+            entities_tmp = self.entities[:]
+            for e in entities_tmp:
+                if not e.valid:
+                    continue
                 dispname = e.name
                 if isinstance(e.target, Monstergrp):
                     if not self.monp:
@@ -3179,6 +3203,9 @@ class Battle:
                         self.mw.print(f"{dispname} casted {e.action}.")
                         self.game.spell.cast_spell_dispatch(
                             e.entity, e.action, e.target)
+                self.clean_dead()  # clean up dead monsters
+                if not self.monp:
+                    break
                 v.disp_scrwin()
                 getch(wait=True)
 
@@ -3224,6 +3251,24 @@ class Battle:
         v.meswins.pop()
         self.game.party.place = place
         return
+
+    def clean_dead(self):
+        """
+        clean up dead monsters from monp and entities so that
+        dead monsters don't attack or continue to be target
+        """
+        monp_tmp = self.monp[:]
+        for mong in monp_tmp:
+            mong_tmp = mong.monsters[:]
+            for mon in mong_tmp:
+                if mon.state in [State.DEAD, State.ASHED, State.LOST]:
+                    mon.hp = 0
+                    mong.monsters.remove(mon)
+                    e = [e for e in self.entities if e.entity is mon]
+                    if e:
+                        e[0].valid = False
+                    if not mong.monsters:  # no alive monsters in grp
+                        self.monp.remove(mong)
 
     def recover_state(self):
         """
@@ -3283,6 +3328,7 @@ class Entity:
         self.agi = agi  # relative agility
         self.action = action  #
         self.target = target  # member obj, mongrp obj ('self', 'all'?)
+        self.valid = True  # valid flag
 
 
 class Chest:
@@ -3513,8 +3559,10 @@ class Chest:
             mw.print(f"{m.name} got stunned.", start=' ')
             v.disp_scrwin()
         elif self.trap == Trap.TELEPORTER:
-            party.move(random.randrange(game.party.floor.x_size),
-                       random.randrange(game.party.floor.y_size))
+            mw.print(f"Oops, teleporter!", start=' ')
+            v.disp_scrwin()
+            game.party.move(random.randrange(game.party.floor.x_size),
+                            random.randrange(game.party.floor.y_size))
         elif self.trap == Trap.ALARM:
             party.alarm = True
         elif self.trap == Trap.MAGE_BLASTER:
@@ -3618,6 +3666,9 @@ def getch(wait=False):
 
 
 def dice(valstr):
+    """
+    valstr as "2D+4", "10D+300", etc.
+    """
     pattern = r"(\d+)[dD](\d+)(\+(\d+))?"
     m = re.search(pattern, valstr)
     total = 0
@@ -3626,8 +3677,8 @@ def dice(valstr):
     else:
         plus = int(m[4])
     for _ in range(int(m[1])):
-        total += random.randint(1, int(m[2])) + plus
-    return total
+        total += random.randint(1, int(m[2]))
+    return total + plus
 
 
 def create_character(game):
@@ -4025,9 +4076,12 @@ def trader_sell(game, mem, op):
     game.shopitems[idic[int(c)][0]] += 1
     price = idic[int(c)][2]
     if op == 's':
-        mem.gold += price
-        del mem.items[int(c)-1]
-        mw.print("I'm sure fellows'll want it.")
+        if price == 0:
+            mw.print("Sorry, but not interested.")
+        else:
+            mem.gold += price
+            del mem.items[int(c)-1]
+            mw.print("I'm sure fellows'll want it.")
     elif op == 'i':
         if mem.gold < price:
             mw.print("Oh, you can't afford it.")
@@ -4564,26 +4618,28 @@ def maze(game):
         vscr.disp_scrwin()
 
         rt = floor_obj.check_event(game)
-        if not rt:
+        if party.defeated():  # Defeated by boss monster?
+            break
+        if not rt:  # event processed
             rtn = game.battle.check_battle()
             if rtn:  # 1: random or 2: room (or 3?) if battle
                 meswin.print("*** encounter ***")
                 vscr.disp_scrwin(floor_obj)
                 getch()
                 game.battle.battle()
-                if not party.members:  # party defeated
+                if party.defeated():  # party defeated
                     break
                 if rtn == 2 and game.battle.treasure:  # room battle
                     game.chest.chest()
                     game.battle.gold *= 2  # Twice the gold for a chest.
-                survnum = sum(1 for m in party.members
-                              if m.state in [State.OK, State.ASLEEP,
-                                             State.PARALYZED, State.STONED])
-                if not survnum:  # party defeated
-                    break
+                    if party.defeated():
+                        break
                 if not game.battle.treasure:
                     game.battle.exp = 0
                     game.battle.gold = 0
+                survnum = sum(1 for m in party.members
+                              if m.state in [State.OK, State.ASLEEP,
+                                             State.PARALYZED, State.STONED])
                 meswin.print(f"Each survivor gets {game.battle.exp//survnum} e.p.",
                              start=' ')
                 meswin.print(f"Each survivor gets {game.battle.gold//survnum} gold.",
