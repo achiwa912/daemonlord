@@ -283,7 +283,8 @@ class Vscr:
         self.display()
         delta = time.time() - start
         try:
-            print(f"\033[{self.height};0H", end='', flush=True)
+            print(
+                f"\033[{self.height};0H", end='', flush=True)
         except:
             pass
 
@@ -1930,6 +1931,7 @@ class Dungeon:
 
         if party.floor_move:
             if party.floor <= 1 and party.floor_move == 2:  # exit from dungeon
+                meswin.cls()
                 party.place = Place.EDGE_OF_TOWN
                 return True  # Exit from dungeon
 
@@ -3204,9 +3206,9 @@ class Battle:
                         self.game.spell.cast_spell_dispatch(
                             e.entity, e.action, e.target)
                 self.clean_dead()  # clean up dead monsters
+                v.disp_scrwin()
                 if not self.monp:
                     break
-                v.disp_scrwin()
                 getch(wait=True)
 
             # Battle end?
@@ -3217,6 +3219,7 @@ class Battle:
                         party.floor_obj.battled[idx] = True
                         break
                 v.disp_scrwin()
+                getch(wait=True)
                 break
             defeated = True
             for mem in party.members:
@@ -3867,6 +3870,7 @@ def tavern_add(game):
             if len(game.party.members) >= 6 or len(charlist) <= 1:
                 break
     vscr.meswins.pop()
+    vscr.cls()
     vscr.disp_scrwin()
 
 
@@ -4602,6 +4606,7 @@ def maze(game):
 
         dungeon.floors = []  # initialize every time
         party.floor_obj = floor_obj = None
+    party.resumed = False
 
     while True:
         dungeon.generate_move_floors()
@@ -4765,7 +4770,7 @@ def main():
     party.place = Place.CASTLE
     w, h = terminal_size()
     vscr = Vscr(w, h-1)  # singleton
-    vscr = Vscr(78, 24)  # +++++++++++++++
+    # vscr = Vscr(78, 24)  # +++++++++++++++
     game.vscr = vscr
     vscr.game = game
     # meswin for scrollwin
