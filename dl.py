@@ -412,6 +412,8 @@ class Game:
             mems.append(mem.name)
         self.savedata.append(mems)
 
+        self.savedata.append(self.shopitems)
+
         if p.place in [Place.MAZE, Place.CAMP, Place.BATTLE]:
             self.savedata.append(self.dungeon.events)
             for f in self.dungeon.floors:
@@ -439,6 +441,8 @@ class Game:
             for ch in self.characters:
                 if mem == ch.name:
                     self.party.members.append(ch)
+
+        self.shopitems = self.savedata.pop(0)
 
         if self.party.place not in [Place.MAZE, Place.CAMP, Place.BATTLE]:
             return
@@ -1315,7 +1319,8 @@ class Member:
             elif c == 'h' and statplus[y] > 0:
                 statplus[y] -= 1
                 bonus += 1
-            elif c == 'l' and statplus[y]+self.stat[y] < 18 and bonus > 0:
+            elif c == 'l' and statplus[y]+self.stat[y] < \
+                    race_status[self.race][y]+10 and bonus > 0:
                 statplus[y] += 1
                 bonus -= 1
             elif c == '.':
@@ -2050,6 +2055,25 @@ class Floor:
            not game.party.members:  # lost the battle
             v.meswins.pop()
             return
+        game.chest.chest()
+        if game.party.defeated():
+            v.meswins.pop()
+            return
+        survnum = sum(1 for m in game.party.members
+                      if m.state in [State.OK, State.ASLEEP,
+                                     State.PARALYZED, State.STONED])
+        mw.print(f"Each survivor gets {game.battle.exp//survnum} e.p.",
+                 start=' ')
+        mw.print(f"Each survivor gets {game.battle.gold//survnum} gold.",
+                 start=' ')
+        v.disp_scrwin()
+        for mem in game.party.members:
+            if mem.state == State.ASLEEP:
+                mem.state = State.OK
+            if mem.state in [State.OK, State.PARALYZED, State.STONED]:
+                mem.exp += game.battle.exp//survnum
+                mem.gold += game.battle.gold//survnum
+        getch(wait=True)
         mw.cls()
         if game.party.floor == 10:  # The last boss?
             self.ending(game)
@@ -3807,9 +3831,9 @@ def training(game):
     vscr.disp_scrwin()
     while True:
         mw.print(
-            "*** training grounds ***\nc)reate a character\ni)nspect a character\nl)eave")
+            "\n*** training grounds ***\nc)reate a character\ni)nspect a character\nl)eave", start=' ')
         vscr.disp_scrwin()
-        c = mw.input_char("Command?")
+        c = mw.input_char("Command?", values=['c', 'i', 'l'])
         if c == 'l':
             break
         elif c == 'c':
@@ -3889,7 +3913,7 @@ def tavern(game):
         newwin = True
     ch = ''
     while True:
-        mw.print("*** The Hawthorne Tavern ***")
+        mw.print("\n*** The Hawthorne Tavern ***", start=' ')
         vscr.disp_scrwin()
         ch = mw.input_char("Command? - a)dd r)emove i)nspect d)ivvy gold l)eave",
                            values=['a', 'r', 'i', 'd', 'l', '^'])
@@ -3941,14 +3965,14 @@ def trader_buy(game, mem):
     a member chooses and buys items from shop inventory
     """
     vscr = game.vscr
-    iw = Meswin(vscr, 12, 1, 46, 12, frame=True)
+    iw = Meswin(vscr, 12, 1, 48, 12, frame=True)
     vscr.meswins.append(iw)
     top = idx = page = 0
-    pages = ('weapon', 'armor', 'shield', 'helm', 'gloves',
-             'ring', 'item')
+    pages = (('weapon'), ('armor'), ('shield', 'helm', 'gloves'),
+             ('ring', 'item'))
     while True:
         items = [item for item in game.shopitems if game.shopitems[item] > 0
-                 and game.itemdef[item].type == pages[page]]
+                 and game.itemdef[item].type in pages[page]]
         ilines = []
         for i, item in enumerate(items):
             cur = ' '
@@ -3960,7 +3984,7 @@ def trader_buy(game, mem):
                 canequip = '#'
             if mem.gold >= game.itemdef[item].price:
                 afford = '$'
-            iline = f"{cur}{i+1:2} {item.ljust(20)[:20]} {game.itemdef[item].price:10d}{canequip}{afford}"
+            iline = f"{cur}{i+1:2} {item.ljust(iw.width-24)[:iw.width-24]} {game.itemdef[item].price:10d}{canequip}{afford}"
             ilines.append(iline)
         iw.mes_lines = []
         iw.mes_lines.append(
@@ -4056,15 +4080,13 @@ def trader_sell(game, mem, op):
                 continue
             dispname = ''.join(['?', game.itemdef[item[0]].unident])
         else:  # sell
-            if item[2] or item[3]:
+            if item[1] or item[2] or item[3]:
                 continue
-            if item[1]:  # equipped
-                mark = '*'
         price = game.itemdef[item[0]].price//div
         if op == 'i':
             price = min(1000, max(price, 20))
         mw.print(
-            f"{i}){mark}{dispname.ljust(16)}{price}",
+            f"{i}){mark}{dispname.ljust(24)} {price}",
             start=' ')
         idic[i] = (item[0], dispname, price)
 
@@ -4130,7 +4152,7 @@ def trader(game):
     vscr = game.vscr
     mw = vscr.meswins[-1]
     while True:
-        mw.print("*** Trader Jay's ***")
+        mw.print("\n*** Trader Jay's ***", start=' ')
         vscr.disp_scrwin()
         mem = game.party.choose_character(game)
         if not mem:
@@ -4375,7 +4397,7 @@ def inn(game):
     mw = v.meswins[-1]
     num = len(game.party.members)
     gold = sum(m.gold for m in game.party.members)
-    mw.print("*** The Lakehouse Inn ***")
+    mw.print("\n*** The Lakehouse Inn ***", start=' ')
     mw.print(f"Welcome.  You must be very tired.", start=' ')
     mw.print(f"You have {gold} gold in total.", start=' ')
     mw.print(f"c)ots                {2*num:4d} gold", start=' ')
@@ -4435,7 +4457,7 @@ def hospital(game):
         State.DEAD: 200,
         State.ASHED: 500,
     }
-    mw.print("*** Moss General Hospital ***")
+    mw.print("\n *** Moss General Hospital ***", start=' ')
     v.disp_scrwin()
     hlist = game.hospitalized[:]
     for p in hlist:
@@ -4485,7 +4507,7 @@ def castle(game):
     while True:
         mw.cls()
         game.party.place = Place.CASTLE
-        mw.print("*** Castle ***")
+        mw.print("*** Castle ***", start=' ')
         mw.print("h)awthorne tavern\nt)rader jay's\ni)lakehouse inn", start=' ')
         mw.print("m)oss general hospital\ne)dge of town", start=' ')
         vscr.disp_scrwin()
@@ -4514,7 +4536,7 @@ def edge_town(game):
     while ch != 'c':
         mw.cls()
         game.party.place = Place.EDGE_OF_TOWN
-        mw.print("*** Edge of Town ***")
+        mw.print("*** Edge of Town ***", start=' ')
         mw.print(
             "m)aze\nt)raining grounds\nc)astle\nS)ave and quit game\nR)esume from saved data", start=' ')
         vscr.disp_scrwin()
