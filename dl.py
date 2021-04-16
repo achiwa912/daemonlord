@@ -77,7 +77,7 @@ job_requirements = {
     Job.THIEF: (0, 0, 0, 0, 11, 0, (False, True, True)),
     Job.BISHOP: (0, 12, 12, 0, 0, 0, (True, False, True)),
     Job.SAMURAI: (15, 11, 10, 14, 10, 0, (True, True, False)),
-    Job.NINJA: (17, 17, 17, 17, 17, 17, (False, False, True)),
+    Job.NINJA: (15, 17, 15, 16, 15, 16, (False, False, True)),
     Job.LORD: (15, 12, 12, 15, 14, 15, (True, False, False)),
 }
 
@@ -429,8 +429,11 @@ class Game:
         """
         Load savedata.pickle to resume game.
         """
-        with open('savedata.pickle', 'rb') as f:
-            self.savedata = pickle.load(f)
+        try:
+            with open('savedata.pickle', 'rb') as f:
+                self.savedata = pickle.load(f)
+        except:
+            return False
         self.characters = self.savedata.pop(0)
 
         ptup = self.savedata.pop(0)
@@ -464,6 +467,7 @@ class Game:
             f.events = events
             self.dungeon.floors.append(f)
         self.party.floor_obj = self.dungeon.floors[self.party.floor-1]
+        return True
 
     def load_party(self, ptup):
         p = self.party
@@ -769,6 +773,15 @@ class Party:
             if mem.poisoned:
                 mem.hpplus -= 1
 
+    def consume_item(self, item):
+        """
+        Consume one item in the party member inventory
+        """
+        for mem in self.members:
+            if item in mem.items:
+                mem.items.remove(item)
+                break
+
     def have_items(self, itemlist):
         """
         Return True someone in the party has one in itemlist
@@ -849,6 +862,8 @@ class Party:
                 keys = ['silver key', 'gold key']
             elif game.party.floor == 10:
                 keys = ['gold key']
+            elif game.party.floor >= 11:
+                keys = ['one time password']
             if game.party.have_items(keys):
                 return True
             return False
@@ -2097,6 +2112,9 @@ class Floor:
         elif game.party.floor == 10:
             key = 'gold'
             keys = ['gold key']
+        elif game.party.floor >= 11:
+            key = 'one time password'
+            keys = [key]
         if not game.party.have_items(keys):
             v = game.vscr
             mw = Meswin(v, v.width//8, v.height//6,
@@ -2175,6 +2193,15 @@ class Floor:
                 y = self.rooms[-1].center_y
                 self.events[(x, y)] = [ev[2], False]  # eventid
 
+        if self.floor >= 11:
+            while True:
+                x = random.randrange(self.x_size)
+                y = random.randrange(self.y_size)
+                if self.get_tile(x, y) == b'.':  # floor tile
+                    break
+            self.put_tile(x, y, b',')
+            self.events[(x, y)] = [Eventid.KEY, False]
+
         # place random messages
         for _ in range(1 + random.randrange(2)):  # 1 to 3 messages
             while True:
@@ -2252,6 +2279,8 @@ class Floor:
             if game.party.can_open(game, ch=b'%'):
                 mw.print("Unlocked.")
                 self.put_tile(x, y, b'.')
+                if game.party.floor >= 11:
+                    game.party.consume_item('one time password')
             else:
                 mw.print("You need the key.")
         else:
@@ -2352,7 +2381,8 @@ class Floor:
             dc = b'+'  # door character
             if random.randrange(10) == 0:  # 10%
                 dc = b'*'  # locked door
-            if self.floor in [3, 6, 9, 10] and r is rooms[-1]:
+            if (self.floor in [3, 6, 9, 10] or self.floor >= 11) \
+               and r is rooms[-1]:
                 dc = b'%'  # special locked door that requires a key
             for x in range(r.x_size):  # top and bottom edges
                 self.place_door(r.x+x, r.y-1, dc)
@@ -2515,8 +2545,12 @@ class Battle:
         else:
             candidates = []
             for mname in self.game.mondef:
-                if self.game.party.floor in self.game.mondef[mname].floors:
-                    candidates.append(mname)
+                if self.game.party.floor <= 10:
+                    if self.game.party.floor in self.game.mondef[mname].floors:
+                        candidates.append(mname)
+                else:
+                    if 0 in self.game.mondef[mname].floors:
+                        candidates.append(mname)
             mname = random.choice(candidates)
         if mname == '':
             breakpoint()  # +++++++++++++++++++++
@@ -3001,8 +3035,8 @@ class Battle:
         elif e.entity.job in [Job.FIGHTER, Job.SAMURAI, Job.LORD]:
             atkcnt = max(e.entity.level//5+1, weapat)
         else:
-            atkcnt = max(1, weapat)
-        if atkcnt > 10:
+            atkcnt = max(e.entity.level//10+1, weapat)
+        if atkcnt > 10 and not e.entity.have_item('kaiden book', equip=True):
             atkcnt = 10
 
         damage = hitcnt = 0
@@ -4559,8 +4593,8 @@ def edge_town(game):
             vscr.disp_scrwin()
             sys.exit()
         elif ch == 'R':
-            game.load()
-            mw.print("loaded.")
+            if game.load():
+                mw.print("loaded.")
             vscr.disp_scrwin()
             break
 
