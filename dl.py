@@ -22,7 +22,7 @@ else:
     os_windows = False
 
 config = {
-    'debug': True,
+    'debug': False,
 }
 
 
@@ -975,7 +975,7 @@ class Member:
         mw.print(
             f"   piety {self.stat[2]:2d}  next {self.nextexp:16d}   a.c.{self.ac:5d}", start=' ')
         mw.print(
-            f"vitality {self.stat[3]:2d}  marks {self.marks:15d}", start=' ')
+            f"vitality {self.stat[3]:2d}  marks {self.marks:15d}   depth{self.deepest:4d}", start=' ')
         mw.print(
             f" agility {self.stat[4]:2d}  h.p.  {self.hp:7d}/{self.maxhp:7d}", start=' ')
         mw.print(
