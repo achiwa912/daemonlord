@@ -1,87 +1,97 @@
 
 # Table of Contents
 
-1.  [dl.py - Daemon Lord](#org35e5f19)
-    1.  [Overview](#org32b80ce)
-        1.  [Wizardry clone](#orgdb013f2)
-        2.  [Rogue-like dungeon maps](#orgc57f335)
-        3.  [Auto-generated maps w/o resetting levels and items of characters](#org6df727b)
-        4.  [A little more user friendly than Wizardry](#orge9fdea3)
-    2.  [Important notice: Under development](#org55a6f77)
-    3.  [Installation](#orgf9bee06)
-    4.  [Prerequisites](#orgd061908)
-    5.  [How to Play](#org535b1ac)
-2.  [License](#org54311ed)
-3.  [Quick Tour of Daemon Lord](#orgc63ab1b)
-    1.  [Game start](#orga8d1f16)
-    2.  [Edge of Town](#org2d11769)
-        1.  [Training Grounds](#org9ba790e)
-    3.  [Castle](#orgc6dd4de)
-        1.  [Hawthorne Tavern](#orgd040474)
-        2.  [Trader Jay's](#orgdca44b4)
-        3.  [Equip](#org314c221)
-    4.  [Save and Resume](#org9b75721)
-    5.  [Dungeon](#org3126d62)
-        1.  [Walk around the Dungeon](#org95d9921)
-        2.  [Battle](#orgcb4a12f)
-        3.  [Chest](#orge618d75)
-        4.  [Friendly monsters](#org9131605)
-        5.  [Get ouf of the Dungeon](#org0a18280)
-        6.  [A new dungeon!](#org4062905)
-        7.  [Camp](#org016c10f)
-        8.  [Save and Resume from camp](#org1d5bf6b)
-    6.  [Castle](#org8eb20c0)
-        1.  [The Lakehouse Inn](#org0f291b2)
-4.  [Spells](#orgd321a12)
-    1.  [Overview](#org60abad8)
-    2.  [Usage](#orgdaf1c9c)
-    3.  [Mage Spells](#orgdd04920)
-    4.  [Priest Spells](#org42e51f8)
-5.  [Monsters](#orgdacf8f9)
-    1.  [Shallow floors](#org6311e3d)
-    2.  [Middle depth floors](#org9e11371)
-    3.  [Deep floors](#org695eec6)
+1.  [dl.py - Daemon Lord](#orgb398689)
+    1.  [Overview](#orga88a70e)
+        1.  [Wizardry clone](#org7e84729)
+        2.  [Rogue-like dungeon maps](#org3ec7ba4)
+        3.  [Auto-generated maps w/o resetting levels and items of characters](#org30c547a)
+        4.  [A little more user friendly than Wizardry](#org55937ec)
+    2.  [Important notice: alpha quality](#orgb27717f)
+    3.  [Installation](#org9515f40)
+    4.  [Prerequisites](#org3de331b)
+    5.  [How to Play](#orgbafd2c6)
+2.  [License](#org58b2c57)
+3.  [Quick Tour of Daemon Lord](#orgf3d19e7)
+    1.  [Game start](#orgc17d518)
+    2.  [Edge of Town](#org63aeee2)
+        1.  [Training Grounds](#orgd967504)
+    3.  [Castle](#org6fe24c3)
+        1.  [Hawthorne Tavern](#orgcac744a)
+        2.  [Trader Jay's](#org2b2d194)
+        3.  [Equip](#orgbfd8bec)
+    4.  [Save and Resume](#orgf6cbd7e)
+    5.  [Dungeon](#org85d3c8b)
+        1.  [Walk around the Dungeon](#orga4e76bb)
+        2.  [Battle](#org08fb3dd)
+        3.  [Chest](#org8c57c24)
+        4.  [Friendly monsters](#org6352e9e)
+        5.  [Get ouf of the Dungeon](#org5bb41ff)
+        6.  [A new dungeon!](#org8f8b33f)
+        7.  [Camp](#orgbf78126)
+        8.  [Save and Resume from camp](#orgfea4287)
+    6.  [Castle](#org90c975f)
+        1.  [The Lakehouse Inn](#orgacf0fe5)
+4.  [Spells](#orgb1fa312)
+    1.  [Overview](#org9083912)
+    2.  [Usage](#org2c47785)
+    3.  [Mage Spells](#orgac0e153)
+    4.  [Priest Spells](#org0ed0c78)
+5.  [Monsters](#org4346500)
+    1.  [Shallow floors](#org3ee5aaa)
+    2.  [Middle depth floors](#orgbf3e3e1)
+    3.  [Deep floors](#org6cb0440)
 
 
 
-<a id="org35e5f19"></a>
+<a id="orgb398689"></a>
 
 # dl.py - Daemon Lord
 
 Daemon Lord is a Wizardry-clone RPG with rogue-like (ie, text-based), randomly-created 2D maps.
 
-     daemon lord - dl - [battle] floor: 3 ( 82/ 18) <identify> <light> ######...#^
-    ^^^^##.########.#######^^#...######.######^^^^##.##########.....##########%##^
-    ^^^^##.########.##^^^^^^^#...######.######^#####.......####.....###.........#^
-    ^^^^##.##|   1) 6 lvl3 samurai             (6)                  |##.........#^
-    ^^^^##.##|                                                      |##.........#^
-    ^^^^#...#|                                                      |####.#######^
-    #####...#|                                                      |####.###^^^^^
-    #####...#^##.........#....#.##.........##.......++++.########.#######.######^^
-    ........+| * What spell to cast?                                |.........##^^
-    .*...++##| > taika                                              |.........##^^
-    .########| * Press any key or t)ake back >                      |.........##^^
-    ###......| * eddie thrusts violently at lvl3 samurai and hits 1 |########.##^^
-    ###......|   times for 1 damage.                                |^^######.###^
-    ^##......| * faun casted taika.                                 |^^^^####.###^
-    ^##......|   lvl3 samurai incurred 15 damage.                   |######.....#^
-    ^##......|   lvl3 samurai incurred 16 damage.                   |######.....#^
-    ###......|   lvl3 samurai incurred 16 damage.                   |.....#.....#^
-     # name  |   lvl3 samurai incurred 13 damage.                   |            ^
-     1 ab    |   lvl3 samurai incurred 6 damage.                    |            ^
-     2 ben   |   lvl3 samurai incurred 13 damage.                   |            ^
-     3 chase      G-FIG   1  409 fight        .* west                            ^
-     4 debbie     N-THI   8  306 fight        .* west                            ^
-     5 eddie      G-PRI   8  391 fight        .* west                            ^
-     6 faun       G-MAG   8  200 taika        .* *** encounter ***               ^
+     daemon lord - dl - [battle] floor: 6 ( 69/ 54) <identify> <light> ^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#...........#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#...........#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    #######^^^|   1) 2 tycoons                  (2)                      |^^^^^^^^^^^^^
+    .....##^^^|                                                          |^^^^^^^^^^^^^
+    .....##^^^|                                                          |^^^^^^^^^^^^^
+    .....##^^^|                                                          |^^^^^^^^^^^^^
+    .....##^^^^^^^^^^^^^^^^^^^^^^^^^^^^##.##^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    .....##^^^| * andy swings violently at tycoon and hits 1 times for 6 |^^^^^^^^^^^^^
+    .....##^^^|   damage.                                                |^^^^^^^^^^^^^
+    ###.###^^^| * bean slashes violently at tycoon and hits 2 times for  |^^^^^^^^^^^^^
+    ###.###^^^|   9 damage.                                              |^^^^^^^^^^^^^
+    ^##.##^^^^|   tycoon is killed.                                      |^^^^^^^^^^^^^
+    ^##.##^^^^| * ed stabs violently at tycoon and hits 1 times for 2    |^^^^^^^^^^^^^
+    ^##.##^^^^|   damage.                                                |^^^^^^^^^^^^^
+    ^##.##^^^^| * fun casted shunmin.                                    |^^^^^^^^^^^^^
+    ^##.##^^^^|   tycoon is not slept.                                   |^^^^^^^^^^^^^
+    ^##.##^^^^|   tycoon is not slept.                                   |^^^^^^^^^^^^^
+    ###.######^^^^^^^^^^^^^^##.......###...##.##^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ###.######^^^^^^^^^^^^^^##...#######......##^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ........##^^^^^^^^^^^^^^###.########...#####^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ........##^^^^^^^^^^^^^^###.###...##...#####^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ........##^^^^^^^^^^^^^^^##.###...###.##^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ###.######^^^^^^^^^^^^^^^##...........##^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ###.######^^^^^^^^^^^^^^^######...######^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^##.##^^^^^^^^^^^^^^^^^^^###############^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^##.##^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+     # name       class  ac   hp status       ^* north                                ^
+     1 andy       G-FIG  -2   63 fight        ^  Which direction? - ;)leave > k       ^
+     2 bean       G-FIG  -3   70 fight        ^* Opened.                              ^
+     3 cammy      G-FIG  -2   77 fight        ^* north                                ^
+     4 dexie      N-THI   8   53 fight        ^* saved.                               ^
+     5 ed         G-PRI   8   67 fight        ^* north                                ^
+     6 fun        G-MAG   8   35 shunmin      ^* *** encounter ***                    ^
 
 
-<a id="org32b80ce"></a>
+<a id="orga88a70e"></a>
 
 ## Overview
 
 
-<a id="orgdb013f2"></a>
+<a id="org7e84729"></a>
 
 ### Wizardry clone
 
@@ -94,7 +104,7 @@ Daemon Lord is a Wizardry-clone RPG with rogue-like (ie, text-based), randomly-c
 -   Need to type spells and chest traps accurately
 
 
-<a id="orgc57f335"></a>
+<a id="org3ec7ba4"></a>
 
 ### Rogue-like dungeon maps
 
@@ -104,7 +114,7 @@ Daemon Lord is a Wizardry-clone RPG with rogue-like (ie, text-based), randomly-c
 -   Maps are auto-generated.
 
 
-<a id="org6df727b"></a>
+<a id="org30c547a"></a>
 
 ### Auto-generated maps w/o resetting levels and items of characters
 
@@ -116,7 +126,7 @@ Daemon Lord is a Wizardry-clone RPG with rogue-like (ie, text-based), randomly-c
 -   You can restart your adventure from a floor that should match your character levels
 
 
-<a id="orge9fdea3"></a>
+<a id="org55937ec"></a>
 
 ### A little more user friendly than Wizardry
 
@@ -128,22 +138,16 @@ Daemon Lord is a Wizardry-clone RPG with rogue-like (ie, text-based), randomly-c
 -   Group heal spells for the entire party
 
 
-<a id="org55a6f77"></a>
+<a id="orgb27717f"></a>
 
-## Important notice: Under development
+## Important notice: alpha quality
 
-Currently, DL (daemon lord) is under development and has tons of bugs and not-yet-implemented features.  It might be below alpha quality and not comfortably playable yet as of April 8th, 2021.  Please note that your saved file might become obsolete and can't load because backward compatibility is not supported yet.  Anything might change anytime.
+Currently, DL (daemon lord) is under development and it's in an alpha code quality.  Probably there are still many bugs, some of them might be critical.
 
 Please send bug reports to achiwa912+gmail.com (replace '+' with '@').
 
-To-be-implemented features:
 
--   Rescue defeated party members in the dungeon
--   Monsters and items on floor 11 or deeper
--   Background story
-
-
-<a id="orgf9bee06"></a>
+<a id="org9515f40"></a>
 
 ## Installation
 
@@ -152,7 +156,7 @@ To-be-implemented features:
 3.  Run "python dl.py"
 
 
-<a id="orgd061908"></a>
+<a id="org3de331b"></a>
 
 ## Prerequisites
 
@@ -167,7 +171,7 @@ To-be-implemented features:
 -   items.csv - item data file
 
 
-<a id="org535b1ac"></a>
+<a id="orgbafd2c6"></a>
 
 ## How to Play
 
@@ -184,7 +188,7 @@ You can save either at Edge of Town or from the Camp menu.
 You can perform resume operation only from Edge of Town.
 
 
-<a id="org54311ed"></a>
+<a id="org58b2c57"></a>
 
 # License
 
@@ -192,12 +196,12 @@ Daemon Lord is under [MIT license](https://en.wikipedia.org/wiki/MIT_License).
 Daemon Lord - Copyright (C) 2021 Kyosuke Achiwa
 
 
-<a id="orgc63ab1b"></a>
+<a id="orgf3d19e7"></a>
 
 # Quick Tour of Daemon Lord
 
 
-<a id="orga8d1f16"></a>
+<a id="orgc17d518"></a>
 
 ## Game start
 
@@ -231,12 +235,12 @@ DL (Daemon Lord) starts with the screen below at the Castle.
 When you first start the game, you need to go to Edge of Town (press `e`) > Training Grounds (press `t`), and then create characters (press `c`).
 
 
-<a id="org2d11769"></a>
+<a id="org63aeee2"></a>
 
 ## Edge of Town
 
 
-<a id="org9ba790e"></a>
+<a id="orgd967504"></a>
 
 ### Training Grounds
 
@@ -592,7 +596,7 @@ As you have already noticed, DL gives you a guide of which letter you can type w
 Have you created six characters?  Then, you should go to Castle > Hawthorne Tavern to form a party.  Type `l` to leave the Training Grounds and then type `c` to go to Castle.
 
 
-<a id="orgc6dd4de"></a>
+<a id="org6fe24c3"></a>
 
 ## Castle
 
@@ -607,7 +611,7 @@ Have you created six characters?  Then, you should go to Castle > Hawthorne Tave
 From the Castle menu, you can visit several places, but you want to go to Hawthorne Tavern now so type `h`.
 
 
-<a id="orgd040474"></a>
+<a id="orgcac744a"></a>
 
 ### Hawthorne Tavern
 
@@ -639,7 +643,7 @@ Now, they are shown in the party window at the bottom left of the screen.
     6 faun       G-MAG  10    7 OK
 
 
-<a id="orgdca44b4"></a>
+<a id="org2b2d194"></a>
 
 ### Trader Jay's
 
@@ -700,7 +704,7 @@ Basically, the front (ie, the first three) members should equip heavily because 
 sling is a long-range weapon that everyone can use.  You can't expect much from sling and its damage is at best 1 or 2, but better than nothing.  Long-ranged weapons tend to be less powerful and more expensive than short-range ones.
 
 
-<a id="org314c221"></a>
+<a id="orgbfd8bec"></a>
 
 ### Equip
 
@@ -728,7 +732,7 @@ At Hatthorne Tavern, first `i)nspect` a character and then choose `i)tems` > ite
 Equipped items will have `*` mark next to the item name.  You need to equip one item at a time and for each member.  To change members, type `j, k` .
 
 
-<a id="org9b75721"></a>
+<a id="orgf6cbd7e"></a>
 
 ## Save and Resume
 
@@ -747,7 +751,7 @@ To save and quit the game, go to Edge of Town and type `S` (capital-S).
 You need to run `python dl.py` again to restart and resume the game.  After restarting the game, go to Edge of Town and choose `R)esume from saved data` .  That is, capital-R.  Automatic resume is not supported.
 
 
-<a id="org3126d62"></a>
+<a id="org85d3c8b"></a>
 
 ## Dungeon
 
@@ -783,7 +787,7 @@ You (`@`) are now in the dungeon and on the upstairs to the outside world.
 `^` indicates areas that you have not visited yet.  `.` is a floor tile that you can walk on.  
 
 
-<a id="org95d9921"></a>
+<a id="orga4e76bb"></a>
 
 ### Walk around the Dungeon
 
@@ -982,7 +986,7 @@ Oops, another door.  Let's open again.
     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^###+###^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
-<a id="orgcb4a12f"></a>
+<a id="org08fb3dd"></a>
 
 ### Battle
 
@@ -1097,7 +1101,7 @@ The party killed all three slimes.
 Yeah!  Each survivor received 27 experience points and 9 gold from this battle.
 
 
-<a id="orge618d75"></a>
+<a id="org8c57c24"></a>
 
 ### Chest
 
@@ -1242,7 +1246,7 @@ Here's the trap list.
 </table>
 
 
-<a id="org9131605"></a>
+<a id="org6352e9e"></a>
 
 ### Friendly monsters
 
@@ -1263,7 +1267,7 @@ Of course, you will get no e.p. or gold if you chose to walk away.
     6 faun       G-MAG  10    7 OK           ^  Each survivor gets 0 gold.      ^
 
 
-<a id="org0a18280"></a>
+<a id="org5bb41ff"></a>
 
 ### Get ouf of the Dungeon
 
@@ -1322,7 +1326,7 @@ Having walked around a lot on this floor, and now the mage's MP is exhausted and
 The party is back at Edge of Town.  It should take a while to get used to the brightness but they are safe again!
 
 
-<a id="org4062905"></a>
+<a id="org8f8b33f"></a>
 
 ### A new dungeon!
 
@@ -1374,7 +1378,7 @@ What?  We can only see 3x3 tiles around the party.  Where has the map data gone?
 See the map is different this time?
 
 
-<a id="org016c10f"></a>
+<a id="orgbf78126"></a>
 
 ### Camp
 
@@ -1464,7 +1468,7 @@ Looks like, Ben's HP is fully restored.  Do the same for Cam.
 Great!
 
 
-<a id="org1d5bf6b"></a>
+<a id="orgfea4287"></a>
 
 ### Save and Resume from camp
 
@@ -1524,12 +1528,12 @@ And, you are in the dungeon again.
 Let's exit from the dungeon and head to Edge of Town > Castle > Lakehouse Inn for some rest.
 
 
-<a id="org8eb20c0"></a>
+<a id="org90c975f"></a>
 
 ## Castle
 
 
-<a id="org0f291b2"></a>
+<a id="orgacf0fe5"></a>
 
 ### The Lakehouse Inn
 
@@ -1572,12 +1576,12 @@ If their e.p. reach the next level, their level will go up while they are asleep
 In DL, age doesn't matter.  They can stay at the inn as long as they wish without getting old.  All the party members stay at the same room type.
 
 
-<a id="orgd321a12"></a>
+<a id="orgb1fa312"></a>
 
 # Spells
 
 
-<a id="org60abad8"></a>
+<a id="org9083912"></a>
 
 ## Overview
 
@@ -1596,7 +1600,7 @@ In this example, she has 2 MPs remaining for level 1 mage spells.  She will acqu
 The maximum MPs for each spell level is 9.  A high level mage/priest will have `9/9/9/9/9/9/9` MPs.
 
 
-<a id="orgdaf1c9c"></a>
+<a id="org2c47785"></a>
 
 ## Usage
 
@@ -1625,7 +1629,7 @@ To use spells from the camp menu, first `i)nspect` a character who would like to
     ^^^^^^^^^^|   i)tems s)pells jk)change member l)leave > s              |^^^^^^
 
 
-<a id="orgdd04920"></a>
+<a id="orgac0e153"></a>
 
 ## Mage Spells
 
@@ -1815,7 +1819,7 @@ One of the most useful spells will be newly introduced "tsubasa".  This spell ca
 </table>
 
 
-<a id="org42e51f8"></a>
+<a id="org0ed0c78"></a>
 
 ## Priest Spells
 
@@ -2067,12 +2071,12 @@ One of the most useful spells will be newly introduced "tsubasa".  This spell ca
 </table>
 
 
-<a id="orgdacf8f9"></a>
+<a id="org4346500"></a>
 
 # Monsters
 
 
-<a id="org6311e3d"></a>
+<a id="org3ee5aaa"></a>
 
 ## Shallow floors
 
@@ -2412,7 +2416,7 @@ Monsters on the second floor are strong.  You could even get poisoned or beheade
 </table>
 
 
-<a id="org9e11371"></a>
+<a id="orgbf3e3e1"></a>
 
 ## Middle depth floors
 
@@ -2846,7 +2850,7 @@ Monsters on the second floor are strong.  You could even get poisoned or beheade
 </table>
 
 
-<a id="org695eec6"></a>
+<a id="org6cb0440"></a>
 
 ## Deep floors
 
