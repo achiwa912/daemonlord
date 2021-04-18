@@ -1134,6 +1134,60 @@ class Member:
                               values=['u', 'e', 't', 'd', 'l'])
             if c == 'l':
                 continue
+            elif c == 'u':
+                if self.items[inum][3]:  # unidentified:
+                    iw.print(f"Tried to use {dispname}.")
+                    iw.print(
+                        ".. but don't know how to use it.", start=' ')
+                    vscr.disp_scrwin()
+                else:
+                    itemdef = game.itemdef[self.items[inum][0]]
+                    if not itemdef.use:
+                        iw.print(f"Tried to use {dispname}.")
+                        iw.print(".. but wasn't able to.", start=' ')
+                        vscr.disp_scrwin()
+                    elif itemdef.use == 'etc':
+                        iw.print(f"Used {dispname}.")
+                        vscr.disp_scrwin()
+                        if self.items[inum][0] == 'muramasa blade':
+                            self.stat[0] += 1  # str+1
+                        elif self.items[inum][0] == 'kaiser knuckles':
+                            self.maxhp += 1  # hp+1
+                        elif self.items[inum][0] == 'armor of lords':
+                            for m in game.party.members:
+                                m.hp = m.maxhp
+                        elif self.items[inum][0] == 'ninja dagger':
+                            self.job = Job.NINJA
+                            for i in self.items:
+                                i[1] = False
+                        if itemdef.brk > random.randrange(100):
+                            self.items[inum][0] = 'broken item'
+                        getch(wait=True)
+                        vscr.meswins.pop()
+                        vscr.cls()
+                        return
+                    else:  # magic spell
+                        sdef = game.spelldef[itemdef.use]
+                        if not sdef.camp:
+                            iw.print("Can't use it now.")
+                        if sdef.target == 'member':
+                            target = game.party.choose_character(
+                                game)
+                            if not target:
+                                #mw = game.vscr.meswins[-1]
+                                iw.print("Aborted.", start=' ')
+                                continue
+                        else:
+                            target = sdef.target
+                        iw.print(f"Used {dispname}.")
+                        vscr.disp_scrwin()
+                        game.spell.cast_spell_dispatch(
+                            self, itemdef.use, target)
+                        if itemdef.brk > random.randrange(100):
+                            self.items[inum][0] = 'broken item'
+                        vscr.meswins.pop()
+                        vscr.cls()
+                        return
             elif c == 't':
                 target = game.party.choose_character(game)
                 if target and len(target.items) < 8:

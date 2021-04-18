@@ -10,8 +10,8 @@
 55,6,mage masher,long sword,wereslayer,sword,weapon,short,FSLN,0,5,2,1D10+1,0,10000,FALSE,,,,,mage,,,
 59,8,force saber,long sword,blade cusinart,sword,weapon,short,FSLN,0,6,4,1D3+9,0,15000,FALSE,,,,,,,,
 81,11,long sword +5(e),long sword,saber of evil,sword,weapon,short,FSLN,0,7,4,1D10+3,0,50000,FALSE,,,,,,evil,,
-86,11,murasama blade,katana,muramasa blade,weapon,weapon,short,S,0,8,3,10D5,0,1000000,FALSE,,,50,,,,str+1,self
-87,11,kaiser knuckles,weapon,shuriken,weapon,weapon,short,N,0,7,3,1D5+10,0,50000,FALSE,,,50,"stone, critical",,evil,hp+1,self
+86,11,murasama blade,katana,muramasa blade,weapon,weapon,short,S,0,8,3,10D5,0,1000000,FALSE,,etc,50,,,,str+1,self
+87,11,kaiser knuckles,weapon,shuriken,weapon,weapon,short,N,0,7,3,1D5+10,0,50000,FALSE,,etc,50,"stone, critical",,evil,hp+1,self
 ,12,The Muramasa Blade!,katana,,,weapon,short,S,0,8,5,50D6,0,9999999,FALSE,,,,,,,,
 ,12,excalibur,long sword,,,weapon,short,L,0,7,4,20D10,0,9999999,FALSE,,,,,,,,
 ,,,,,,,,,,,,,,,,,,,,,,,
@@ -52,7 +52,7 @@
 6,1,dagger,dagger,dagger,dagger,weapon,short,FMTSLN,0,1,0,1D4,9999,5,FALSE,,,,,,,,
 69,6,dagger +2,dagger,dagger of slicing,dagger,weapon,short,FMTSLN,0,3,2,1D4+2,0,8000,FALSE,,,,,,,,
 72,10,butterfly knife,knife,dagger of speed,dagger,weapon,short,MN,3,-1,7,1D4,0,30000,FALSE,,,,,,,,
-83,11,ninja dagger,dagger,dagger of thieves,dagger,weapon,short,TN,0,5,4,1D6,0,50000,FALSE,,,100,,,,ninja,self
+83,11,ninja dagger,dagger,dagger of thieves,dagger,weapon,short,TN,0,5,4,1D6,0,50000,FALSE,,etc,100,,,,ninja,self
 ,,,,,,,,,,,,,,,,,,,,,,,
 20,7,iron wand,wand,rod of iron,rod,weapon,short,MB,0,1,0,1D6,1,3000,FALSE,,tate,25,,,,,
 58,8,wand of silence,wand,rod of silence,rod,weapon,short,FMPTBSLN,0,1,1,1D5+1,0,15000,FALSE,,damare,10,,,,,
@@ -95,7 +95,7 @@
 ,8,plate +2,armor,,armor,armor,,FSLN,-7,0,0,0D0,0,50000,,,,,,,,,
 ,10,plate +3,armor,,armor,armor,,FSLN,-8,0,0,0D0,0,200000,,,,,,,,,
 ,12,plate +4,armor,,,armor,,FSLN,-9,0,0,0D0,0,800000,,,,,,,,,
-85,11,,,armor of lords,armor,armor,,L,-10,0,0,0D0,0,1000000,,5,,50,"fire, cold, poison, drain, stone",many,,HP max,party
+85,11,,,armor of lords,armor,armor,,L,-10,0,0,0D0,0,1000000,,5,etc,50,"fire, cold, poison, drain, stone",many,,HP max,party
 ,,,,,,,,,,,,,,,,,,,,,,,
 14,2,helm,helm,helm,helm,helm,,FSLN,-1,0,0,0D0,9999,100,,,,,,,,,
 34,5,helm +1,helm,helm of hardiness,helm,helm,,FSLN,-2,0,0,0D0,0,3000,,,,,,,,,
