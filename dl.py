@@ -746,6 +746,70 @@ class Party:
         self.identify = False  # latumapic
         self.gps = False  # eternal dumapic
 
+    def injured(self):
+        """
+        Check if someone is injured and return True/False
+        dead, ashed, lost members are not counted
+        """
+        for mem in self.members:
+            if mem.state in [State.DEAD, State.ASHED, State.LOST]:
+                continue
+            if mem.hp < mem.maxhp:
+                return True
+        return False
+
+    def cast_spell(self, game, spell, target='party'):
+        """
+        If someone can cast the spell, cast it and return True
+        If not, return False
+        Only support heal and etc spells for now
+        """
+        for mem in self.members:
+            if mem.state in [State.DEAD, State.ASHED, State.LOST]:
+                continue
+            if game.spell.cancast(mem, spell, consume=True):
+                game.vscr.meswins[-1].print(f"{mem.name} casted {spell}")
+                if spell in ['gps', 'hogo', 'shikibetsu', 'hikarinotama']:
+                    game.spell.etc(mem, spell, target)
+                else:
+                    game.spell.heal(mem, spell, target)
+                game.vscr.disp_scrwin()
+                getch(wait=True)
+                return True
+        return False
+
+    def prep(self, game):
+        """
+        Cast hogo, shikibetsu, gps and lomilwa
+        """
+        if self.ac == 0:
+            self.cast_spell(game, 'hogo')
+        if not self.identify:
+            self.cast_spell(game, 'shikibetsu')
+        if not self.gps:
+            self.cast_spell(game, 'gps')
+        if self.light_cnt < 1000:
+            self.cast_spell(game, 'hikarinotama')
+
+    def heal(self, game):
+        """
+        Heal all members in the party
+        """
+        while self.injured():
+            if not self.cast_spell(game, 'zenkai'):
+                if not self.cast_spell(game, 'zenjiai'):
+                    break
+        for mem in self.members:
+            if mem.state in [State.DEAD, State.ASHED, State.LOST]:
+                continue
+            if mem.hp == mem.maxhp:
+                continue
+            if not self.cast_spell(game, 'kanzen', mem):
+                if not self.cast_spell(game, 'daikaifuku', mem):
+                    if not self.cast_spell(game, 'iyashi', mem):
+                        if not self.cast_spell(game, 'jiai', mem):
+                            return
+
     def defeated(self):
         """
         Party defeat check after a battle, a boss battle or a chest
@@ -1448,6 +1512,27 @@ class Spell:
 
     def __init__(self, game):
         self.game = game
+
+    def cancast(self, mem, spell, consume=False):
+        """
+        Check if mem has mastered the spell and has MP
+        Return True if can (and consumed if concume=True)
+        Return False if can not
+        """
+        if mem.state not in [State.OK]:
+            return False
+        spelldef = self.game.spelldef[spell]
+        if spell in mem.mspells:
+            if mem.mspell_cnt[spelldef.level-1] > 0:
+                if consume:
+                    mem.mspell_cnt[spelldef.level-1] -= 1
+                return True
+        elif spell in mem.pspells:
+            if mem.pspell_cnt[spelldef.level-1] > 0:
+                if consume:
+                    mem.pspell_cnt[spelldef.level-1] -= 1
+                return True
+        return False
 
     def spell_counts(self, start, diff, level):
         """
@@ -3760,7 +3845,7 @@ def getch(wait=False):
         while True:
             if msvcrt.kbhit() or wait:  # msvcrt.kbhit() is non-blocking
                 c = msvcrt.getch()  # msvcrt.getch() is blocking
-                if c == 'Q' and config['debug']:
+                if c == 'Q':
                     sys.exit()
                 return c
 
@@ -3775,7 +3860,7 @@ def getch(wait=False):
                 break
     finally:
         termios.tcsetattr(fd, termios.TCSADRAIN, oattr)
-    if ch == 'Q' and config['debug'] == True:
+    if ch == 'Q':
         sys.exit()
     return ch
 
@@ -4664,12 +4749,16 @@ def camp(game, floor_obj):
 
     while not game.party.floor_move:  # tsubasa?
         mw.print(
-            "*** Camp ***\ni)nspect\nr)eorder party\nS)ave and quit game\nl)eave")
-        c = mw.input_char("Command?", values=['i', 'r', 'S', 'l'])
+            "*** Camp ***\ni)nspect\nr)eorder party\nh)eal all members\np)rep for adventure\nS)ave and quit game\nl)eave")
+        c = mw.input_char("Command?", values=['i', 'r', 'S', 'l', 'h', 'p'])
         if c == 'l':
             break
         elif c == 'r':
             game.party.reorder(game)
+        elif c == 'h':
+            game.party.heal(game)
+        elif c == 'p':
+            game.party.prep(game)
         elif c == 'S':
             game.party.place = Place.MAZE
             game.save()
@@ -4834,7 +4923,7 @@ def maze(game):
                     m.deepest = max(m.deepest, party.floor)
             elif c == '<' and config['debug']:
                 party.floor_move = 2  # go up
-            elif c == 'S' and config['debug']:
+            elif c == 'S':
                 game.save()
                 meswin.print("saved.")
                 vscr.disp_scrwin()
