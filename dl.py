@@ -1253,6 +1253,14 @@ class Member:
                         vscr.cls()
                         return
             elif c == 't':
+                if self.items[inum][2]:
+                    iw.print(f"Cursed.")
+                    vscr.disp_scrwin()
+                    continue
+                elif self.items[inum][1]:
+                    iw.print(f"Equipped.")
+                    vscr.disp_scrwin()
+                    continue
                 target = game.party.choose_character(game)
                 if target and len(target.items) < 8:
                     target.items.append(self.items[inum])
@@ -1264,6 +1272,14 @@ class Member:
                 vscr.cls()
                 break
             elif c == 'd':
+                if self.items[inum][2]:
+                    iw.print(f"Cursed.")
+                    vscr.disp_scrwin()
+                    continue
+                elif self.items[inum][1]:
+                    iw.print(f"Equipped.")
+                    vscr.disp_scrwin()
+                    continue
                 c = iw.input_char(f"Drop {dispname}? (y/n)",
                                   values=['y', 'n'])
                 if c == 'y':
@@ -1285,6 +1301,11 @@ class Member:
                             break
                         elif item[1]:  # equipped
                             item[1] = False
+                            self.calc_ac(game)
+                            vscr.meswins.pop()
+                            vscr.cls()
+                            # vscr.disp_scrwin()
+                            return
                 if game.itemdef[self.items[inum][0]].curse:
                     self.items[inum][2] = True  # cursed
                     iw.print("Cursed!")
@@ -1946,7 +1967,7 @@ class Spell:
         sdef = self.game.spelldef[spell]
         if not isinstance(invoker, Member):
             if sdef.target == 'party':
-                for mon in self.game.battle.monp[0]:
+                for mon in self.game.battle.monp[0].monsters:
                     self.heal_single(spell, sdef, mon)
             else:
                 self.heal_single(spell, sdef, invoker)
@@ -2464,7 +2485,7 @@ class Floor:
         Return a list filled with Rooms objects on a floor.
         """
         rooms = []
-        for _ in range(256):
+        for _ in range(1024):
             rx = 3 + random.randrange(10)
             ry = 3 + random.randrange(4)
             room = Room(random.randrange(self.x_size-rx+1),
@@ -2638,6 +2659,12 @@ class Battle:
         self.monp = []  # includes monster group(s)
         self.entities = []  # includes party member or monster
         self.treasure = True  # treasure
+        if random.randrange(100) < 10:
+            self.surprised = 1  # you surprised the monsters
+        elif random.randrange(100) < 10:
+            self.surprised = 2  # monsters surprised you
+        else:
+            self.surprised = 0
         self.ran = False  # ran flag
         for m in self.game.party.members:
             m.action = '????????????'
@@ -2764,6 +2791,7 @@ class Battle:
                 if len(mong.monsters) > 1:
                     dispname = mong.mdef.unidents
         if self.friendly:
+            self.surprised = 0
             self.mw.print(f"You encountered friendly {dispname}.")
             c = self.mw.input_char("Leave? (y/n)", values=['y', 'n'])
             if c == 'y':
@@ -2779,6 +2807,8 @@ class Battle:
         """
         Decide enemy/monster actions
         """
+        if self.surprised == 1:  # you surprised the monsters
+            return
         mondef = self.game.mondef
         party = self.game.party
         for mong in self.monp:
@@ -2793,7 +2823,7 @@ class Battle:
                 elif action == 'breath':
                     self.entities.append(
                         Entity(mon, mong.name, mong, agi, 'breath', None))
-                elif action == 'atk':
+                elif action == 'atk' or self.surprised == 2:
                     targets = [mem for mem in party.members
                                if mem.state in [State.OK, State.ASLEEP]]
                     if len(targets) > 3:
@@ -2821,6 +2851,8 @@ class Battle:
         self.entities = []
         for mem in self.game.party.members:
             mem.action = '????????????'
+        if self.surprised == 2:  # monsters surprised you
+            return False
         while True:
             self.mw.print(f"Options - f)ight s)pell u)se")
             self.mw.print(f"d)ispell p)arry r)un t)ake back", start=' ')
@@ -2876,6 +2908,8 @@ class Battle:
                         self.game.vscr.disp_scrwin()
                         break
                     elif c == 's':
+                        if self.surprised == 1:  # you surprised the monsters
+                            continue
                         s, target = self.choose_spell(mem)
                         self.entities.append(
                             Entity(mem, mem.name, None, agi, s, target))
@@ -3268,6 +3302,17 @@ class Battle:
             self.game.party.place = place
             return
 
+        if self.surprised == 1:
+            self.mw.print("You surprised the monsters.\n - press space bar")
+            self.game.vscr.disp_scrwin()
+            while getch(wait=True) != ' ':
+                pass
+        elif self.surprised == 2:
+            self.mw.print("Monsters surprised you.\n - press space bar")
+            self.game.vscr.disp_scrwin()
+            while getch(wait=True) != ' ':
+                pass
+
         while True:
             for m in self.game.party.members:
                 m.action = '????????????'
@@ -3291,6 +3336,7 @@ class Battle:
                 self.treasure = False
                 break  # ran successfully
             self.enemy_action()
+            self.surprised = 0
 
             self.entities.sort(key=attrgetter('agi'), reverse=True)
             entities_tmp = self.entities[:]
@@ -3756,7 +3802,7 @@ class Chest:
             v.disp_scrwin()
         elif self.trap == Trap.STUNNER:
             mem.state = State.PARALYZED
-            mw.print(f"{m.name} got stunned.", start=' ')
+            mw.print(f"{mem.name} got stunned.", start=' ')
             v.disp_scrwin()
         elif self.trap == Trap.TELEPORTER:
             mw.print(f"Oops, teleporter!", start=' ')
