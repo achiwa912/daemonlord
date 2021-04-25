@@ -270,7 +270,7 @@ class Vscr:
             floor_obj = party.floor_obj
         view_range = 1
         if party.light_cnt > 0:
-            view_range = 2
+            view_range = 3
         if party.place == Place.MAZE or party.place == Place.CAMP:
             for y in range(party.y-view_range, party.y+view_range+1):
                 for x in range(party.x-view_range, party.x+view_range+1):
@@ -769,7 +769,7 @@ class Party:
                 continue
             if game.spell.cancast(mem, spell, consume=True):
                 game.vscr.meswins[-1].print(f"{mem.name} casted {spell}")
-                if spell in ['gps', 'hogo', 'shikibetsu', 'hikarinotama']:
+                if spell in ['gps', 'hogo', 'shikibetsu', 'hikarinotama', 'kanzen']:
                     game.spell.etc(mem, spell, target)
                 else:
                     game.spell.heal(mem, spell, target)
