@@ -1301,11 +1301,11 @@ class Member:
                             break
                         elif item[1]:  # equipped
                             item[1] = False
-                            self.calc_ac(game)
-                            vscr.meswins.pop()
-                            vscr.cls()
-                            # vscr.disp_scrwin()
-                            return
+                            if item is self.items[inum]:
+                                self.calc_ac(game)
+                                vscr.meswins.pop()
+                                vscr.cls()
+                                return
                 if game.itemdef[self.items[inum][0]].curse:
                     self.items[inum][2] = True  # cursed
                     iw.print("Cursed!")
@@ -1867,7 +1867,7 @@ class Spell:
             if spelldef.target == 'enemy':
                 mem = random.choice(self.game.party.members)
                 if spelldef.type == 'death':
-                    death_single(mem, mem.name)
+                    self.death_single(mem, mem.name)
                 else:
                     damage = dice(spelldef.value)
                     mw.print(
@@ -1881,7 +1881,7 @@ class Spell:
             else:  # 'group' or 'all
                 for mem in self.game.party.members:
                     if spelldef.type == 'death':
-                        death_single(mem, mem_name)
+                        self.death_single(mem, mem.name)
                     else:
                         damage = dice(spelldef.value)
                         mw.print(
@@ -2659,6 +2659,7 @@ class Battle:
         self.monp = []  # includes monster group(s)
         self.entities = []  # includes party member or monster
         self.treasure = True  # treasure
+        self.game.party.alarm = False  # alarm flag
         if random.randrange(100) < 10:
             self.surprised = 1  # you surprised the monsters
         elif random.randrange(100) < 10:
@@ -3807,10 +3808,18 @@ class Chest:
         elif self.trap == Trap.TELEPORTER:
             mw.print(f"Oops, teleporter!", start=' ')
             v.disp_scrwin()
-            game.party.move(random.randrange(game.party.floor.x_size),
-                            random.randrange(game.party.floor.y_size))
+            game.party.move(random.randrange(game.dungeon.floors[game.party.floor-1].x_size),
+                            random.randrange(game.dungeon.floors[game.party.floor-1].y_size))
         elif self.trap == Trap.ALARM:
-            party.alarm = True
+            v.disp_scrwin()
+            getch(wait=True)
+            exp_sv = game.battle.exp
+            gold_sv = game.battle.gold
+            game.battle.battle()
+            game.battle.exp += exp_sv
+            game.battle.gold += gold_sv
+            v.disp_scrwin()
+            # getch(wait=True)
         elif self.trap == Trap.MAGE_BLASTER:
             for m in game.party.members:
                 if m.job == Job.MAGE:

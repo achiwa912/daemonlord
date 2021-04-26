@@ -93,7 +93,7 @@
 91,high master,hattori,hattoris,conhead,conheads,fighter,15,15D4,-2,3D10,3,atk,atk,atk,atk,atk,,,,TRUE,,,,90,TRUE,TRUE,TRUE,,,,TRUE,3000,1D1,"9, 10, 0",hatamoto,100,15,"8, 9, 10, 11"
 92,flack,joker,jokers,strange animal,strange animals,animal,15,15D12,-3,4D8+3,1,atk,atk,breath,breath,atk,TRUE,TRUE,TRUE,TRUE,0,cold,0,90,TRUE,TRUE,TRUE,35,FALSE,FALSE,FALSE,9200,1D1,"9, 10, 0",murphy's ghost,100,15,"8, 9, 10, 11"
 93,arch mage,arch wizard,arch wizard,man in robes,men in robes,mage,20,20D4,0,1D4,1,atk,zentomei,chissoku,zettaireido,zentomei,,,,,0,,0,100,FALSE,FALSE,FALSE,,FALSE,FALSE,TRUE,3160,1D1,"9, 10, 0",high wizard,100,15,"8, 9, 10"
-94,maelfics,magatsukami,magatsukamis,unseen being,unseen beings,undead,25,25D4,-5,1D4+1,1,atk,atk,jigokunohonou,kakubaku,kakbaku,TRUE,TRUE,,,3,,3,100,FALSE,FALSE,FALSE,50,FALSE,FALSE,TRUE,7460,1D1,"9, 10, 0",poison giant,100,15,"8, 9, 10, 11"
+94,maelfics,magatsukami,magatsukamis,unseen being,unseen beings,undead,25,25D4,-5,1D4+1,1,atk,atk,jigokunohonou,kakubaku,kakubaku,TRUE,TRUE,,,3,,3,100,FALSE,FALSE,FALSE,50,FALSE,FALSE,TRUE,7460,1D1,"9, 10, 0",poison giant,100,15,"8, 9, 10, 11"
 95,vampire lord,dracula,draculas,unseen entity,unseen entities,undead,20,20D8,-5,1D4,1,atk,atk,zentomei,chissoku,zettaireido,,TRUE,,,4,,4,100,FALSE,FALSE,FALSE,,FALSE,FALSE,TRUE,7320,1D1,"9, 10, 0",vampire,100,15,"8, 9, 10 ,11"
 ,gate keeper,gate keeper,gate keepers,huge scorpion,huge scorpions,boss,6,6D6,7,1D6,1,atk,atk,atk,shunmin,iyashi,TRUE,,,,,,1,60,,,,30,,,FALSE,4200,1D1,0,,0,5,"1, 2, 3"
 ,daemon kid,daemon kid,daemon kids,child,children,boss,8,6D8+4,8,1D4,1,atk,run,taika,shunmin,taika,,,,,,,1,70,TRUE,,,50,,,FALSE,8400,1D1,0,creeping coin?,100,8,"2, 3, 4"
