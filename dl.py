@@ -2836,6 +2836,9 @@ class Battle:
                         target = random.choice(targets)
                     self.entities.append(
                         Entity(mon, mong.name, mong, agi, 'fight', target))
+                elif action == 'help':
+                    self.entities.append(
+                        Entity(mon, mong.name, mong, agi, action, None))
                 else:
                     if action in self.game.spelldef:
                         self.entities.append(
@@ -3363,7 +3366,7 @@ class Battle:
 
                 if e.action == 'parry':
                     self.mw.print(f"{dispname} parried.")
-                elif e.action == 'breath':
+                elif e.action == 'breath':  # monster only
                     self.mw.print(f"{dispname} breathed on the party.")
                     for mem in self.game.party.members:
                         damage = e.entity.hp // 2
@@ -3385,13 +3388,26 @@ class Battle:
                 elif e.action == 'run':  # monster only
                     if self.canrun(e.entity):
                         e.group.monsters.remove(e.entity)
-                        self.mw.print(f"{dispname} ran away")
+                        self.mw.print(f"{dispname} ran away.")
                         if not e.group.monsters:
                             self.monp.remove(e.group)
                         self.draw_ew()
                     else:
                         self.mw.print(f"{dispname} tried to run away")
                         self.mw.print(f".. but wasn't able to.", start=' ')
+                elif e.action == 'help':  # monster only
+                    self.mw.print(f"{dispname} called for help.")
+                    if len(e.group.monsters) < 9 and \
+                       random.randrange(100) < 40:  # 40%
+                        self.mw.print(
+                            f".. and a fellow monster appeared.", start=' ')
+                        mon = Monster(self.game, e.name)
+                        e.group.monsters.append(mon)
+                        self.gold += self.game.mondef[e.name].level * \
+                            (random.randrange(15) + 10)
+                    else:
+                        self.mw.print(
+                            f".. but no help came.", start=' ')
                 elif '?' in e.action:  # tried to use unidentified item
                     self.mw.print(f"{dispname} tried to use {e.action}.")
                     self.mw.print(
@@ -3745,6 +3761,12 @@ class Chest:
         """
         v = self.game.vscr
         mw = v.meswins[-1]
+        if sum(len(mem.items) for mem in self.game.party.members) == \
+           8 * len(self.game.party.members):
+            mw.print("Item full.")
+            v.disp_scrwin()
+            getch(wait=True)
+            return
         mem = random.choice(
             [mem for mem in self.game.party.members if len(mem.items) < 8])
         mem.items.append([item, False, False, True])
