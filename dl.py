@@ -1865,6 +1865,8 @@ class Spell:
         spelldef = self.game.spelldef[spell]
         if not isinstance(invoker, Member):
             if spelldef.target == 'enemy':
+                if spell == 'butsumetsu':
+                    return
                 mem = random.choice(self.game.party.members)
                 if spelldef.type == 'death':
                     self.death_single(mem, mem.name)
