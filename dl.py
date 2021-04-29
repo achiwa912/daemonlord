@@ -1865,7 +1865,8 @@ class Spell:
         spelldef = self.game.spelldef[spell]
         if not isinstance(invoker, Member):
             if spelldef.target == 'enemy':
-                if spell == 'butsumetsu':
+                if spell == 'butsumetsu' or \
+                   target.state in [State.DEAD, State.ASHED, State.LOST]:
                     return
                 mem = random.choice(self.game.party.members)
                 if spelldef.type == 'death':
@@ -1882,6 +1883,8 @@ class Spell:
                         mw.print(f"{mem.name} is killed.", start=' ')
             else:  # 'group' or 'all
                 for mem in self.game.party.members:
+                    if mem.state in [State.DEAD, State.ASHED, State.LOST]:
+                        continue
                     if spelldef.type == 'death':
                         self.death_single(mem, mem.name)
                     else:
@@ -3371,6 +3374,8 @@ class Battle:
                 elif e.action == 'breath':  # monster only
                     self.mw.print(f"{dispname} breathed on the party.")
                     for mem in self.game.party.members:
+                        if mem.state in [State.DEAD, State.ASHED, State.LOST]:
+                            continue
                         damage = e.entity.hp // 2
                         mem.hp = max(0, mem.hp - damage)
                         self.mw.print(f"{mem.name} incurred {damage} damage.",
@@ -4876,6 +4881,7 @@ def maze(game):
     dungeon = game.dungeon
     party = game.party
 
+    party.floor_move = 0
     if not party.resumed and\
        party.place in [Place.MAZE, Place.CAMP, Place.BATTLE]:
         party.place = Place.MAZE
