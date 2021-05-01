@@ -1042,8 +1042,12 @@ class Member:
             f"vitality {self.stat[3]:2d}  marks {self.marks:15d}   depth{self.deepest:4d}", start=' ')
         mw.print(
             f" agility {self.stat[4]:2d}  h.p.  {self.hp:7d}/{self.maxhp:7d}", start=' ')
-        mw.print(
-            f"    luck {self.stat[5]:2d}  status {self.state.name}", start=' ')
+        if self.state == State.OK and self.poisoned:
+            mw.print(
+                f"    luck {self.stat[5]:2d}  status   POISONED", start=' ')
+        else:
+            mw.print(
+                f"    luck {self.stat[5]:2d}  status   {self.state.name}", start=' ')
         mw.print(f"", start=' ')
         mw.print(f"mage  {self.mspell_cnt[0]}/{self.mspell_cnt[1]}/{self.mspell_cnt[2]}/{self.mspell_cnt[3]}/{self.mspell_cnt[4]}/{self.mspell_cnt[5]}/{self.mspell_cnt[6]}   priest  {self.pspell_cnt[0]}/{self.pspell_cnt[1]}/{self.pspell_cnt[2]}/{self.pspell_cnt[3]}/{self.pspell_cnt[4]}/{self.pspell_cnt[5]}/{self.pspell_cnt[6]}/", start=' ')
         for idx in range(8):
@@ -1641,7 +1645,7 @@ class Spell:
         elif spell == 'gedoku':
             if target.poisoned:
                 target.poisoned = False
-                # target.hpplus += 1
+                target.hpplus += 1
                 mw.print(f"{target.name} is cured.", start=' ')
                 v.disp_scrwin()
 
@@ -1673,12 +1677,12 @@ class Spell:
         elif spell == 'hikarinotama':
             self.game.party.light_cnt += 9999
         elif spell == 'kanzen':
-            if target.state not in {State.DEAD, State.ASHED, State.LOST}:
+            if target.state not in [State.DEAD, State.ASHED, State.LOST]:
                 target.hp = target.maxhp
                 target.state = State.OK
                 if target.poisoned:
                     target.poisoned = False
-                    # target.hpplus += 1
+                self.game.party.calc_hpplus(self.game)
                 mw.print(f"{target.name} is completely healed.", start=' ')
         elif spell == 'senmetsu':
             monptmp = self.game.battle.monp[:]
@@ -1778,14 +1782,14 @@ class Spell:
                 target.monsters[0].ac += int(spelldef.value)
             else:
                 mem = random.choice(self.game.party.members)
-                mem.ac += int(spelldef.value)
+                mem.acplus += int(spelldef.value)
         elif spelldef.target == 'group':
             if isinstance(invoker, Member):
                 for mon in target.monsters:
                     mon.ac += int(spelldef.value)
             else:
                 for mem in self.game.party.members:
-                    mem.ac += int(spelldef.value)
+                    mem.acplus += int(spelldef.value)
         else:  # 'all'
             if isinstance(invoker, Member):
                 for mong in self.game.battle.monp:
@@ -1793,7 +1797,7 @@ class Spell:
                         mon.ac += int(spelldef.value)
             else:
                 for mem in self.game.party.members:
-                    mem.ac += int(spelldef.value)
+                    mem.acplus += int(spelldef.value)
 
     def status(self, invoker, spell, target):
         """
@@ -1856,6 +1860,8 @@ class Spell:
             mw.print(f"{disptarget} is killed.", start=' ')
             target.hp = 0
             target.state = State.DEAD
+            if isinstance(target, Member):
+                target.rip += 1
         else:
             mw.print(f"{disptarget} is alive.", start=' ')
 
@@ -1881,6 +1887,7 @@ class Spell:
                     if mem.hp <= 0 and \
                        mem.state not in [State.DEAD, State.ASHED, State.LOST]:
                         mem.state = State.DEAD
+                        mem.rip += 1
                         mw.print(f"{mem.name} is killed.", start=' ')
             else:  # 'group' or 'all
                 for mem in self.game.party.members:
@@ -1896,6 +1903,7 @@ class Spell:
                         if mem.hp <= 0 and \
                            mem.state not in [State.DEAD, State.ASHED, State.LOST]:
                             mem.state = State.DEAD
+                            mem.rip += 1
                             mw.print(f"{mem.name} is killed.", start=' ')
             return
         if spelldef.target == 'group':
@@ -2369,7 +2377,7 @@ class Floor:
             self.events[(x, y)] = [Eventid.KEY, False]
 
         # place random messages
-        for _ in range(1 + random.randrange(2)):  # 1 to 3 messages
+        for _ in range(2 + random.randrange(3)):  # 2 to 4 messages
             while True:
                 x = random.randrange(self.x_size)
                 y = random.randrange(self.y_size)
@@ -2724,7 +2732,12 @@ class Battle:
                 else:
                     if 0 in self.game.mondef[mname].floors:
                         candidates.append(mname)
-            mname = random.choice(candidates)
+            while True:
+                mname = random.choice(candidates)
+                # Hidden monsters shouldn't appear too often
+                if mname not in ['Nobunaga', 'Shenlong'] or \
+                   random.randrange(10) == 0:  # 1/10
+                    break
         if mname == '':
             breakpoint()  # +++++++++++++++++++++
         self.friendly = False
@@ -3081,6 +3094,7 @@ class Battle:
         if e.target.hp <= 0:
             e.target.hp = 0
             e.target.state = State.DEAD
+            e.target.rip += 1
             self.mw.print(f"{e.target.name} is killed.", start=' ')
             return
         if hitcnt == 0:
@@ -3093,7 +3107,7 @@ class Battle:
 
         if self.game.mondef[e.name].poison:
             if (e.target.stat[5]+1)*100//20 < random.randrange(100):
-                if 'poison' not in regist:
+                if 'poison' not in regist and not e.target.poisoned:
                     e.target.poisoned = True
                     e.target.hpplus -= 1
                     self.mw.print(f"{e.target.name} is poisoned.")
@@ -3147,6 +3161,7 @@ class Battle:
                        < random.randrange(100):
                         e.target.state = State.DEAD
                         e.target.hp = 0
+                        e.target.rip += 1
                         self.mw.print(f"{e.target.name} is decapitated.")
 
     def dispell(self, e):
@@ -3384,6 +3399,7 @@ class Battle:
                         if mem.hp <= 0 and mem.state not in \
                            [State.DEAD, State.ASHED, State.LOST]:
                             mem.state = State.DEAD
+                            mem.rip += 1
                             self.mw.print(f"{mem.name} is killed.",
                                           start=' ')
                 elif e.action == 'fight':
@@ -3503,6 +3519,7 @@ class Battle:
                     mem.hp = 0
                     if mem.state in [State.PARALYZED, State.STONED]:
                         mem.state = State.DEAD
+                        mem.rip += 1
                     mem.in_maze = True
                     mem.floor = party.floor  # last known place for him/her
                     party.members.remove(mem)
@@ -3549,9 +3566,11 @@ class Battle:
         v = self.game.vscr
         mw = v.meswins[-1]
         for mem in self.game.party.members:
-            mem.hp = min(max(0, mem.hp+mem.hpplus), mem.maxhp)
             if mem.state == State.ASLEEP and random.randrange(100) < 50:
                 mem.state = State.OK
+            if mem.state in [State.DEAD, State.ASHED, State.LOST]:
+                continue
+            mem.hp = min(max(0, mem.hp+mem.hpplus), mem.maxhp)
         for mong in self.monp:
             for mon in mong.monsters:
                 mon.hp = min(max(0, mon.hp+mon.hpplus), mon.maxhp)
@@ -3815,6 +3834,7 @@ class Chest:
             mw.print(f"{mem.name} incurred {damage} damage.", start=' ')
             if mem.hp <= 0:
                 mem.state = State.DEAD
+                mem.rip += 1
                 mw.print(f"{mem.name} is killed.", start=' ')
             v.disp_scrwin()
         elif self.trap == Trap.EXPLODING_BOX:
@@ -3829,6 +3849,7 @@ class Chest:
                     mw.print(f"{m.name} incurred {damage} damage.", start=' ')
                 if m.hp <= 0:
                     m.state = State.DEAD
+                    m.rip += 1
                     mw.print(f"{m.name} is killed.", start=' ')
             v.disp_scrwin()
         elif self.trap == Trap.STUNNER:
@@ -4357,7 +4378,8 @@ def trader_sell(game, mem, op):
                 break
         except:
             continue
-    game.shopitems[idic[int(c)][0]] += 1
+    if idic[int(c)][0] not in game.shopitems:
+        game.shopitems[idic[int(c)][0]] = 0
     price = idic[int(c)][2]
     if op == 's':
         if price == 0:
@@ -4366,6 +4388,7 @@ def trader_sell(game, mem, op):
             mem.gold += price
             del mem.items[int(c)-1]
             mw.print("I'm sure fellows'll want it.")
+            game.shopitems[idic[int(c)][0]] += 1
     elif op == 'i':
         if mem.gold < price:
             mw.print("Oh, you can't afford it.")
@@ -4903,7 +4926,7 @@ def maze(game):
         party.calc_hpplus(game)
         for mem in party.members:
             if mem.state not in [State.DEAD, State.ASHED, State.LOST]:
-                mem.hp = max(1, mem.hp+mem.hpplus)
+                mem.hp = min(max(1, mem.hp+mem.hpplus), mem.maxhp)
 
         vscr.disp_scrwin()
 
