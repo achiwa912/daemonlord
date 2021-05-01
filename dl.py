@@ -1865,10 +1865,11 @@ class Spell:
         spelldef = self.game.spelldef[spell]
         if not isinstance(invoker, Member):
             if spelldef.target == 'enemy':
-                if spell == 'butsumetsu' or \
-                   target.state in [State.DEAD, State.ASHED, State.LOST]:
+                if spell == 'butsumetsu':
                     return
-                mem = random.choice(self.game.party.members)
+                targets = [mem for mem in self.game.party.members
+                           if mem.state in [State.OK, State.ASLEEP]]
+                mem = random.choice(targets)
                 if spelldef.type == 'death':
                     self.death_single(mem, mem.name)
                 else:
@@ -2833,7 +2834,7 @@ class Battle:
                     targets = [mem for mem in party.members
                                if mem.state in [State.OK, State.ASLEEP]]
                     if len(targets) > 3:
-                        if party.floor > 3 and random.randrange(100) < 40:
+                        if party.floor > 3 and random.randrange(100) < 25:
                             target = random.choice(targets)
                         else:
                             target = targets[random.randrange(3)]
@@ -4453,12 +4454,12 @@ def levelup(game, m):
         levelup += 1
 
         for i in range(6):
-            r = random.randrange(100)
-            if r < 15:  # 15%
-                m.stat[i] -= 1
-            elif r >= 55:  # 55%
+            if random.randrange(100) < 45:  # 45%
                 m.stat[i] += 1
-                m.stat[i] = min(m.stat[i], race_status[m.race][i]+10)
+            elif random.randrange(100) < 25:  # (100-45) * 25% = 13.75%
+                m.stat[i] -= 1
+            m.stat[i] = max(m.stat[i], race_status[m.race][i])
+            m.stat[i] = min(m.stat[i], race_status[m.race][i]+10)
 
         m.level += 1
         newhp = 0
