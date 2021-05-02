@@ -3286,11 +3286,14 @@ class Battle:
         """
         Members with bad status move back.
         """
-        mems = self.game.party.members
-        for mem in mems:
-            if mem.state not in [State.OK]:
-                mems.remove(mem)
-                mems.append(mem)
+        valid = []
+        invalid = []
+        for mem in self.game.party.members:
+            if mem.state in [State.OK]:
+                valid.append(mem)
+            else:
+                invalid.append(mem)
+        self.game.party.members = valid + invalid
 
     def identify_check(self):
         """

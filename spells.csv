@@ -41,7 +41,7 @@
 39,priest,5,chogekido,badialma,TRUE,FALSE,attack,enemy,3D8,friendly,,Extreme angry to inflict 3-24 damage to an enemy
 40,priest,5,kaminoikari,litokan,TRUE,FALSE,attack,group,3D8,fire,,God's fire inflicts 3-24 damage to an enemy group
 42,priest,5,sosei,di,FALSE,TRUE,etc,member,,,misc,Attempt to ressurect a dead character
-43,priest,5,shisubeshi,badi,TRUE,FALSE,death,,,,"misc, max(74, 49 + 5*level_diff) %",Attempt to kill an enemy
+43,priest,5,shisubeshi,badi,TRUE,FALSE,death,enemy,,,"misc, max(74, 49 + 5*level_diff) %",Attempt to kill an enemy
 44,priest,6,tenchu,lorto,TRUE,FALSE,attack,group,6D6,friendly,,Gods power to inflict 6-36 damage to an enemy group
 45,priest,6,kanzen,madi,TRUE,TRUE,etc,member,,,misc,Complete heal & cure
 46,priest,6,hinshi,mabadi,TRUE,FALSE,etc,enemy,,,almost kill,Gods power to almost kill a single enemy
