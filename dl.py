@@ -1722,7 +1722,7 @@ class Spell:
                                         if mem.state in [State.OK, State.ASLEEP]])
                 regspellp = target.stat[5] * 100/20  # luck
                 if random.randrange(100) >= regspellp:
-                    damage = max(target.hp - random.randint(7) - 1, 0)
+                    damage = max(target.hp - random.randrange(7) - 1, 0)
                     target.hp -= damage
                     mw.print(
                         f"{target.name} incurred {damage} damage.", start=' ')
