@@ -1217,7 +1217,7 @@ class Member:
                     elif itemdef.use == 'etc':
                         iw.print(f"Used {dispname}.")
                         vscr.disp_scrwin()
-                        if self.items[inum][0] == 'muramasa blade':
+                        if self.items[inum][0] == 'murasama blade':
                             self.stat[0] += 1  # str+1
                         elif self.items[inum][0] == 'kaiser knuckles':
                             self.maxhp += 1  # hp+1
@@ -1230,6 +1230,7 @@ class Member:
                                 i[1] = False
                         if itemdef.brk > random.randrange(100):
                             self.items[inum][0] = 'broken item'
+                            self.items[inum][1] = False
                         getch(wait=True)
                         vscr.meswins.pop()
                         vscr.cls()
@@ -1934,7 +1935,7 @@ class Spell:
             else:
                 disptarget = self.game.mondef[target.name].unident
             if spelldef.type == 'death':
-                self.death_single(target, disptarget)
+                self.death_single(target.monsters[0], disptarget)
             elif spell != 'butsumetsu' or \
                     self.game.mondef[target.name].type != 'undead':
                 self.attack_single(target.monsters[0], disptarget,
@@ -2298,7 +2299,10 @@ class Floor:
             mw.print(f"The {key} statue is intricate and lively.")
             mw.print(f"You thought you need to touch the statue.")
             if mw.input_char("Search? (y/n)") == 'y':
-                game.chest.get_item(key+' key')
+                if key == 'one time password':
+                    game.chest.get_item(key)
+                else:
+                    game.chest.get_item(key+' key')
             v.meswins.pop()
             v.disp_scrwin()
 
