@@ -1,63 +1,65 @@
 
 # Table of Contents
 
-1.  [dl.py - Daemon Lord](#org974d920)
-    1.  [Overview](#org2e29ac0)
-        1.  [Wizardry clone](#org3db2d76)
-        2.  [Rogue-like dungeon maps](#org58fc980)
-        3.  [Auto-generated maps w/o resetting levels and items of characters](#orgbc8696b)
-        4.  [A little more user friendly than Wizardry](#orga55672e)
-    2.  [Important notice: alpha quality](#orgcb6f919)
-    3.  [Getting started](#org7b11eb0)
-        1.  [Prerequisites](#orgfca1993)
-        2.  [Installation](#orge7c3768)
-    4.  [How to Play](#org3741de7)
-        1.  [Tips](#org5088626)
-2.  [Contributing](#orgfe25ea4)
-3.  [License](#org85f4c83)
-4.  [Quick Tour of Daemon Lord](#orga92eb14)
-    1.  [Game start](#org4c2a0d4)
-    2.  [Edge of Town](#org80b5296)
-        1.  [Training Grounds](#org48029cc)
-    3.  [Castle](#org0980359)
-        1.  [Hawthorne Tavern](#orgce97451)
-        2.  [Trader Jay's](#org60df9db)
-        3.  [Equip](#orgf92ee8a)
-    4.  [Save and Resume](#orgd3f121f)
-    5.  [Dungeon](#org10f8f7b)
-        1.  [Walk around the Dungeon](#orga0fc531)
-        2.  [Battle](#orge47a988)
-        3.  [Surprise attacks](#orgb588c5a)
-        4.  [Chest](#org07b2140)
-        5.  [Friendly monsters](#orgc3498bb)
-        6.  [Get ouf of the Dungeon](#orga49292c)
-        7.  [A new dungeon!](#org5064c78)
-        8.  [Camp](#org5db99cb)
-        9.  [Heal all members](#org8cc8335)
-        10. [Prep for adventure](#orgfe63ea6)
-        11. [Save and Resume from camp](#org8633fc0)
-    6.  [Castle](#orgbcce95a)
-        1.  [The Lakehouse Inn](#org161af26)
-5.  [Spells](#orga7a88da)
-    1.  [Overview](#orgf3da77f)
-    2.  [Usage](#org9d28a26)
-    3.  [Mage Spells](#org96c51a6)
-    4.  [Priest Spells](#org3bad818)
-6.  [Monsters](#org5cc1594)
-    1.  [Shallow floors](#org2dac905)
-    2.  [Middle depth floors](#org147051e)
-    3.  [Deep floors](#orga7dabb0)
-    4.  [Boss and special monsters](#orgee5ed09)
-        1.  [gate keeper](#orgf8436c7)
-        2.  [d????? ???, t?? ????, a????](#org4ae1526)
-        3.  [d????? ????](#org74eb054)
-        4.  [S???????, N??????](#orgf6b2755)
-7.  [Contact](#org986625c)
-8.  [Acknowledgements](#org0802b77)
+1.  [dl.py - Daemon Lord](#orgb3c2ec0)
+    1.  [Overview](#org0318f52)
+        1.  [Wizardry clone](#org612d7e4)
+        2.  [Rogue-like dungeon maps](#orgbff8195)
+        3.  [Auto-generated maps w/o resetting levels and items of characters](#org796b03c)
+        4.  [A little more user friendly than Wizardry](#orgb982fdc)
+    2.  [Important notice: alpha quality](#orgc85cb1b)
+    3.  [Getting started](#org99119ed)
+        1.  [Prerequisites](#orgad3114a)
+        2.  [Installation](#orgf1a7934)
+    4.  [How to Play](#org5941141)
+        1.  [Tips](#orgbc8a213)
+    5.  [What's new (5/7/2021)](#org97a4fd2)
+        1.  [Now using database to save/load status](#org63a7b69)
+2.  [Contributing](#org0944b1c)
+3.  [License](#org5ed4fa1)
+4.  [Quick Tour of Daemon Lord](#org05e8430)
+    1.  [Game start](#org7b894e3)
+    2.  [Edge of Town](#org671dd99)
+        1.  [Training Grounds](#orge1cdeb7)
+    3.  [Castle](#org21e648f)
+        1.  [Hawthorne Tavern](#org948f42c)
+        2.  [Trader Jay's](#org5e3545f)
+        3.  [Equip](#orga9d190e)
+    4.  [Save and Resume](#org8ed7b7c)
+    5.  [Dungeon](#orgbc1a919)
+        1.  [Walk around the Dungeon](#org1a95d7c)
+        2.  [Battle](#org5dc72b7)
+        3.  [Surprise attacks](#org404b2e0)
+        4.  [Chest](#org0bc7d75)
+        5.  [Friendly monsters](#org23df0c6)
+        6.  [Get ouf of the Dungeon](#orgd50617e)
+        7.  [A new dungeon!](#org17e84f4)
+        8.  [Camp](#orgd07ae59)
+        9.  [Heal all members](#org2d3a6fe)
+        10. [Prep for adventure](#orge190ded)
+        11. [Save and Resume from camp](#org4f33cd7)
+    6.  [Castle](#orgde68508)
+        1.  [The Lakehouse Inn](#orgc0d152d)
+5.  [Spells](#org1132a32)
+    1.  [Overview](#org1bbc304)
+    2.  [Usage](#org0148be3)
+    3.  [Mage Spells](#org0b0459b)
+    4.  [Priest Spells](#org3393105)
+6.  [Monsters](#org9dd316b)
+    1.  [Shallow floors](#orgbe49026)
+    2.  [Middle depth floors](#orgbd27b94)
+    3.  [Deep floors](#org46d7cfd)
+    4.  [Boss and special monsters](#orga42248f)
+        1.  [gate keeper](#org8893b38)
+        2.  [d????? ???, t?? ????, a????](#org7dff97f)
+        3.  [d????? ????](#org2bbeca6)
+        4.  [S???????, N??????](#org42132cc)
+7.  [Contact](#orge2f759d)
+8.  [Acknowledgements](#org9349cd3)
 
 
 
-<a id="org974d920"></a>
+<a id="orgb3c2ec0"></a>
 
 # dl.py - Daemon Lord
 
@@ -99,12 +101,12 @@ Daemon Lord is a Wizardry-clone RPG with rogue-like (ie, text-based), randomly-c
      6 fun        G-MAG   8   35 shunmin      ^* *** encounter ***                    ^
 
 
-<a id="org2e29ac0"></a>
+<a id="org0318f52"></a>
 
 ## Overview
 
 
-<a id="org3db2d76"></a>
+<a id="org612d7e4"></a>
 
 ### Wizardry clone
 
@@ -117,7 +119,7 @@ Daemon Lord is a Wizardry-clone RPG with rogue-like (ie, text-based), randomly-c
 -   Need to type spells and chest traps accurately
 
 
-<a id="org58fc980"></a>
+<a id="orgbff8195"></a>
 
 ### Rogue-like dungeon maps
 
@@ -127,7 +129,7 @@ Daemon Lord is a Wizardry-clone RPG with rogue-like (ie, text-based), randomly-c
 -   Maps are auto-generated.
 
 
-<a id="orgbc8696b"></a>
+<a id="org796b03c"></a>
 
 ### Auto-generated maps w/o resetting levels and items of characters
 
@@ -139,7 +141,7 @@ Daemon Lord is a Wizardry-clone RPG with rogue-like (ie, text-based), randomly-c
 -   You can restart your adventure from a floor that should match your character levels
 
 
-<a id="orga55672e"></a>
+<a id="orgb982fdc"></a>
 
 ### A little more user friendly than Wizardry
 
@@ -151,7 +153,7 @@ Daemon Lord is a Wizardry-clone RPG with rogue-like (ie, text-based), randomly-c
 -   Group heal spells for the entire party
 
 
-<a id="orgcb6f919"></a>
+<a id="orgc85cb1b"></a>
 
 ## Important notice: alpha quality
 
@@ -160,12 +162,12 @@ Currently, DL (daemon lord) is under development and it's in an alpha code quali
 Please file issues on github, or send bug reports (or comments) to achiwa912+gmail.com (replace '+' with '@').
 
 
-<a id="org7b11eb0"></a>
+<a id="org99119ed"></a>
 
 ## Getting started
 
 
-<a id="orgfca1993"></a>
+<a id="orgad3114a"></a>
 
 ### Prerequisites
 
@@ -180,16 +182,17 @@ Please file issues on github, or send bug reports (or comments) to achiwa912+gma
 -   items.csv - item data file
 
 
-<a id="orge7c3768"></a>
+<a id="orgf1a7934"></a>
 
 ### Installation
 
 1.  Setup python 3.8 or later
-2.  Place dl.py, monsters.csv, spells.csv, items.csv in the same directory
-3.  Run "python dl.py"
+2.  Install sqlalchemy: `pip install sqlalchemy`
+3.  Place dl.py, monsters.csv, spells.csv, items.csv in the same directory
+4.  Run "python dl.py"
 
 
-<a id="org3741de7"></a>
+<a id="org5941141"></a>
 
 ## How to Play
 
@@ -206,7 +209,7 @@ You can save either at Edge of Town or from the Camp menu.
 You can perform resume operation only from Edge of Town.
 
 
-<a id="org5088626"></a>
+<a id="orgbc8a213"></a>
 
 ### Tips
 
@@ -217,7 +220,23 @@ You can perform resume operation only from Edge of Town.
 -   ctrl-c is disabled but you can Q)uit game on a prompt (press 'Q' (shift-q))
 
 
-<a id="orgfe25ea4"></a>
+<a id="org97a4fd2"></a>
+
+## What's new (5/7/2021)
+
+
+<a id="org63a7b69"></a>
+
+### Now using database to save/load status
+
+-   DL used to save/load game status to a file `savedata.pickle`
+-   It now saves/loads status to a sqlite3 file `dl.db` using SQLAlchemy
+-   Support seamless migration from the saved file to the database
+    -   If `dl.db` file is not present, DL tries to load status from `savedata.pickle` file
+    -   Subsequent save/load will go to the database.  Saving to `savedata.pickle` is not supported anymore
+
+
+<a id="org0944b1c"></a>
 
 # Contributing
 
@@ -230,19 +249,19 @@ Any contributions you make are greatly appreciated.
 5.  Open a Pull Request
 
 
-<a id="org85f4c83"></a>
+<a id="org5ed4fa1"></a>
 
 # License
 
 Daemon Lord is under [MIT license](https://en.wikipedia.org/wiki/MIT_License).
 
 
-<a id="orga92eb14"></a>
+<a id="org05e8430"></a>
 
 # Quick Tour of Daemon Lord
 
 
-<a id="org4c2a0d4"></a>
+<a id="org7b894e3"></a>
 
 ## Game start
 
@@ -276,12 +295,12 @@ DL (Daemon Lord) starts with the screen below at the Castle.
 When you first start the game, you need to go to Edge of Town (press `e`) > Training Grounds (press `t`), and then create characters (press `c`).
 
 
-<a id="org80b5296"></a>
+<a id="org671dd99"></a>
 
 ## Edge of Town
 
 
-<a id="org48029cc"></a>
+<a id="orge1cdeb7"></a>
 
 ### Training Grounds
 
@@ -637,7 +656,7 @@ As you have already noticed, DL gives you a guide of which letter you can type w
 Have you created six characters?  Then, you should go to Castle > Hawthorne Tavern to form a party.  Type `l` to leave the Training Grounds and then type `c` to go to Castle.
 
 
-<a id="org0980359"></a>
+<a id="org21e648f"></a>
 
 ## Castle
 
@@ -652,7 +671,7 @@ Have you created six characters?  Then, you should go to Castle > Hawthorne Tave
 From the Castle menu, you can visit several places, but you want to go to Hawthorne Tavern now so type `h`.
 
 
-<a id="orgce97451"></a>
+<a id="org948f42c"></a>
 
 ### Hawthorne Tavern
 
@@ -684,7 +703,7 @@ Now, they are shown in the party window at the bottom left of the screen.
     6 faun       G-MAG  10    7 OK
 
 
-<a id="org60df9db"></a>
+<a id="org5e3545f"></a>
 
 ### Trader Jay's
 
@@ -745,7 +764,7 @@ Basically, the front (ie, the first three) members should equip heavily because 
 sling is a long-range weapon that everyone can use.  You can't expect much from sling and its damage is at best 1 or 2, but better than nothing.  Long-ranged weapons tend to be less powerful and more expensive than short-range ones.
 
 
-<a id="orgf92ee8a"></a>
+<a id="orga9d190e"></a>
 
 ### Equip
 
@@ -773,7 +792,7 @@ At Hatthorne Tavern, first `i)nspect` a character and then choose `i)tems` > ite
 Equipped items will have `*` mark next to the item name.  You need to equip one item at a time and for each member.  To change members, type `j, k` .
 
 
-<a id="orgd3f121f"></a>
+<a id="org8ed7b7c"></a>
 
 ## Save and Resume
 
@@ -792,7 +811,7 @@ To save and quit the game, go to Edge of Town and type `S` (capital-S).
 You need to run `python dl.py` again to restart and resume the game.  After restarting the game, go to Edge of Town and choose `R)esume from saved data` .  That is, capital-R.  Automatic resume is not supported.
 
 
-<a id="org10f8f7b"></a>
+<a id="orgbc1a919"></a>
 
 ## Dungeon
 
@@ -828,7 +847,7 @@ You (`@`) are now in the dungeon and on the upstairs to the outside world.
 `^` indicates areas that you have not visited yet.  `.` is a floor tile that you can walk on.  
 
 
-<a id="orga0fc531"></a>
+<a id="org1a95d7c"></a>
 
 ### Walk around the Dungeon
 
@@ -1039,7 +1058,7 @@ Oops, another door.  Let's open again.
     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^###+###^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
-<a id="orge47a988"></a>
+<a id="org5dc72b7"></a>
 
 ### Battle
 
@@ -1154,7 +1173,7 @@ The party killed all three slimes.
 Yeah!  Each survivor received 27 experience points and 9 gold from this battle.
 
 
-<a id="orgb588c5a"></a>
+<a id="org404b2e0"></a>
 
 ### Surprise attacks
 
@@ -1172,7 +1191,7 @@ On the other hand, monsters might surprise your party.  If this occurs, monsters
     ^^^^^^^^^^^^^|    - press space bar                                                     |^^^^^^^^^^^^^^^
 
 
-<a id="org07b2140"></a>
+<a id="org0bc7d75"></a>
 
 ### Chest
 
@@ -1317,7 +1336,7 @@ Here's the trap list.
 </table>
 
 
-<a id="orgc3498bb"></a>
+<a id="org23df0c6"></a>
 
 ### Friendly monsters
 
@@ -1338,7 +1357,7 @@ Of course, you will get no e.p. or gold if you chose to walk away.
     6 faun       G-MAG  10    7 OK           ^  Each survivor gets 0 gold.      ^
 
 
-<a id="orga49292c"></a>
+<a id="orgd50617e"></a>
 
 ### Get ouf of the Dungeon
 
@@ -1397,7 +1416,7 @@ Having walked around a lot on this floor, and now the mage's MP is exhausted and
 The party is back at Edge of Town.  It should take a while to get used to the brightness but they are safe again!
 
 
-<a id="org5064c78"></a>
+<a id="org17e84f4"></a>
 
 ### A new dungeon!
 
@@ -1449,7 +1468,7 @@ What?  We can only see 3x3 tiles around the party.  Where has the map data gone?
 See the map is different this time?
 
 
-<a id="org5db99cb"></a>
+<a id="orgd07ae59"></a>
 
 ### Camp
 
@@ -1540,7 +1559,7 @@ Looks like, Ben's HP is fully restored.  Do the same for Cam.
 Great!
 
 
-<a id="org8cc8335"></a>
+<a id="org2d3a6fe"></a>
 
 ### Heal all members
 
@@ -1567,7 +1586,7 @@ Before you get out of the dungeon, you usually heal (ie, recover HP) all party m
 Note that this option doesn't cure status anomallies such as paralyzed or even ashed.  Also, the algorithm is not very smart.
 
 
-<a id="orgfe63ea6"></a>
+<a id="orge190ded"></a>
 
 ### Prep for adventure
 
@@ -1588,7 +1607,7 @@ This is also an automatic-spell-cast option.  When you just go into the dungeon,
     ^^^^^^^^^^| * ed casted hikarinotama                                   |^^^^^^^^^^^^
 
 
-<a id="org8633fc0"></a>
+<a id="org4f33cd7"></a>
 
 ### Save and Resume from camp
 
@@ -1648,12 +1667,12 @@ And, you are in the dungeon again.
 Let's exit from the dungeon and head to Edge of Town > Castle > Lakehouse Inn for some rest.
 
 
-<a id="orgbcce95a"></a>
+<a id="orgde68508"></a>
 
 ## Castle
 
 
-<a id="org161af26"></a>
+<a id="orgc0d152d"></a>
 
 ### The Lakehouse Inn
 
@@ -1696,12 +1715,12 @@ If their e.p. reach the next level, their level will go up while they are asleep
 In DL, age doesn't matter.  They can stay at the inn as long as they wish without getting old.  All the party members stay at the same room type.
 
 
-<a id="orga7a88da"></a>
+<a id="org1132a32"></a>
 
 # Spells
 
 
-<a id="orgf3da77f"></a>
+<a id="org1bbc304"></a>
 
 ## Overview
 
@@ -1720,7 +1739,7 @@ In this example, she has 2 MPs remaining for level 1 mage spells.  She will acqu
 The maximum MPs for each spell level is 9.  A high level mage/priest will have `9/9/9/9/9/9/9` MPs.
 
 
-<a id="org9d28a26"></a>
+<a id="org0148be3"></a>
 
 ## Usage
 
@@ -1749,7 +1768,7 @@ To use spells from the camp menu, first `i)nspect` a character who would like to
     ^^^^^^^^^^|   i)tems s)pells jk)change member l)leave > s              |^^^^^^
 
 
-<a id="org96c51a6"></a>
+<a id="org0b0459b"></a>
 
 ## Mage Spells
 
@@ -1939,7 +1958,7 @@ One of the most useful spells will be newly introduced "tsubasa".  This spell ca
 </table>
 
 
-<a id="org3bad818"></a>
+<a id="org3393105"></a>
 
 ## Priest Spells
 
@@ -2191,12 +2210,12 @@ One of the most useful spells will be newly introduced "tsubasa".  This spell ca
 </table>
 
 
-<a id="org5cc1594"></a>
+<a id="org9dd316b"></a>
 
 # Monsters
 
 
-<a id="org2dac905"></a>
+<a id="orgbe49026"></a>
 
 ## Shallow floors
 
@@ -2536,7 +2555,7 @@ Monsters on the second floor are strong.  You could even get poisoned or beheade
 </table>
 
 
-<a id="org147051e"></a>
+<a id="orgbd27b94"></a>
 
 ## Middle depth floors
 
@@ -2970,7 +2989,7 @@ Monsters on the second floor are strong.  You could even get poisoned or beheade
 </table>
 
 
-<a id="orga7dabb0"></a>
+<a id="org46d7cfd"></a>
 
 ## Deep floors
 
@@ -3264,12 +3283,12 @@ Monsters on the second floor are strong.  You could even get poisoned or beheade
 </table>
 
 
-<a id="orgee5ed09"></a>
+<a id="orga42248f"></a>
 
 ## Boss and special monsters
 
 
-<a id="orgf8436c7"></a>
+<a id="org8893b38"></a>
 
 ### gate keeper
 
@@ -3277,28 +3296,28 @@ Huge scorpion originated in an SNES game, Tenchi-sozo.
 It was a boss monster on floor 1 but hasn't been implemented.  Rather weak on deepest floors.
 
 
-<a id="org4ae1526"></a>
+<a id="org7dff97f"></a>
 
 ### d????? ???, t?? ????, a????
 
 Boss monsters.  You'll need special keys to break into the boss rooms.  Special keys should be placed somewhere on the same floor.  Look for `,` floor tile.
 
 
-<a id="org74eb054"></a>
+<a id="org2bbeca6"></a>
 
 ### d????? ????
 
 The last boss.  He is with mighty earth demons, which makes the last battle most difficult to win.  Hint: Use certain spells.  Though extremely risky, you would have no other choice.
 
 
-<a id="orgf6b2755"></a>
+<a id="org42132cc"></a>
 
 ### S???????, N??????
 
 Ancient gods from the past.  You are doomed to be destroyed.  Run away immediately if you see them.
 
 
-<a id="org986625c"></a>
+<a id="orge2f759d"></a>
 
 # Contact
 
@@ -3307,7 +3326,7 @@ Kyosuke Achiwa - @kyos\_achwan - achiwa912+gmail.com (please replace `+` with `@
 Project Link: <https://github.com/achiwa912/daemonlord>
 
 
-<a id="org0802b77"></a>
+<a id="org9349cd3"></a>
 
 # Acknowledgements
 
