@@ -15,6 +15,7 @@ import textwrap
 import re
 import pickle
 import uuid
+from threading import Thread
 import sqlalchemy
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -401,15 +402,22 @@ class Game:
         self.dungeon = None
         self.spell = None
         self.battle = None
+        self.saving = 0  # 0: not saving, 1: saving, 2: save completed
 
     def save(self):
-        self.vscr.meswins[-1].print("saving..")
-        self.vscr.disp_scrwin()
+        """ 
+        Called from a separate thread
+        """
+        engine = create_engine('sqlite:///dl.db')
+        Base.metadata.create_all(engine)
+        Session = sessionmaker(bind=engine)
+        session = Session()
+
         # Save party
-        party_db = self.database.session.query(Party_db).first()
+        party_db = session.query(Party_db).first()
         if not party_db:
             party_db = Party_db()
-            self.database.session.add(party_db)
+            session.add(party_db)
 
         party_db.x = self.party.x
         party_db.y = self.party.y
@@ -428,18 +436,18 @@ class Game:
         party_db.gps = self.party.gps
         party_db.dungeon_uuid = self.dungeon.uuid
 
-        self.database.session.commit()  # commit party_db.id
-        party_db = self.database.session.query(Party_db).first()
+        session.commit()  # commit party_db.id
+        party_db = session.query(Party_db).first()
 
         # save members
-        self.database.session.query(Memitems_db).delete()
+        session.query(Memitems_db).delete()
 
         for mem in self.characters:
-            mem_db = self.database.session.query(
+            mem_db = session.query(
                 Member_db).filter_by(name=mem.name).first()
             if not mem_db:
                 mem_db = Member_db(name=mem.name)
-                self.database.session.add(mem_db)
+                session.add(mem_db)
 
             mem_db.name = mem.name
             mem_db.align = mem.align
@@ -475,49 +483,53 @@ class Game:
             mem_db.pspell_cnt = ','.join(map(str, mem.pspell_cnt))
             mem_db.mspell_max = ','.join(map(str, mem.mspell_max))
             mem_db.pspell_max = ','.join(map(str, mem.pspell_max))
-            self.database.session.commit()  # to assign member.id
+            mem_db.hospitalized = False
+            if mem in self.hospitalized:
+                mem_db.hospitalized = True
+                session.commit()  # to assign member.id
 
             # Save member items
             for i in mem.items:
                 mi_db = Memitems_db(name=i[0], equipped=i[1],
                                     cursed=i[2], unidentified=i[3],
                                     member_id=mem_db.id)
-                self.database.session.add(mi_db)
+                session.add(mi_db)
 
         # Save party members to members table
         for i, mem in enumerate(self.party.members, 1):
-            mem_db = self.database.session.query(
+            mem_db = session.query(
                 Member_db).filter_by(name=mem.name).first()
             mem_db.party_id = party_db.id
             mem_db.party_order = i
 
         # Save shop inventory
-        self.database.session.query(Inventory_db).delete()
+        session.query(Inventory_db).delete()
         for item in self.shopitems.keys():
             if not self.shopitems[item]:
                 continue
             inv_db = Inventory_db(name=item, value=self.shopitems[item])
-            self.database.session.add(inv_db)
+            session.add(inv_db)
 
         # if in Dungeon
         if self.party.place in [Place.MAZE, Place.CAMP, Place.BATTLE]:
             # Different dungeon
             if not self.dungeon.uuid or \
                party_db.dungeon_uuid != self.dungeon.uuid:
-                self.database.session.query(Floor_db).delete()
-                self.database.session.query(Room_db).delete()
-                self.database.session.query(Fevent_db).delete()
+                session.query(Floor_db).delete()
+                session.query(Room_db).delete()
+                session.query(Fevent_db).delete()
+                session.query(Devent_db).delete()
 
             # Always recreate dungeon events as this is small
-            self.database.session.query(Devent_db).delete()
+            session.query(Devent_db).delete()
             for ev in self.dungeon.events:
                 devent_db = Devent_db(loc_type=ev[0], floor=ev[1],
                                       ev_type=ev[2])
-                self.database.session.add(devent_db)
+                session.add(devent_db)
 
             # Save floors
             for f in self.dungeon.floors:
-                floor_db = self.database.session.query(
+                floor_db = session.query(
                     Floor_db).filter_by(floor=f.floor).first()
                 if not floor_db:
                     floor_db = Floor_db(
@@ -526,13 +538,13 @@ class Game:
                         up_x=f.up_x, up_y=f.up_y,
                         down_x=f.down_x, down_y=f.down_y
                     )
-                    self.database.session.add(floor_db)
+                    session.add(floor_db)
                 floor_db.floor_data = f.floor_data
-                self.database.session.commit()  # to define floor.id
+                session.commit()  # to define floor.id
 
                 # Save rooms of the floor
                 for i, r in enumerate(f.rooms):
-                    room_db = self.database.session.query(
+                    room_db = session.query(
                         Room_db).filter_by(
                             x=r.x, y=r.y, floor_id=floor_db.id).first()
                     if not room_db:
@@ -541,12 +553,12 @@ class Game:
                             y_size=r.y_size, center_x=r.center_x,
                             center_y=r.center_y, floor_id=floor_db.id
                         )
-                        self.database.session.add(room_db)
+                        session.add(room_db)
                     room_db.battled = f.battled[i]
 
                 # Save floor events
                 for fek in f.events.keys():
-                    fev_db = self.database.session.query(
+                    fev_db = session.query(
                         Fevent_db).filter_by(
                             x=fek[0], y=fek[1],
                             floor_id=floor_db.id).first()
@@ -556,11 +568,19 @@ class Game:
                             ev_type=f.events[fek][0],
                             floor_id=floor_db.id
                         )
-                        self.database.session.add(dev_db)
-                    dev_db.done = f.events[fek][1]
+                        session.add(dev_db)
+                        dev_db.done = f.events[fek][1]
+        else:
+            session.query(Floor_db).delete()
+            session.query(Room_db).delete()
+            session.query(Fevent_db).delete()
+            session.query(Devent_db).delete()
 
-        self.database.session.commit()  # final commit
+        session.commit()  # final commit
+        session.close()
+        engine.dispose()
         self.database.newdb = False  # can load from database
+        self.saving = 2  # saved
 
     def save_file(self):
         """
@@ -604,6 +624,7 @@ class Game:
         self.vscr.disp_scrwin()
         if self.database.newdb:
             return self.load_file()
+
         party_db = self.database.session.query(Party_db).first()
 
         # load party
@@ -615,7 +636,6 @@ class Game:
         self.party.pfloor = party_db.pfloor
         self.party.tsubasa_floor = party_db.tsubasa_floor
         self.party.floor_move = party_db.floor_move
-        self.party.resumed = True  # party_db.resumed
         self.party.place = party_db.place
         self.party.light_cnt = party_db.light_cnt
         self.party.ac = party_db.ac
@@ -625,6 +645,7 @@ class Game:
         self.dungeon.uuid = party_db.dungeon_uuid
 
         # load members
+        self.hospitalized = []
         self.characters = []
         for mem_db in self.database.session.query(
                 Member_db).order_by(Member_db.id):
@@ -661,6 +682,8 @@ class Game:
             mem.mspell_max = list(map(int, mem_db.mspell_max.split(',')))
             mem.pspell_max = list(map(int, mem_db.pspell_max.split(',')))
             self.characters.append(mem)
+            if mem_db.hospitalized:
+                self.hospitalized.append(mem)
 
             # load member items
             mem.items = []
@@ -685,7 +708,10 @@ class Game:
 
         # if not in Dungeon
         if not self.party.place in [Place.MAZE, Place.CAMP, Place.BATTLE]:
+            self.party.resumed = False
             return True
+
+        self.party.resumed = True  # party_db.resumed
 
         # load dungeon events
         self.dungeon.events = []
@@ -1087,6 +1113,7 @@ class Member_db(Base):
     pspell_max = Column(String)
     party_id = Column(Integer, ForeignKey('party.id'))
     party_order = Column(Integer)
+    hospitalized = Column(Boolean)
 
 
 class Memitems_db(Base):
@@ -2514,6 +2541,10 @@ class Dungeon:
             party.move(floor_obj.rooms[0].center_x,
                        floor_obj.rooms[0].center_y,
                        floor=party.floor+1)
+            if floor == 1:
+                party.move(floor_obj.rooms[0].center_x,
+                           floor_obj.rooms[0].center_y,
+                           floor=party.floor+1)
         elif party.floor_move == 2:  # 2: up; on the downstairs
             floor_obj = self.floors[party.floor-2]
             party.floor_obj = floor_obj
@@ -5299,7 +5330,7 @@ def edge_town(game):
                 mw.print("No party members.")
             break
         elif ch == 'S':
-            game.save()
+            save(game)
             mw.print("Thank you for playing.")
             mw.print("See you soon.")
             vscr.disp_scrwin()
@@ -5334,7 +5365,7 @@ def camp(game, floor_obj):
             game.party.prep(game)
         elif c == 'S':
             game.party.place = Place.MAZE
-            game.save()
+            save(game)
             mw.print("Thank you for playing.")
             mw.print("See you again soon.")
             v.disp_scrwin()
@@ -5393,6 +5424,12 @@ def maze(game):
         for mem in party.members:
             if mem.state not in [State.DEAD, State.ASHED, State.LOST]:
                 mem.hp = min(max(1, mem.hp+mem.hpplus), mem.maxhp)
+
+        if game.saving == 2:
+            game.thread.join()
+            meswin.print("saved")
+            vscr.disp_scrwin(floor_obj)
+            game.saving = 0
 
         vscr.disp_scrwin()
 
@@ -5499,9 +5536,7 @@ def maze(game):
             elif c == '<' and config['debug']:
                 party.floor_move = 2  # go up
             elif c == 'S':
-                game.save()
-                meswin.print("saved.")
-                vscr.disp_scrwin()
+                save(game)
             elif c == '#' and config['debug']:
                 for y in range(party.y-10, party.y+10+1):
                     for x in range(party.x-32, party.x+32+1):
@@ -5532,6 +5567,19 @@ def dispatch(game):
             castle(game)
         elif pl == Place.MAZE:
             maze(game)
+
+
+def save(game):
+    if game.saving != 0:
+        return
+
+    game.vscr.meswins[-1].print("saving..")
+    game.vscr.disp_scrwin()
+    game.saving = 1  # saving
+
+    thread = Thread(target=game.save)
+    thread.start()
+    game.thread = thread
 
 
 def main():
