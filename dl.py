@@ -406,7 +406,10 @@ class Game:
 
     def save(self):
         """ 
-        Called from a separate thread
+        Save game status to the database (sqlte3: dl.db via SQLAlchemy).
+        Skip saving floor and event data if saved from Edge of Town.
+        Called from a separate thread as it is slow.  Not really thread 
+        safe but it wouldn't do major harm either.
         """
         engine = create_engine('sqlite:///dl.db')
         Base.metadata.create_all(engine)
@@ -486,7 +489,7 @@ class Game:
             mem_db.hospitalized = False
             if mem in self.hospitalized:
                 mem_db.hospitalized = True
-                session.commit()  # to assign member.id
+            session.commit()  # to assign member.id
 
             # Save member items
             for i in mem.items:
@@ -534,11 +537,11 @@ class Game:
                 if not floor_db:
                     floor_db = Floor_db(
                         x_size=f.x_size, y_size=f.y_size,
-                        floor=f.floor, floor_orig=f.floor_orig,
-                        up_x=f.up_x, up_y=f.up_y,
+                        floor=f.floor, up_x=f.up_x, up_y=f.up_y,
                         down_x=f.down_x, down_y=f.down_y
                     )
                     session.add(floor_db)
+                floor_db.floor_orig = f.floor_orig
                 floor_db.floor_data = f.floor_data
                 session.commit()  # to define floor.id
 
@@ -584,6 +587,7 @@ class Game:
 
     def save_file(self):
         """
+        Obsolete.  It is not used anymore.
         Save game status for later resume.  If saved in dungeon,
         it saves floor objects as well.  As pickling party object
         resulted in an error (memoryview can't be pickled), convert
@@ -616,8 +620,9 @@ class Game:
 
     def load(self):
         """
-        Load save data from database.
-        If database didn't exist, load from file.
+        Load save data from the database.
+        If database doesn't exist, load from file for backward
+        compatibility.
         Return True if loaded.
         """
         self.vscr.meswins[-1].print("loading..")
@@ -625,7 +630,16 @@ class Game:
         if self.database.newdb:
             return self.load_file()
 
-        party_db = self.database.session.query(Party_db).first()
+        engine = create_engine('sqlite:///dl.db')
+        Base.metadata.create_all(engine)
+        Session = sessionmaker(bind=engine)
+        session = Session()
+
+        party_db = session.query(Party_db).first()
+        if not party_db:
+            self.vscr.meswins[-1].print("..oops, no save data.")
+            self.vscr.disp_scrwin()
+            return False
 
         # load party
         self.party.x = party_db.x
@@ -647,7 +661,7 @@ class Game:
         # load members
         self.hospitalized = []
         self.characters = []
-        for mem_db in self.database.session.query(
+        for mem_db in session.query(
                 Member_db).order_by(Member_db.id):
             mem = Member(mem_db.name, mem_db.align, mem_db.race)
             mem.level = mem_db.level
@@ -687,7 +701,7 @@ class Game:
 
             # load member items
             mem.items = []
-            for mi_db in self.database.session.query(
+            for mi_db in session.query(
                     Memitems_db).filter_by(member_id=mem_db.id).order_by(
                         Memitems_db.id):
                 mem.items.append((mi_db.name, mi_db.equipped, mi_db.cursed,
@@ -695,14 +709,14 @@ class Game:
 
         # load party members
         self.party.members = []
-        for pmem_db in self.database.session.query(
+        for pmem_db in session.query(
                 Member_db).filter_by(party_id=party_db.id).order_by(
                     Member_db.party_order):
             mem = [m for m in self.characters if m.name == pmem_db.name][0]
             self.party.members.append(mem)
 
         # load shop inventories
-        for item_db in self.database.session.query(
+        for item_db in session.query(
                 Inventory_db).all():
             self.shopitems[item_db.name] = item_db.value
 
@@ -715,7 +729,7 @@ class Game:
 
         # load dungeon events
         self.dungeon.events = []
-        for dev_db in self.database.session.query(
+        for dev_db in session.query(
                 Devent_db).all():
             self.dungeon.events.append((dev_db.loc_type,
                                         dev_db.floor,
@@ -723,7 +737,7 @@ class Game:
 
         # load floors
         self.dungeon_floors = []
-        for floor_db in self.database.session.query(
+        for floor_db in session.query(
                 Floor_db).order_by(Floor_db.floor):
             f = Floor(floor_db.x_size, floor_db.y_size,
                       floor_db.floor, bytearray(floor_db.floor_data))
@@ -735,7 +749,7 @@ class Game:
 
             # load rooms on the floor
             f.rooms = []
-            for room_db in self.database.session.query(
+            for room_db in session.query(
                     Room_db).filter_by(
                         floor_id=floor_db.id).order_by(Room_db.id):
                 r = Room(room_db.x, room_db.y, room_db.x_size,
@@ -744,7 +758,7 @@ class Game:
                 f.battled.append(room_db.battled)
 
             # load floor events
-            for i, fev_db in enumerate(self.database.session.query(
+            for i, fev_db in enumerate(session.query(
                     Fevent_db).filter_by(floor_id=floor_db.id)):
                 f.events[(fev_db.x, fev_db.y)] = \
                     [fev_db.ev_type, fev_db.done]
@@ -753,6 +767,8 @@ class Game:
 
         self.party.floor_obj = self.dungeon.floors[self.party.floor-1]
 
+        session.close()
+        engine.dispose()
         self.vscr.meswins[-1].print("loaded.")
         self.vscr.disp_scrwin()
         return True
@@ -1067,10 +1083,6 @@ class Database:
         self.newdb = True
         if os.path.exists("dl.db"):
             self.newdb = False
-        self.engine = create_engine('sqlite:///dl.db')
-        Base.metadata.create_all(self.engine)
-        Session = sessionmaker(bind=self.engine)
-        self.session = Session()
 
 
 class Member_db(Base):
@@ -1316,6 +1328,9 @@ class Party:
             self.floor = floor
 
     def calc_hpplus(self, game):
+        """
+        Calc poison and healing item effects for the party members
+        """
         for mem in self.members:
             mem.hpplus = sum(game.itemdef[item[0]].hp for item in mem.items)
             if mem.poisoned:
@@ -2119,6 +2134,9 @@ class Spell:
             self.etc(invoker, spell, target)
 
     def cure(self, invoker, spell, target):
+        """
+        Spell to cure bad status
+        """
         v = self.game.vscr
         mw = v.meswins[-1]
         spelldef = self.game.spelldef[spell]
@@ -2135,6 +2153,9 @@ class Spell:
                 v.disp_scrwin()
 
     def etc(self, invoker, spell, target):
+        """
+        Misc spell
+        """
         v = self.game.vscr
         mw = v.meswins[-1]
         spelldef = self.game.spelldef[spell]
@@ -2335,6 +2356,9 @@ class Spell:
                         mw.print(f"{mem.name} is not slept.", start=' ')
 
     def death_single(self, target, disptarget):
+        """
+        Spells that cause instant death to a single enemy
+        """
         mw = self.game.vscr.meswins[-1]
         if isinstance(target, Monster):
             regdeathp = self.game.mondef[target.name].regdeathp
@@ -2351,6 +2375,9 @@ class Spell:
             mw.print(f"{disptarget} is alive.", start=' ')
 
     def attack(self, invoker, spell, target):
+        """
+        Attack spells to decrease HP
+        """
         v = self.game.vscr
         mw = v.meswins[-1]
         spelldef = self.game.spelldef[spell]
@@ -2434,6 +2461,9 @@ class Spell:
                 self.game.battle.monp.remove(mong)
 
     def attack_single(self, mon, dispname, value, attr, mong, invoker):
+        """
+        Attack spells for a single enemy
+        """
         if mon.state == State.DEAD:
             return
         v = self.game.vscr
@@ -2463,6 +2493,9 @@ class Spell:
             invoker.marks += 1
 
     def heal(self, invoker, spell, target):
+        """
+        Heal spells to recover HP
+        """
         sdef = self.game.spelldef[spell]
         if not isinstance(invoker, Member):
             if sdef.target == 'party':
@@ -2478,6 +2511,9 @@ class Spell:
             self.heal_single(spell, sdef, target)
 
     def heal_single(self, sname, sdef, target):
+        """
+        Heal spells to recover HP for a signle fellow
+        """
         plus = dice(sdef.value)
         target.hp = min(target.hp+plus, target.maxhp)
         mw = self.game.vscr.meswins[-1]
@@ -2691,6 +2727,9 @@ class Floor:
         getch(wait=True)
 
     def boss(self, game):
+        """
+        Events before fighting with boss mosters
+        """
         v = game.vscr
         mw = Meswin(v, v.width//8, v.height//6,
                     v.width*3//4, 4, frame=True)
@@ -2764,6 +2803,9 @@ class Floor:
         v.meswins.pop()
 
     def key(self, game):
+        """
+        Events to find keys
+        """
         if game.party.floor == 3:
             key = 'ivory'
             keys = ['ivory ley', 'bronze key', 'silver key', 'gold key']
@@ -2796,6 +2838,9 @@ class Floor:
             v.disp_scrwin()
 
     def random_message(self, game):
+        """
+        Random message events
+        """
         v = game.vscr
         mw = Meswin(v, v.width//8, v.height//6,
                     v.width*3//4, 8, frame=True)
@@ -5427,7 +5472,7 @@ def maze(game):
 
         if game.saving == 2:
             game.thread.join()
-            meswin.print("saved")
+            vscr.meswins[0].print("...saved")
             vscr.disp_scrwin(floor_obj)
             game.saving = 0
 
@@ -5570,6 +5615,9 @@ def dispatch(game):
 
 
 def save(game):
+    """
+    Dispatch a game.save thread to start save
+    """
     if game.saving != 0:
         return
 
