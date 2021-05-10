@@ -440,6 +440,7 @@ class Game:
         party_db.dungeon_uuid = self.dungeon.uuid
 
         session.commit()  # commit party_db.id
+
         party_db = session.query(Party_db).first()
 
         # save members
@@ -704,8 +705,8 @@ class Game:
             for mi_db in session.query(
                     Memitems_db).filter_by(member_id=mem_db.id).order_by(
                         Memitems_db.id):
-                mem.items.append((mi_db.name, mi_db.equipped, mi_db.cursed,
-                                  mi_db.unidentified))
+                mem.items.append([mi_db.name, mi_db.equipped, mi_db.cursed,
+                                  mi_db.unidentified])
 
         # load party members
         self.party.members = []
@@ -722,6 +723,10 @@ class Game:
 
         # if not in Dungeon
         if not self.party.place in [Place.MAZE, Place.CAMP, Place.BATTLE]:
+            session.close()
+            engine.dispose()
+            self.vscr.meswins[-1].print("loaded.")
+            self.vscr.disp_scrwin()
             self.party.resumed = False
             return True
 
