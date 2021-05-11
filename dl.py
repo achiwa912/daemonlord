@@ -33,7 +33,14 @@ else:
 
 config = {
     'debug': False,
+    'newdb': True,
 }
+
+if os.path.exists("dl.db"):
+    config['newdb'] = False
+engine = create_engine('sqlite:///dl.db')
+Base.metadata.create_all(engine)
+Session = sessionmaker(bind=engine)
 
 
 class Job(Enum):
@@ -411,9 +418,6 @@ class Game:
         Called from a separate thread as it is slow.  Not really thread 
         safe but it wouldn't do major harm either.
         """
-        engine = create_engine('sqlite:///dl.db')
-        Base.metadata.create_all(engine)
-        Session = sessionmaker(bind=engine)
         session = Session()
 
         # Save party
@@ -567,13 +571,13 @@ class Game:
                             x=fek[0], y=fek[1],
                             floor_id=floor_db.id).first()
                     if not fev_db:
-                        dev_db = Fevent_db(
+                        fev_db = Fevent_db(
                             x=fek[0], y=fek[1],
                             ev_type=f.events[fek][0],
                             floor_id=floor_db.id
                         )
-                        session.add(dev_db)
-                        dev_db.done = f.events[fek][1]
+                        session.add(fev_db)
+                    fev_db.done = f.events[fek][1]
         else:
             session.query(Floor_db).delete()
             session.query(Room_db).delete()
@@ -582,8 +586,7 @@ class Game:
 
         session.commit()  # final commit
         session.close()
-        engine.dispose()
-        self.database.newdb = False  # can load from database
+        config['newdb'] = False  # can load from database
         self.saving = 2  # saved
 
     def save_file(self):
@@ -628,12 +631,9 @@ class Game:
         """
         self.vscr.meswins[-1].print("loading..")
         self.vscr.disp_scrwin()
-        if self.database.newdb:
+        if config['newdb']:
             return self.load_file()
 
-        engine = create_engine('sqlite:///dl.db')
-        Base.metadata.create_all(engine)
-        Session = sessionmaker(bind=engine)
         session = Session()
 
         party_db = session.query(Party_db).first()
@@ -724,7 +724,6 @@ class Game:
         # if not in Dungeon
         if not self.party.place in [Place.MAZE, Place.CAMP, Place.BATTLE]:
             session.close()
-            engine.dispose()
             self.vscr.meswins[-1].print("loaded.")
             self.vscr.disp_scrwin()
             self.party.resumed = False
@@ -773,7 +772,6 @@ class Game:
         self.party.floor_obj = self.dungeon.floors[self.party.floor-1]
 
         session.close()
-        engine.dispose()
         self.vscr.meswins[-1].print("loaded.")
         self.vscr.disp_scrwin()
         return True
@@ -1079,15 +1077,6 @@ class Game:
                 rtn.append(t)
             rtn = tuple(rtn)
         return rtn
-
-
-class Database:
-    # Represents the database
-    def __init__(self, game):
-        self.game = game
-        self.newdb = True
-        if os.path.exists("dl.db"):
-            self.newdb = False
 
 
 class Member_db(Base):
@@ -2585,7 +2574,7 @@ class Dungeon:
             if floor == 1:
                 party.move(floor_obj.rooms[0].center_x,
                            floor_obj.rooms[0].center_y,
-                           floor=party.floor+1)
+                           floor=party.floor)
         elif party.floor_move == 2:  # 2: up; on the downstairs
             floor_obj = self.floors[party.floor-2]
             party.floor_obj = floor_obj
@@ -5637,7 +5626,6 @@ def save(game):
 
 def main():
     game = Game()  # singleton
-    game.database = Database(game)  # singleton
     party = Party(0, 0, 1)
     game.party = party
     game.load_spelldef()
