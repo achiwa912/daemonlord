@@ -1,0 +1,7 @@
+server:
+  host: localhost
+  port: 8080
+  auth:
+    user: default_user
+    password: default_pass
+    team: default_team
