@@ -6,6 +6,7 @@ import json
 import fcntl
 from enum import Enum
 import tty
+import select
 import struct
 import sys
 import os
@@ -16,6 +17,7 @@ import re
 import pickle
 import uuid
 from threading import Thread
+import yaml
 import sqlalchemy
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -33,8 +35,14 @@ else:
 
 config = {
     'debug': False,
+    'client': True,
     'newdb': True,
 }
+
+if config['client']:
+    import socketio
+    sio = socketio.Client()
+
 
 if os.path.exists("dl.db"):
     config['newdb'] = False
@@ -167,6 +175,8 @@ class Vscr:
         self.prev_vscr_view = memoryview(self.vscr0)
         self.cur_vscr_view = memoryview(self.vscr1)
         self.meswins = []
+        self.messages = []  # list of tuple(user, message)
+        self.refresh = False  # someone moved
 
     def draw_map(self, party, floor_obj):
         """
@@ -175,6 +185,9 @@ class Vscr:
         floor_view = memoryview(floor_obj.floor_data)
         cv = self.cur_vscr_view
         w = self.width
+        plocs = [(k[:1].upper(), v[0], v[1])
+                 for k, v in game.dungeon.party_locs.items()
+                 if v[2] == party.floor and k != config['server']['auth']['user']]
         for cy in range(self.height):
             cv[cy*w:(cy+1)*w] = b'^'*w  # fill with rocks
             my = party.y - (self.height-7)//2 + cy  # convert cy to floor_y
@@ -184,6 +197,11 @@ class Vscr:
                 map_left = my*floor_obj.x_size + party.x - w//2 + l_left
                 map_right = map_left + l_right - l_left
                 cv[cy*w+l_left:cy*w+l_right] = floor_view[map_left:map_right]
+                for ch, x, y in plocs:
+                    if my != y:
+                        continue
+                    if party.x-w//2+l_left < x < party.x-w//2+l_right:
+                        cv[cy*w+l_left+x] = ch.encode('utf-8')[0]
             if cy == (self.height-7)//2:
                 cv[cy*w+w//2:cy*w+w//2+1] = b'@'
 
@@ -270,6 +288,8 @@ class Vscr:
             line = f" daemon lord - dl - [{party.place.name.lower()}] floor:{party.floor:2d} ({party.x:3d}/{party.y:3d}) "
         else:
             line = f" daemon lord - dl - [{party.place.name.lower()}] floor:?? (???/???) "
+        if game.dungeon.expedition:
+            line = line.replace("- dl -", "<server>")
         if party.identify:
             line = line + "<identify> "
         if party.light_cnt:
@@ -412,7 +432,7 @@ class Game:
         self.saving = 0  # 0: not saving, 1: saving, 2: save completed
 
     def save(self):
-        """ 
+        """
         Save game status to the database (sqlte3: dl.db via SQLAlchemy).
         Skip saving floor and event data if saved from Edge of Town.
         Called from a separate thread as it is slow.  Not really thread 
@@ -438,12 +458,14 @@ class Game:
         party_db.place = self.party.place
         party_db.light_cnt = self.party.light_cnt
         party_db.ac = self.party.ac
-        party_db.silenced = self.party.silenced
+        # temporary measure until we have an independent table
+        # Note: currently, we don't use "silensed" flag for party
+        party_db.silenced = self.dungeon.expedition
         party_db.identify = self.party.identify
         party_db.gps = self.party.gps
         party_db.dungeon_uuid = self.dungeon.uuid
 
-        session.commit()  # commit party_db.id
+        # session.commit()  # commit party_db.id
 
         party_db = session.query(Party_db).first()
 
@@ -494,7 +516,7 @@ class Game:
             mem_db.hospitalized = False
             if mem in self.hospitalized:
                 mem_db.hospitalized = True
-            session.commit()  # to assign member.id
+            # session.commit()  # to assign member.id
 
             # Save member items
             for i in mem.items:
@@ -537,6 +559,8 @@ class Game:
 
             # Save floors
             for f in self.dungeon.floors:
+                if f is None:
+                    continue
                 floor_db = session.query(
                     Floor_db).filter_by(floor=f.floor).first()
                 if not floor_db:
@@ -548,7 +572,7 @@ class Game:
                     session.add(floor_db)
                 floor_db.floor_orig = f.floor_orig
                 floor_db.floor_data = f.floor_data
-                session.commit()  # to define floor.id
+                # session.commit()  # to define floor.id
 
                 # Save rooms of the floor
                 for i, r in enumerate(f.rooms):
@@ -654,7 +678,10 @@ class Game:
         self.party.place = party_db.place
         self.party.light_cnt = party_db.light_cnt
         self.party.ac = party_db.ac
-        self.party.silenced = party_db.silenced
+        # temporary measure until we have an independent table
+        # Note: currently, we don't use "silensed" flag for party
+        self.dungeon.expedition = party_db.silenced
+        self.party.silenced = False
         self.party.identify = party_db.identify
         self.party.gps = party_db.gps
         self.dungeon.uuid = party_db.dungeon_uuid
@@ -767,6 +794,11 @@ class Game:
                 f.events[(fev_db.x, fev_db.y)] = \
                     [fev_db.ev_type, fev_db.done]
 
+            while True:
+                if len(self.dungeon.floors) < f.floor-1:
+                    self.dungeon.floors.append(None)
+                else:
+                    break
             self.dungeon.floors.append(f)
 
         self.party.floor_obj = self.dungeon.floors[self.party.floor-1]
@@ -1320,6 +1352,12 @@ class Party:
         self.pfloor = self.floor
         if floor:
             self.floor = floor
+        if game.dungeon.expedition:
+            locdict = {}
+            locdict['x'] = x
+            locdict['y'] = y
+            locdict['floor'] = self.floor
+            sio.emit('party_move', locdict)
 
     def calc_hpplus(self, game):
         """
@@ -2528,6 +2566,10 @@ class Dungeon:
         self.events = []  # list of events (floor, eventid)
         self.generate_events()
         self.uuid = None
+        self.expedition = False  # logging in to an external server
+        self.sio = None
+        self.loaded = False  # load flag
+        self.party_locs = {}  # {user: (x, y, floor)}
 
     def generate_events(self):
         """
@@ -2562,26 +2604,38 @@ class Dungeon:
             floor = party.tsubasa_floor
         for idx in range(floor):
             if len(self.floors) < idx+1:
-                floor_obj = self.generate_floor(idx+1)
+                if party.floor == idx + 1:
+                    floor_obj = self.generate_floor(idx+1)
+                else:
+                    floor_obj = None
                 self.floors.append(floor_obj)
 
         if party.floor_move == 1:  # down; on the upstairs
-            floor_obj = self.floors[party.floor]
+            party.floor += 1
+            if self.floors[party.floor-1] == None:
+                self.floors[party.floor-1] = self.generate_floor(party.floor)
+            floor_obj = self.floors[party.floor-1]
             party.floor_obj = floor_obj
             party.move(floor_obj.rooms[0].center_x,
                        floor_obj.rooms[0].center_y,
-                       floor=party.floor+1)
+                       floor=party.floor)
             if floor == 1:
                 party.move(floor_obj.rooms[0].center_x,
                            floor_obj.rooms[0].center_y,
                            floor=party.floor)
         elif party.floor_move == 2:  # 2: up; on the downstairs
-            floor_obj = self.floors[party.floor-2]
+            party.floor -= 1
+            if self.floors[party.floor-1] == None:
+                self.floors[party.floor-1] = self.generate_floor(party.floor)
+            floor_obj = self.floors[party.floor-1]
             party.floor_obj = floor_obj
             party.move(floor_obj.rooms[-1].center_x,
                        floor_obj.rooms[-1].center_y,
-                       floor=party.floor-1)
+                       floor=party.floor)
         else:  # tsubasa; on the upstairs
+            if self.floors[party.tsubasa_floor-1] == None:
+                self.floors[party.tsubasa_floor -
+                            1] = self.generate_floor(party.tsubasa_floor)
             floor_obj = self.floors[party.tsubasa_floor-1]
             party.floor_obj = floor_obj
             party.move(floor_obj.rooms[0].center_x,
@@ -2594,9 +2648,16 @@ class Dungeon:
 
     def generate_floor(self, floor):
         """
-        Generate a dungeon floor.
+        Generate (or load from server) a dungeon floor.
         Create rooms, connect among them and place doors
         """
+        if self.expedition:
+            self.floor_obj = None
+            sio.emit('load_floor', floor)
+            while not self.floor_obj:
+                pass
+            return self.floor_obj
+
         floor_x_size = min(256, 48 + 24*floor)
         floor_y_size = min(128, 20 + 10*floor)
         floor_data = bytearray(b'#' * floor_x_size *
@@ -2645,6 +2706,10 @@ class Dungeon:
 
         if party.floor_move:
             if party.floor <= 1 and party.floor_move == 2:  # exit from dungeon
+                if game.dungeon.expedition:
+                    game.dungeon.expedition = False
+                    sio.emit('exit_dungeon')
+                    sio.disconnect()
                 meswin.cls()
                 party.place = Place.EDGE_OF_TOWN
                 return True  # Exit from dungeon
@@ -4477,7 +4542,11 @@ def terminal_size():
     return w, h
 
 
-def getch(wait=False):
+def isData():
+    return select.select([sys.stdin], [], [], 0) == ([sys.stdin], [], [])
+
+
+def getch(wait=True):
     """
     realtime key scan
     wait - if it waits (blocks) for user input
@@ -4490,20 +4559,34 @@ def getch(wait=False):
                     sys.exit()
                 return c
 
-    fd = sys.stdin.fileno()
-    oattr = termios.tcgetattr(fd)
-    ch = ''
+    c = ''
+    old_settings = termios.tcgetattr(sys.stdin)
     try:
-        while ch == '':
-            tty.setraw(sys.stdin.fileno())
-            ch = sys.stdin.read(1)
-            if not wait:
+        tty.setcbreak(sys.stdin.fileno())
+
+        c = ''
+        while True:
+            if isData():
+                c = sys.stdin.read(1)
+            if c != '' or not wait:
                 break
+            if game.vscr.refresh:
+                game.vscr.refresh = False
+                game.vscr.disp_scrwin()
+            if game.vscr.messages:  # one message at a time
+                user, mes = game.vscr.messages.pop(0)
+                game.vscr.meswins[0].print(f"Message from {user}:")
+                game.vscr.meswins[0].print(mes, start=' ')
+                game.vscr.disp_scrwin()
+
     finally:
-        termios.tcsetattr(fd, termios.TCSADRAIN, oattr)
-    if ch == 'Q':
+        termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_settings)
+
+    if c == 'Q':
+        if game.dungeon.expedition:
+            sio.disconnect()
         sys.exit()
-    return ch
+    return c
 
 
 def dice(valstr):
@@ -5353,10 +5436,14 @@ def edge_town(game):
         mw.cls()
         game.party.place = Place.EDGE_OF_TOWN
         mw.print("*** Edge of Town ***", start=' ')
+        if config['client']:
+            mw.print("m)aze\nx)expedition to external dungeon", start=' ')
+        else:
+            mw.print("m)aze", start=' ')
         mw.print(
-            "m)aze\nt)raining grounds\nc)astle\nS)ave and quit game\nR)esume from saved data", start=' ')
+            "t)raining grounds\nc)astle\nS)ave and quit game\nR)esume from saved data", start=' ')
         vscr.disp_scrwin()
-        ch = mw.input_char("Command? ", values=['t', 'S', 'm', 'c', 'R'])
+        ch = mw.input_char("Command? ", values=['t', 'S', 'm', 'c', 'R', 'x'])
         if ch == 't':
             training(game)
         elif ch == 'c':
@@ -5376,8 +5463,71 @@ def edge_town(game):
             sys.exit()
         elif ch == 'R':
             if game.load():
-                mw.print("loaded.")
+                pass
+                # mw.print("loaded.")
             vscr.disp_scrwin()
+            if game.dungeon.expedition:
+                url = f"http://{config['server']['host']}:{config['server']['port']}"
+                auth = config['server']['auth']
+                game.dungeon.loaded = False
+                uuid = game.dungeon.uuid
+                try:
+                    sio.connect(url, auth)
+                except:
+                    vscr.cls()
+                    game.dungeon.expedition = False
+                    game.dungeon.floors = []
+                    game.party.place = Place.EDGE_OF_TOWN
+                    game.party.floor_obj = None
+                    game.party.resumed = False
+                    mw.print("Connection error occurred.")
+                    mw.print("Falling back to Edge of Town")
+                    vscr.disp_scrwin()
+                    getch(wait=True)
+                    continue
+                #mw.print("receiving dungeon data")
+                # vscr.disp_scrwin()
+                while True:
+                    if game.dungeon.loaded:
+                        #mw.print("dugeon data received")
+                        #vscr.disp_scrwin()
+                        break
+
+                game.dungeon.sio = sio
+                game.party.place = Place.MAZE
+                game.party.resumed = True
+                game.dungeon.expedition = True
+                if game.dungeon.uuid != uuid:
+                    mw.print("Dungeon data removed from the server")
+                    mw.print("Entering a new dungeon")
+                    vscr.disp_scrwin()
+                    game.dungeon.floors = []
+                    game.party.floor_obj = None
+                    game.party.resumed = False
+                    # sio.disconnect()
+                    getch(wait=True)
+            break
+        elif ch == 'x' and game.party.members:
+            url = f"http://{config['server']['host']}:{config['server']['port']}"
+            auth = config['server']['auth']
+            game.dungeon.loaded = False
+            try:
+                sio.connect(url, auth)
+            except:
+                mw.print("Connection error occurred.")
+                vscr.disp_scrwin()
+                getch(wait=True)
+                continue
+
+            mw.print(
+                f"Traveling to {config['server']['host']} as {config['server']['auth']['user']}@{config['server']['auth']['team']} ({sio.sid})")
+            vscr.disp_scrwin()
+            game.dungeon.expedition = True
+            game.dungeon.sio = sio
+            game.party.place = Place.MAZE
+            while True:
+                if game.dungeon.loaded:
+                    break
             break
 
 
@@ -5448,94 +5598,100 @@ def maze(game):
         party.floor_move = 1  # 0: no, 1: down, 2: up
 
         dungeon.floors = []  # initialize every time
-        dungeon.uuid = uuid.uuid1().hex
+        if not dungeon.expedition:
+            dungeon.uuid = uuid.uuid1().hex
         party.floor_obj = floor_obj = None
     party.resumed = False
 
+    loop_cnt = 0
+    checked = False
     while True:
-        dungeon.generate_move_floors()
-        floor_obj = party.floor_obj
+        if not checked:
+            checked = True
+            dungeon.generate_move_floors()
+            floor_obj = party.floor_obj
 
-        if party.light_cnt > 0:  # milwa/lomilwa counter
-            party.light_cnt -= 1
+            if party.light_cnt > 0:  # milwa/lomilwa counter
+                party.light_cnt -= 1
 
-        party.calc_hpplus(game)
-        for mem in party.members:
-            if mem.state not in [State.DEAD, State.ASHED, State.LOST]:
-                mem.hp = min(max(1, mem.hp+mem.hpplus), mem.maxhp)
+            party.calc_hpplus(game)
+            for mem in party.members:
+                if mem.state not in [State.DEAD, State.ASHED, State.LOST]:
+                    mem.hp = min(max(1, mem.hp+mem.hpplus), mem.maxhp)
 
-        if game.saving == 2:
-            game.thread.join()
-            vscr.meswins[0].print("...saved")
-            vscr.disp_scrwin(floor_obj)
-            game.saving = 0
-
-        vscr.disp_scrwin()
-
-        rt = floor_obj.check_event(game)
-        if party.defeated():  # Defeated by boss monster?
-            break
-        if not rt:  # event processed
-            rtn = game.battle.check_battle()
-            if rtn:  # 1: random or 2: room (or 3?) if battle
-                meswin.print("*** encounter ***")
+            if game.saving == 2:
+                game.thread.join()
+                vscr.meswins[0].print("...saved")
                 vscr.disp_scrwin(floor_obj)
-                getch()
-                game.battle.battle()
-                if party.defeated():  # party defeated
-                    break
-                if rtn == 2 and game.battle.treasure:  # room battle
-                    game.chest.chest()
-                    game.battle.gold *= 2  # Twice the gold for a chest.
-                    if party.defeated():
+                game.saving = 0
+
+            vscr.disp_scrwin()
+
+            rt = floor_obj.check_event(game)
+            if party.defeated():  # Defeated by boss monster?
+                break
+            if not rt:  # event processed
+                rtn = game.battle.check_battle()
+                if rtn:  # 1: random or 2: room (or 3?) if battle
+                    meswin.print("*** encounter ***")
+                    vscr.disp_scrwin(floor_obj)
+                    getch()
+                    game.battle.battle()
+                    if party.defeated():  # party defeated
                         break
-                if not game.battle.treasure:
-                    game.battle.exp = 0
-                    game.battle.gold = 0
-                survnum = sum(1 for m in party.members
-                              if m.state in [State.OK, State.ASLEEP,
-                                             State.PARALYZED, State.STONED])
-                meswin.print(f"Each survivor gets {game.battle.exp//survnum} e.p.",
-                             start=' ')
-                meswin.print(f"Each survivor gets {game.battle.gold//survnum} gold.",
-                             start=' ')
-                for mem in party.members:
-                    if mem.state == State.ASLEEP:
-                        mem.state = State.OK
-                    if mem.state in [State.OK, State.PARALYZED, State.STONED]:
-                        mem.exp += game.battle.exp//survnum
-                        mem.gold += game.battle.gold//survnum
-        if game.battle.ran:  # ran?
-            if floor_obj != party.floor_obj:
-                floor_obj = party.floor_obj
-        vscr.disp_scrwin(floor_obj)
+                    if rtn == 2 and game.battle.treasure:  # room battle
+                        game.chest.chest()
+                        game.battle.gold *= 2  # Twice the gold for a chest.
+                        if party.defeated():
+                            break
+                    if not game.battle.treasure:
+                        game.battle.exp = 0
+                        game.battle.gold = 0
+                    survnum = sum(1 for m in party.members
+                                  if m.state in [State.OK, State.ASLEEP,
+                                                 State.PARALYZED, State.STONED])
+                    meswin.print(f"Each survivor gets {game.battle.exp//survnum} e.p.",
+                                 start=' ')
+                    meswin.print(f"Each survivor gets {game.battle.gold//survnum} gold.",
+                                 start=' ')
+                    for mem in party.members:
+                        if mem.state == State.ASLEEP:
+                            mem.state = State.OK
+                        if mem.state in [State.OK, State.PARALYZED, State.STONED]:
+                            mem.exp += game.battle.exp//survnum
+                            mem.gold += game.battle.gold//survnum
+            if game.battle.ran:  # ran?
+                if floor_obj != party.floor_obj:
+                    floor_obj = party.floor_obj
+            vscr.disp_scrwin(floor_obj)
 
-        exit = dungeon.check_move_floor(floor_obj)
-        if exit:  # Exit from dungeon
-            mlist = party.members[:]
-            for mem in mlist:
-                if mem.poisoned:
-                    mem.poisoned = False
-                    mem.hpplus = 0
-                if mem.state in [State.PARALYZED, State.STONED, State.DEAD,
-                                 State.ASHED]:
-                    party.members.remove(mem)
-                    # Carried away in an ambulance
-                    game.hospitalized.append(mem)
+            exit = dungeon.check_move_floor(floor_obj)
+            if exit:  # Exit from dungeon
+                mlist = party.members[:]
+                for mem in mlist:
+                    if mem.poisoned:
+                        mem.poisoned = False
+                        mem.hpplus = 0
+                    if mem.state in [State.PARALYZED, State.STONED, State.DEAD,
+                                     State.ASHED]:
+                        party.members.remove(mem)
+                        # Carried away in an ambulance
+                        game.hospitalized.append(mem)
 
-            party.light_cnt = 0
-            party.ac = 0
-            party.silenced = False
-            party.identify = False
-            party.gps = False
+                party.light_cnt = 0
+                party.ac = 0
+                party.silenced = False
+                party.identify = False
+                party.gps = False
 
-            break
-        if party.floor_move:
-            continue
+                break
+            if party.floor_move:
+                continue
 
         c = getch(wait=True)
         draw = True
         if c:
+            checked = False
             if c == 'c':
                 camp(game, floor_obj)
                 if game.party.floor_move:
@@ -5581,12 +5737,31 @@ def maze(game):
                     for x in range(party.x-32, party.x+32+1):
                         floor_obj.put_tile(
                             x, y, floor_obj.get_tile(x, y), orig=False)
+            elif c == 'm' and game.dungeon.expedition:
+                mw = Meswin(vscr, 10, 2, 60, 2, frame=True)
+                vscr.meswins.append(mw)
+                mes = mw.input('Message to send?')
+                sio.emit('message', mes)
+                vscr.meswins.pop()
             else:
-                pass  # draw = False
+                pass
+
+            draw = False
+            if vscr.messages:  # one message at a time
+                user, mes = vscr.messages.pop(0)
+                meswin.print(f"Message from {user}:")
+                meswin.print(mes, start=' ')
+                draw = True
         else:
             draw = False
+            if vscr.messages:  # one message at a time
+                user, mes = vscr.messages.pop(0)
+                meswin.print(f"Message from {user}:")
+                meswin.print(mes, start=' ')
+                draw = True
         if draw:
             vscr.disp_scrwin(floor_obj)
+        loop_cnt += 1
 
     vscr.meswins = meswins_save
     vscr.cls()
@@ -5624,8 +5799,63 @@ def save(game):
     game.thread = thread
 
 
+if config['client']:
+    @sio.event
+    def connect():
+        print("Connected")
+
+    @sio.event
+    def connect_error(data):
+        print("Connection failed.")
+
+    @sio.event
+    def disconnect():
+        print("Disconnected.")
+
+    @sio.event
+    def message(data):
+        game.vscr.messages.append((data['user'], data['message']))
+
+    @sio.event
+    def party_loc(data):
+        #print(f"{data['user']} to ({data['x']},{data['y']})@{data['floor']}")
+        game.dungeon.party_locs[data['user']] = (
+            data['x'], data['y'], data['floor'])
+        game.vscr.refresh = True
+
+    @sio.event
+    def dungeon(data):
+        if game.dungeon.uuid != data['uuid']:
+            game.dungeon.floors = []
+            game.dungeon.events = []
+            game.dungeon.uuid = data['uuid']
+            game.dungeon.events = [(Evloctype[event[0]], event[1], Eventid[event[2]])
+                                   for event in data['events']]
+        game.dungeon.loaded = True
+
+    @sio.event
+    def floor_dic(fdic):
+        f = Floor(fdic['x_size'], fdic['y_size'],
+                  fdic['floor'], bytearray(fdic['floor_data']))
+        f.floor_orig = bytearray(fdic['floor_orig'])
+        f.up_x = fdic['up_x']
+        f.up_y = fdic['up_y']
+        f.down_x = fdic['down_x']
+        f.down_y = fdic['down_y']
+        rooms = fdic['rooms']
+        f.rooms = [Room(r[0], r[1], r[2], r[3]) for r in rooms]
+        f.events = {tuple(k.split(',')): [Eventid[v[0]], v[1]]
+                    for k, v in fdic['events'].items()}
+        f.battled = fdic['battled']
+        game.dungeon.floor_obj = f
+
+
+game = Game()  # singleton
+
+
 def main():
-    game = Game()  # singleton
+    with open('dlconf.yaml') as f:  # load cofig
+        config.update(yaml.safe_load(f))
     party = Party(0, 0, 1)
     game.party = party
     game.load_spelldef()
