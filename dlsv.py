@@ -1,9 +1,12 @@
+import os
+import random
+import uuid
+from datetime import datetime
+from enum import Enum
+import yaml
 import socketio
 from aiohttp import web
-from datetime import datetime
-import uuid
-from enum import Enum
-import random
+import aiofiles
 
 sio = socketio.AsyncServer()
 app = web.Application()
@@ -19,20 +22,41 @@ class Evloctype(Enum):
 
 
 login_teams = {}  # key=team: value=Team object
+registered_users = {}
+userfile_path = "users.yaml"
 
 
 @sio.on('connect')
 async def connect(sid, environ):
+    # print(environ)  # for debug
     user = environ['HTTP_USER']
     room = environ['HTTP_TEAM']
-    sio.enter_room(sid, room)
-    async with sio.session(sid) as session:
-        session['user'] = user
-        session['team'] = room
+    phash = environ['HTTP_PHASH']
+    if not user or not room or not phash:
+        return
+    if user not in registered_users.keys():
+        # register user
+        registered_users[user] = {}
+        registered_users[user]['phash'] = phash
+        print(f"New user rigstered: {user}")
+    else:
+        if phash != registered_users[user]['phash']:
+            print(F"Login failed for {user}")
+            # incorrect password
+            return
+    registered_users[user]['last_login'] = datetime.now()
+    yf = yaml.dump(registered_users)
+    async with aiofiles.open(userfile_path, 'w') as f:
+        # for l in yf:
+        await f.write(yf)
     if room not in login_teams:
         login_teams[room] = Team(room)
     team = login_teams[room]
     team.logins[user] = datetime.now()
+    sio.enter_room(sid, room)
+    async with sio.session(sid) as session:
+        session['user'] = user
+        session['team'] = room
     await sio.emit('dungeon', {'uuid': team.dungeon.uuid,
                                'events': team.dungeon.events}, room=sid)
     print(
@@ -403,4 +427,8 @@ class Room:
 
 
 if __name__ == '__main__':
+    # read user file once before async starts
+    if os.path.exists(userfile_path):
+        with open(userfile_path, 'r') as f:
+            registered_users = yaml.safe_load(f)
     web.run_app(app)
