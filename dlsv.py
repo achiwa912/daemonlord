@@ -22,6 +22,7 @@ class Evloctype(Enum):
 
 
 login_teams = {}  # key=team: value=Team object
+login_users = {}  # key=user: value=sid
 registered_users = {}
 userfile_path = "users.yaml"
 
@@ -53,6 +54,7 @@ async def connect(sid, environ):
         login_teams[room] = Team(room)
     team = login_teams[room]
     team.logins[user] = datetime.now()
+    login_users[user] = sid
     sio.enter_room(sid, room)
     async with sio.session(sid) as session:
         session['user'] = user
@@ -73,9 +75,77 @@ async def message(sid, data):
     await sio.emit('message', mesdic, room=team)
 
 
+@sio.event
+async def get_plocs(sid):
+    """
+    Send back party locations that are logged in
+    """
+    async with sio.session(sid) as session:
+        team = session['team']
+    dungeon = login_teams[team].dungeon
+    await sio.emit('send_plocs', dungeon.team_locs, room=sid)
+
+
 @sio.on('disconnect')
 def disconnect(sid):
     print('disconnect ', sid)
+
+
+@sio.on('get_monp')
+async def get_monp(sid, sender):
+    """
+    Request monster party info to sender (of the info)
+    Used for joined battles
+    """
+    async with sio.session(sid) as session:
+        requester = session['user']
+    await sio.emit('get_monp', requester, room=login_users[sender])
+    print(
+        f"get_monp request from {requester}({sid}) to {sender}({login_users[sender]})")
+
+
+@sio.on('send_monp')
+async def send_monp(sid, data):
+    """
+    Send back monster party info to requester
+    Used for joined battles
+    """
+    await sio.emit('send_monp', data['monp_s'], room=login_users[data['requester']])
+    print(f"sent monp_s to {data['requester']}")
+
+
+@sio.event
+async def update_monp(sid, monp_s):
+    async with sio.session(sid) as session:
+        team = session['team']
+        user = session['user']
+    tm = login_teams[team]  # Team object
+    loc = tm.dungeon.team_locs[user]  # (x, y, floor, place)
+    users = []  # user list to update monp
+    for k, v in tm.dungeon.team_locs.items():
+        if loc == v:
+            users.append(k)
+    for u in users:
+        if u != user:
+            await sio.emit('send_monp', monp_s, room=login_users[u])
+            print(f"update_monp from {user} to {login_users[u]}")
+
+
+@sio.event
+async def battle_msg(sid, data):
+    async with sio.session(sid) as session:
+        team = session['team']
+        user = session['user']
+    tm = login_teams[team]  # Team object
+    loc = tm.dungeon.team_locs[user]  # (x, y, floor, place)
+    users = []  # user list to update monp
+    for k, v in tm.dungeon.team_locs.items():
+        if loc == v:
+            users.append(k)
+    for u in users:
+        if u != user:
+            await sio.emit('battle_msg', data, room=login_users[u])
+            # print(f"battle_msg: {data['msg']}, {data['start']}")
 
 
 @sio.on('party_move')
@@ -83,16 +153,21 @@ async def party_move(sid, data):
     async with sio.session(sid) as session:
         team = session['team']
         user = session['user']
+    dungeon = login_teams[team].dungeon
+    dungeon.team_locs[user] = (
+        data['x'], data['y'], data['floor'], data['place'])
     locdic = {}
     locdic['user'] = user
     locdic['x'] = data['x']
     locdic['y'] = data['y']
     locdic['floor'] = data['floor']
-    #print(f"{user} moved to ({locdic['x']},{locdic['y']})@{locdic['floor']}")
-    await sio.emit('party_loc', locdic)
+    locdic['place'] = data['place']
+    # print(
+    #    f"{user} - ({locdic['x']},{locdic['y']})@{locdic['floor']}%{locdic['place']}")
+    await sio.emit('party_loc', locdic, room=team, skip_sid=sid)
 
 
-@sio.on('exit_dungeon')
+@ sio.on('exit_dungeon')
 async def exit_dungeon(sid):
     async with sio.session(sid) as session:
         team = session['team']
@@ -151,6 +226,8 @@ class Dungeon:
         self.events = []  # list of events (floor, eventid)
         self.generate_events()
         self.uuid = uuid.uuid1().hex
+        # user: (x, y, floor, place)  # Place.MAZE, .CAMP or .BATTLE in text
+        self.team_locs = {}
 
     def __repr__(self):
         return f"Dungeon<{self.uuid} - {self.floors}, {self.events}>"
