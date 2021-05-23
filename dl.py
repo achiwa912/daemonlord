@@ -2436,10 +2436,11 @@ class Spell:
                         mw.print(f"{mem.name} is slept.",
                                  start=' ', bcast=True)
                     else:
-                        mw.print(f"{mem.name} is not slept.", start=' ', bcast=True)
+                        mw.print(f"{mem.name} is not slept.",
+                                 start=' ', bcast=True)
         if update:
             game.battle.update_monp()
-            
+
     def death_single(self, target, disptarget):
         """
         Spells that cause instant death to a single enemy
@@ -2488,7 +2489,8 @@ class Spell:
                        mem.state not in [State.DEAD, State.ASHED, State.LOST]:
                         mem.state = State.DEAD
                         mem.rip += 1
-                        mw.print(f"{mem.name} is killed.", start=' ', bcast=True)
+                        mw.print(f"{mem.name} is killed.",
+                                 start=' ', bcast=True)
             else:  # 'group' or 'all
                 for mem in self.game.party.members:
                     if mem.state in [State.DEAD, State.ASHED, State.LOST]:
@@ -2504,7 +2506,8 @@ class Spell:
                            mem.state not in [State.DEAD, State.ASHED, State.LOST]:
                             mem.state = State.DEAD
                             mem.rip += 1
-                            mw.print(f"{mem.name} is killed.", start=' ', bcast=True)
+                            mw.print(f"{mem.name} is killed.",
+                                     start=' ', bcast=True)
             return
         if spelldef.target == 'group':
             if target.identified:
@@ -2570,7 +2573,8 @@ class Spell:
                 mon.hpplus = -1
                 mw.print(f"{dispname} was poisoned.", start=' ', bcast=True)
         mon.hp = max(mon.hp-damage, 0)
-        mw.print(f"{dispname} incurred {damage} damage.", start=' ', bcast=True)
+        mw.print(f"{dispname} incurred {damage} damage.",
+                 start=' ', bcast=True)
         if mon.hp <= 0:
             mw.print(f"{dispname} is killed.", start=' ', bcast=True)
             mon.state = State.DEAD
@@ -2606,9 +2610,12 @@ class Spell:
         target.hp = min(target.hp+plus, target.maxhp)
         mw = self.game.vscr.meswins[-1]
         if target.hp == target.maxhp:
-            mw.print(f"{target.name}'s HP was fully restored.", start=' ', bcast=True)
+            mw.print(f"{target.name}'s HP was fully restored.",
+                     start=' ', bcast=True)
         else:
-            mw.print(f"{plus} HP was restored to {target.name}.", start=' ', bcast=True)
+            mw.print(f"{plus} HP was restored to {target.name}.",
+                     start=' ', bcast=True)
+
 
 class Dungeon:
     """
@@ -3346,12 +3353,12 @@ class Battle:
         self.boss = False
         self.ran = False  # ran from the battle flag
         v = game.vscr
-        self.cw = Meswin(v, v.width//16, v.height//8+4,
-                         v.width*7//16-1, 10, frame=True)
-        self.mw = Meswin(v, v.width//2-3, v.height//8+4,
-                         v.width*7//16+6, 10, frame=True)
+        self.cw = Meswin(v, v.width//16, v.height//8+6,
+                         v.width*7//16-1, 8, frame=True)
+        self.mw = Meswin(v, v.width//2-3, v.height//8+6,
+                         v.width*7//16+6, 8, frame=True)
         self.ew = Meswin(v, v.width//16, v.height//8-1,
-                         v.width*14//16+4, 4, frame=True)
+                         v.width*14//16+4, 6, frame=True)
 
     def new_battle(self):
         """
@@ -3381,6 +3388,7 @@ class Battle:
         # self.join_user = None  # joined battle for a server dungeon
         # monster party set flag (joined battle @ server dungeon)
         self.monp_set = False
+        self.cw.cls()
 
     def draw_ew(self):
         """
@@ -3422,6 +3430,10 @@ class Battle:
             while not self.monp_set:
                 pass
             self.game.chest.items = self.monp[0].mdef.treasure
+            for mong in self.monp:
+                mdef = self.game.mondef[mong.name]
+                self.gold = sum((mdef.level*(random.randrange(15)+10))
+                                for _ in mong.monsters)
             return
         if self.boss:
             bosses = {
@@ -3449,7 +3461,10 @@ class Battle:
         if mname == '':
             breakpoint()  # +++++++++++++++++++++
         self.friendly = False
-        while len(self.monp) < 4:  # up to 4 groups
+        maxgrps = 4  # up to 4 groups
+        if game.dungeon.expedition:
+            maxgrps = 6  # up to 6 groups in a server dungeon
+        while len(self.monp) < maxgrps:
             mdef = self.game.mondef[mname]
             if len(self.monp) == 0:  # 1st group
                 if mdef.friendly and random.randrange(100) < 10:  # 1/10
@@ -3461,7 +3476,10 @@ class Battle:
                 mon = Monster(self.game, mname)
                 mong.monsters.append(mon)
                 self.gold += mdef.level * (random.randrange(15) + 10)
-            if mdef.fellowp <= random.randrange(100):
+            fellowp = mdef.fellowp
+            if game.dungeon.expedition and fellowp != 0:
+                fellowp += 20  # +20% more likely in a server dungeon
+            if fellowp <= random.randrange(100):
                 break
             mname = mdef.fellow
         # top monster defines treasure levels
@@ -3822,7 +3840,8 @@ class Battle:
         if e.target.state != State.OK:
             e.target.hp -= damage  # twice the damage if not status OK
         self.mw.print(f"{dispname} {verb} at {e.target.name}.", bcast=True)
-        self.mw.print(f"{e.target.name} incurred {damage} damage.", start=' ', bcast=True)
+        self.mw.print(
+            f"{e.target.name} incurred {damage} damage.", start=' ', bcast=True)
         self.game.vscr.disp_scrwin()
         if e.target.hp <= 0:
             e.target.hp = 0
@@ -3895,7 +3914,8 @@ class Battle:
                         e.target.state = State.DEAD
                         e.target.hp = 0
                         e.target.rip += 1
-                        self.mw.print(f"{e.target.name} is decapitated.", bcast=True)
+                        self.mw.print(
+                            f"{e.target.name} is decapitated.", bcast=True)
 
     def dispell(self, e):
         """
@@ -3921,9 +3941,11 @@ class Battle:
             if random.randrange(100) < chance:
                 mon.state = State.DEAD
                 mon.hp = 0
-                self.mw.print(f"{dispname} is dispelled.", start=' ', bcast=True)
+                self.mw.print(f"{dispname} is dispelled.",
+                              start=' ', bcast=True)
             else:
-                self.mw.print(f"{dispname} registed to dispell.", start=' ', bcast=True)
+                self.mw.print(f"{dispname} registed to dispell.",
+                              start=' ', bcast=True)
 
     def member_attack(self, e):
         """
@@ -4156,7 +4178,7 @@ class Battle:
                 elif e.action == 'run':  # monster only
                     if self.canrun(e.entity):
                         e.group.top_active().state = State.RAN
-                        self.mw.print(f"{dispname} ran away.", bcast=Teue)
+                        self.mw.print(f"{dispname} ran away.", bcast=True)
                         self.draw_ew()
                     else:
                         self.mw.print(
@@ -4227,7 +4249,8 @@ class Battle:
                                 else:
                                     self.mw.print(
                                         f"{dispname} tried to cast {e.action}", bcast=True)
-                                    self.mw.print(f".. but MP is exhausted.", start=' ', bcast=True)
+                                    self.mw.print(
+                                        f".. but MP is exhausted.", start=' ', bcast=True)
                                     v.disp_scrwin()
                                     getch(wait=True)
                                     continue
@@ -4235,7 +4258,8 @@ class Battle:
                         self.mw.print(
                             f"{dispname} tried to cast {e.action} but silenced.", bcast=True)
                     else:
-                        self.mw.print(f"{dispname} casted {e.action}.", bcast=True)
+                        self.mw.print(
+                            f"{dispname} casted {e.action}.", bcast=True)
                         self.game.spell.cast_spell_dispatch(
                             e.entity, e.action, e.target)
                 # self.clean_dead()  # clean up dead monsters
@@ -4260,7 +4284,8 @@ class Battle:
                     defeated = False
                     break
             if defeated:
-                self.mw.print("The party lost the battle and defeated.", bcast=True)
+                self.mw.print(
+                    "The party lost the battle and defeated.", bcast=True)
                 self.mw.input_char(" - press space bar", values=[' '])
                 party.place = Place.EDGE_OF_TOWN
                 members = party.members[:]
@@ -6142,6 +6167,9 @@ if config['client']:
                         mon.ac = mon_s['ac']
                     if mon.state.value < State[mon_s['state']].value:
                         mon.state = State[mon_s['state']]
+                        if mon.state in [State.DEAD, State.ASHED, State.LOST]:
+                            # Get a quarter exp if the other party killed a monster
+                            game.battle.exp += game.mondef[mong.name].exp // 4
                     if mon_s['silenced']:
                         mon.silenced = True
                     if mon_s['poisoned']:

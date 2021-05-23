@@ -1,71 +1,74 @@
 
 # Table of Contents
 
-1.  [dl.py - Daemon Lord](#org11bd92b)
-    1.  [Overview](#org161815f)
-        1.  [Wizardry clone](#orgb221d08)
-        2.  [Rogue-like dungeon maps](#org13d989c)
-        3.  [Auto-generated maps w/o resetting levels and items of characters](#orgdc8abf9)
-        4.  [Multiplayer mode (new; optional)](#org21ddb93)
-        5.  [A little more user friendly than Wizardry](#orgf98a171)
-    2.  [Important notice: alpha quality](#org1e64366)
-    3.  [Getting started](#orgbf46aca)
-        1.  [Prerequisites](#org15e46c1)
-        2.  [Installation](#org536ce48)
-        3.  [DL server installation (optional)](#orga784dc2)
-    4.  [How to Play](#org211746e)
-        1.  [Tips](#orgdb441c4)
-    5.  [What's new](#org2e400b7)
-        1.  [Implemented multiplayer mode (5/22/2021 updated)](#org8d9a9f1)
-        2.  [Now using database to save/load status (5/7/2021)](#orgf7d008d)
-2.  [Contributing](#orgd4fa1ac)
-3.  [License](#orgab8bc1a)
-4.  [Quick Tour of Daemon Lord](#org0d8495e)
-    1.  [Game start](#org64c7801)
-    2.  [Edge of Town](#org15a081e)
-        1.  [Training Grounds](#org0f2be82)
-    3.  [Castle](#orgc2ee520)
-        1.  [Hawthorne Tavern](#orgcd835d4)
-        2.  [Trader Jay's](#org8be1bb0)
-        3.  [Equip](#org9e677dc)
-    4.  [Save and Resume](#orga5fb719)
-    5.  [Dungeon](#orge12d620)
-        1.  [Expedition to external dungeon (requires optional server)](#org980c56d)
-        2.  [Walk around the Dungeon](#orgd62fd43)
-        3.  [Battle](#org692ee4c)
-        4.  [Surprise attacks](#orgc1be53b)
-        5.  [Chest](#org84af3a7)
-        6.  [Friendly monsters](#orgba146e4)
-        7.  [Send messages (optional)](#orgfe67b1b)
-        8.  [Get ouf of the Dungeon](#org0344bba)
-        9.  [A new dungeon!](#org89b7f0e)
-        10. [A new remote dungeon in the DL server (optional; requires a DL server)](#org6fde8ff)
-        11. [Camp](#org39a9d56)
-        12. [Heal all members](#org770cac2)
-        13. [Prep for adventure](#org0cf47b4)
-        14. [Save and Resume from camp](#org70e1bf5)
-    6.  [Castle](#org9aaf439)
-        1.  [The Lakehouse Inn](#orge54ce69)
-5.  [Spells](#orga3949c2)
-    1.  [Overview](#orgb9f5cd6)
-    2.  [Usage](#orgd671817)
-    3.  [Mage Spells](#orgbae5ce9)
-    4.  [Priest Spells](#orgfda32e0)
-6.  [Monsters](#orgc8a0b9f)
-    1.  [Shallow floors](#orga12cba9)
-    2.  [Middle depth floors](#org43453d7)
-    3.  [Deep floors](#org8273e71)
-    4.  [Boss and special monsters](#org28e8353)
-        1.  [gate keeper](#org9b19b85)
-        2.  [d????? ???, t?? ????, a????](#orged30306)
-        3.  [d????? ????](#org92f32e2)
-        4.  [S???????, N??????](#org40bae0d)
-7.  [Contact](#org3032db8)
-8.  [Acknowledgements](#org8315d6d)
+1.  [dl.py - Daemon Lord](#org92e0a59)
+    1.  [Overview](#org79702bb)
+        1.  [Wizardry clone](#orgf5ea071)
+        2.  [Rogue-like dungeon maps](#org1b756f6)
+        3.  [Auto-generated maps w/o resetting levels and items of characters](#org43b6a53)
+        4.  [Multiplayer mode (new; optional)](#org4259a63)
+        5.  [A little more user friendly than Wizardry](#orge0e35f6)
+    2.  [Important notice: alpha quality](#org6f39ea1)
+    3.  [Getting started](#org347a3de)
+        1.  [Prerequisites](#orgb7b3777)
+        2.  [Installation](#org33ec8e9)
+        3.  [DL server installation (optional)](#org89d5f26)
+    4.  [How to Play](#org31f399e)
+        1.  [Tips](#org446bce9)
+    5.  [What's new](#org79dc859)
+        1.  [Implemented multiplayer mode (5/22/2021 updated)](#orga0225ad)
+        2.  [Now using database to save/load status (5/7/2021)](#org5b8e6b3)
+2.  [Contributing](#orge6ac911)
+3.  [License](#org1499314)
+4.  [Quick Tour of Daemon Lord](#org4abc43a)
+    1.  [Game start](#org013e7bb)
+    2.  [Edge of Town](#org3590394)
+        1.  [Training Grounds](#org40051f0)
+    3.  [Castle](#orga142a79)
+        1.  [Hawthorne Tavern](#org4928fd2)
+        2.  [Trader Jay's](#org37ed4ba)
+        3.  [Equip](#orge37901c)
+    4.  [Save and Resume](#orgf3e8abd)
+    5.  [Dungeon](#orgcaae3c3)
+        1.  [Walk around the Dungeon](#org08bcb55)
+        2.  [Battle](#org859f0b0)
+        3.  [Surprise attacks](#orgeb0ea8d)
+        4.  [Chest](#org9424f3f)
+        5.  [Friendly monsters](#orgb7abea5)
+        6.  [Get ouf of the Dungeon](#org2d1cf1c)
+        7.  [A new dungeon!](#org9756351)
+        8.  [A new remote dungeon in the DL server (optional; requires a DL server)](#org62041eb)
+        9.  [Camp](#org3d98e02)
+        10. [Heal all members](#orgc4436f9)
+        11. [Prep for adventure](#org992e6e8)
+        12. [Save and Resume from camp](#org86db852)
+    6.  [Castle](#orgd45297c)
+        1.  [The Lakehouse Inn](#org789dfda)
+    7.  [Multiplayer mode (optional)](#org6c07c8c)
+        1.  [Expedition to external dungeon](#orgfd9e5b4)
+        2.  [Send messages](#orgc2aafe1)
+        3.  [Battles in a server dungeon](#orge5fcdd5)
+        4.  [Multiplayer battles](#org052f966)
+5.  [Spells](#org47f463b)
+    1.  [Overview](#org32d3525)
+    2.  [Usage](#org72941d8)
+    3.  [Mage Spells](#org3a377d0)
+    4.  [Priest Spells](#org56b874c)
+6.  [Monsters](#orgb0f409a)
+    1.  [Shallow floors](#org3fb0055)
+    2.  [Middle depth floors](#orgd0c8382)
+    3.  [Deep floors](#org2930a20)
+    4.  [Boss and special monsters](#orgd6b69d3)
+        1.  [gate keeper](#orgdc73700)
+        2.  [d????? ???, t?? ????, a????](#org936df87)
+        3.  [d????? ????](#orgba20a2e)
+        4.  [S???????, N??????](#org92ea079)
+7.  [Contact](#org74c8908)
+8.  [Acknowledgements](#org29a6b57)
 
 
 
-<a id="org11bd92b"></a>
+<a id="org92e0a59"></a>
 
 # dl.py - Daemon Lord
 
@@ -107,12 +110,12 @@ Daemon Lord is a Wizardry-clone RPG with rogue-like (ie, text-based), randomly-c
      6 fun        G-MAG   8   35 shunmin      ^* *** encounter ***                    ^
 
 
-<a id="org161815f"></a>
+<a id="org79702bb"></a>
 
 ## Overview
 
 
-<a id="orgb221d08"></a>
+<a id="orgf5ea071"></a>
 
 ### Wizardry clone
 
@@ -125,7 +128,7 @@ Daemon Lord is a Wizardry-clone RPG with rogue-like (ie, text-based), randomly-c
 -   Need to type spells and chest traps accurately
 
 
-<a id="org13d989c"></a>
+<a id="org1b756f6"></a>
 
 ### Rogue-like dungeon maps
 
@@ -135,7 +138,7 @@ Daemon Lord is a Wizardry-clone RPG with rogue-like (ie, text-based), randomly-c
 -   Maps are auto-generated.
 
 
-<a id="orgdc8abf9"></a>
+<a id="org43b6a53"></a>
 
 ### Auto-generated maps w/o resetting levels and items of characters
 
@@ -147,7 +150,7 @@ Daemon Lord is a Wizardry-clone RPG with rogue-like (ie, text-based), randomly-c
 -   You can restart your adventure from a floor that should match your character levels
 
 
-<a id="org21ddb93"></a>
+<a id="org4259a63"></a>
 
 ### Multiplayer mode (new; optional)
 
@@ -160,7 +163,7 @@ Daemon Lord is a Wizardry-clone RPG with rogue-like (ie, text-based), randomly-c
 -   More to come!!
 
 
-<a id="orgf98a171"></a>
+<a id="orge0e35f6"></a>
 
 ### A little more user friendly than Wizardry
 
@@ -172,7 +175,7 @@ Daemon Lord is a Wizardry-clone RPG with rogue-like (ie, text-based), randomly-c
 -   Group heal spells for the entire party
 
 
-<a id="org1e64366"></a>
+<a id="org6f39ea1"></a>
 
 ## Important notice: alpha quality
 
@@ -181,12 +184,12 @@ Currently, DL (daemon lord) is under development and it's in an alpha code quali
 Please file issues on github, or send bug reports (or comments) to achiwa912+gmail.com (replace '+' with '@').
 
 
-<a id="orgbf46aca"></a>
+<a id="org347a3de"></a>
 
 ## Getting started
 
 
-<a id="org15e46c1"></a>
+<a id="orgb7b3777"></a>
 
 ### Prerequisites
 
@@ -202,7 +205,7 @@ Please file issues on github, or send bug reports (or comments) to achiwa912+gma
 -   dlconf.yaml - server config file
 
 
-<a id="org536ce48"></a>
+<a id="org33ec8e9"></a>
 
 ### Installation
 
@@ -214,7 +217,7 @@ Please file issues on github, or send bug reports (or comments) to achiwa912+gma
 6.  Run "python dl.py"
 
 
-<a id="orga784dc2"></a>
+<a id="org89d5f26"></a>
 
 ### DL server installation (optional)
 
@@ -227,7 +230,7 @@ Please file issues on github, or send bug reports (or comments) to achiwa912+gma
 7.  Run "python dlsv.py"
 
 
-<a id="org211746e"></a>
+<a id="org31f399e"></a>
 
 ## How to Play
 
@@ -244,7 +247,7 @@ You can save either at Edge of Town or from the Camp menu.
 You can perform resume operation only from Edge of Town.
 
 
-<a id="orgdb441c4"></a>
+<a id="org446bce9"></a>
 
 ### Tips
 
@@ -255,12 +258,12 @@ You can perform resume operation only from Edge of Town.
 -   You can Q)uit game on a prompt (press 'Q' (shift-q)) to quit game (you might need additional ctrl+c)
 
 
-<a id="org2e400b7"></a>
+<a id="org79dc859"></a>
 
 ## What's new
 
 
-<a id="org8d9a9f1"></a>
+<a id="orga0225ad"></a>
 
 ### Implemented multiplayer mode (5/22/2021 updated)
 
@@ -287,7 +290,7 @@ Enhancement candidates (TBD; wishlist):
 -   Server access via the internet
 
 
-<a id="orgf7d008d"></a>
+<a id="org5b8e6b3"></a>
 
 ### Now using database to save/load status (5/7/2021)
 
@@ -298,7 +301,7 @@ Enhancement candidates (TBD; wishlist):
     -   Subsequent save/load will go to the database.  Saving to `savedata.pickle` is not supported anymore
 
 
-<a id="orgd4fa1ac"></a>
+<a id="orge6ac911"></a>
 
 # Contributing
 
@@ -311,19 +314,19 @@ Any contributions you make are greatly appreciated.
 5.  Open a Pull Request
 
 
-<a id="orgab8bc1a"></a>
+<a id="org1499314"></a>
 
 # License
 
 Daemon Lord is under [MIT license](https://en.wikipedia.org/wiki/MIT_License).
 
 
-<a id="org0d8495e"></a>
+<a id="org4abc43a"></a>
 
 # Quick Tour of Daemon Lord
 
 
-<a id="org64c7801"></a>
+<a id="org013e7bb"></a>
 
 ## Game start
 
@@ -357,12 +360,12 @@ DL (Daemon Lord) starts with the screen below at the Castle.
 When you first start the game, you need to go to Edge of Town (press `e`) > Training Grounds (press `t`), and then create characters (press `c`).
 
 
-<a id="org15a081e"></a>
+<a id="org3590394"></a>
 
 ## Edge of Town
 
 
-<a id="org0f2be82"></a>
+<a id="org40051f0"></a>
 
 ### Training Grounds
 
@@ -718,7 +721,7 @@ As you have already noticed, DL gives you a guide of which letter you can type w
 Have you created six characters?  Then, you should go to Castle > Hawthorne Tavern to form a party.  Type `l` to leave the Training Grounds and then type `c` to go to Castle.
 
 
-<a id="orgc2ee520"></a>
+<a id="orga142a79"></a>
 
 ## Castle
 
@@ -733,7 +736,7 @@ Have you created six characters?  Then, you should go to Castle > Hawthorne Tave
 From the Castle menu, you can visit several places, but you want to go to Hawthorne Tavern now so type `h`.
 
 
-<a id="orgcd835d4"></a>
+<a id="org4928fd2"></a>
 
 ### Hawthorne Tavern
 
@@ -765,7 +768,7 @@ Now, they are shown in the party window at the bottom left of the screen.
     6 faun       G-MAG  10    7 OK
 
 
-<a id="org8be1bb0"></a>
+<a id="org37ed4ba"></a>
 
 ### Trader Jay's
 
@@ -826,7 +829,7 @@ Basically, the front (ie, the first three) members should equip heavily because 
 sling is a long-range weapon that everyone can use.  You can't expect much from sling and its damage is at best 1 or 2, but better than nothing.  Long-ranged weapons tend to be less powerful and more expensive than short-range ones.
 
 
-<a id="org9e677dc"></a>
+<a id="orge37901c"></a>
 
 ### Equip
 
@@ -854,7 +857,7 @@ At Hatthorne Tavern, first `i)nspect` a character and then choose `i)tems` > ite
 Equipped items will have `*` mark next to the item name.  You need to equip one item at a time and for each member.  To change members, type `j, k` .
 
 
-<a id="orga5fb719"></a>
+<a id="orgf3e8abd"></a>
 
 ## Save and Resume
 
@@ -874,7 +877,7 @@ To save and quit the game, go to Edge of Town and type `S` (capital-S).
 You need to run `python dl.py` again to restart and resume the game.  After restarting the game, go to Edge of Town and choose `R)esume from saved data` .  That is, capital-R.  Automatic resume is not supported.
 
 
-<a id="orge12d620"></a>
+<a id="orgcaae3c3"></a>
 
 ## Dungeon
 
@@ -910,34 +913,7 @@ You (`@`) are now in the dungeon and on the upstairs to the outside world.
 `^` indicates areas that you have not visited yet.  `.` is a floor tile that you can walk on.  
 
 
-<a id="org980c56d"></a>
-
-### Expedition to external dungeon (requires optional server)
-
-If you've setup a DL server, you can travel to a remote dungeon in the server.
-To use this feature, you need to configure `dlconf.yaml` file.
-
-    (dl2) [achiwa@localhost dl2]$ cat dlconf.yaml 
-    server:
-      host: localhost
-      port: 8080
-      auth:
-        user: fellow33
-        password: default_pass
-        team: default_team
-
-In this example, DL will connect <http://localhost:8080> with username: `fellow33` and password: `default_pass`, joining the team `default_team`.  You need to use the same team with your friends so that to share messages or other featuers.  You must not use the same username with your friends.
-
-Note: Password change is not supported.  If you change the DL server password, you'll need to ask your DL server admin to remove your user entry from the `users.yaml` file in the server.  A workarond is to use a different user.
-
-If you successfully go into a remote dungeon, the header will be like:
-
-    daemon lord <server> [maze] floor:?? (???/???) ^^^^^^^^^^^^^^^^^^^^^^
-
-Note `- DL -` is replaced with `<server>` to indicate that you are in a remote dungeon.
-
-
-<a id="orgd62fd43"></a>
+<a id="org08bcb55"></a>
 
 ### Walk around the Dungeon
 
@@ -1154,7 +1130,7 @@ Oops, another door.  Let's open again.
     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^###+###^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
-<a id="org692ee4c"></a>
+<a id="org859f0b0"></a>
 
 ### Battle
 
@@ -1269,7 +1245,7 @@ The party killed all three slimes.
 Yeah!  Each survivor received 27 experience points and 9 gold from this battle.
 
 
-<a id="orgc1be53b"></a>
+<a id="orgeb0ea8d"></a>
 
 ### Surprise attacks
 
@@ -1287,7 +1263,7 @@ On the other hand, monsters might surprise your party.  If this occurs, monsters
     ^^^^^^^^^^^^^|    - press space bar                                                     |^^^^^^^^^^^^^^^
 
 
-<a id="org84af3a7"></a>
+<a id="org9424f3f"></a>
 
 ### Chest
 
@@ -1432,7 +1408,7 @@ Here's the trap list.
 </table>
 
 
-<a id="orgba146e4"></a>
+<a id="orgb7abea5"></a>
 
 ### Friendly monsters
 
@@ -1453,44 +1429,7 @@ Of course, you will get no e.p. or gold if you chose to walk away.
     6 faun       G-MAG  10    7 OK           ^  Each survivor gets 0 gold.      ^
 
 
-<a id="orgfe67b1b"></a>
-
-### Send messages (optional)
-
-If you are in a remote dungeon in a DL server, you can send messages to your friends who are also in the same server dungeon and in the same team.
-
-Type `m` pops up a message edit window.
-
-     daemon lord <server> [maze] floor:?? (???/???) ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#.#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    ^^^^^^^^^^| * Message to send?                                     |^^^^^^^^^^^^^^^^^^^^^
-    ^^^^^^^^^^| > Hello, where are you?                                |^^^^^^^^^^^^^^^^^^^^^
-    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#.#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#.####^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#@..D+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^######^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-And the message is sent to all your friends in the same team, including yourself.
-
-    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#.####^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#F..@+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^######^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-     # name       class  ac   hp status       ^* west                                       ^
-     1 andy       G-FIG  -5  362 OK           ^* east                                       ^
-     2 bean       G-FIG  -7  310 OK           ^* Message from fellow33:                     ^
-     3 cammy      G-SAM  -6  321 OK           ^  Hello, where are you?                      ^
-
-Do you notice `D` and `F` in the above screenshots?  These are the 1st letter of your friend's username.  In this example, D for default\_user and F for fellow33.  This way, you can see friends moving around on the same map.
-
-Currently, these are the only server featuers implemented.
-
-
-<a id="org0344bba"></a>
+<a id="org2d1cf1c"></a>
 
 ### Get ouf of the Dungeon
 
@@ -1549,7 +1488,7 @@ Having walked around a lot on this floor, and now the mage's MP is exhausted and
 The party is back at Edge of Town.  It should take a while to get used to the brightness but they are safe again!
 
 
-<a id="org89b7f0e"></a>
+<a id="org9756351"></a>
 
 ### A new dungeon!
 
@@ -1601,7 +1540,7 @@ What?  We can only see 3x3 tiles around the party.  Where has the map data gone?
 See the map is different this time?
 
 
-<a id="org6fde8ff"></a>
+<a id="org62041eb"></a>
 
 ### A new remote dungeon in the DL server (optional; requires a DL server)
 
@@ -1610,7 +1549,7 @@ If all your friends in the same team got out of the remote/server dungeon, the s
 Currently, the DL server doesn't support save/load dungeons.  If a DL server reboots and the next time you resume your adventure in a dungeon on the server, the dungeon data is already lost and you will be navigated to the 1st floor in a new dungeon.
 
 
-<a id="org39a9d56"></a>
+<a id="org3d98e02"></a>
 
 ### Camp
 
@@ -1701,7 +1640,7 @@ Looks like, Ben's HP is fully restored.  Do the same for Cam.
 Great!
 
 
-<a id="org770cac2"></a>
+<a id="orgc4436f9"></a>
 
 ### Heal all members
 
@@ -1728,7 +1667,7 @@ Before you get out of the dungeon, you usually heal (ie, recover HP) all party m
 Note that this option doesn't cure status anomallies such as paralyzed or even ashed.  Also, the algorithm is not very smart.
 
 
-<a id="org0cf47b4"></a>
+<a id="org992e6e8"></a>
 
 ### Prep for adventure
 
@@ -1749,7 +1688,7 @@ This is also an automatic-spell-cast option.  When you just go into the dungeon,
     ^^^^^^^^^^| * ed casted hikarinotama                                   |^^^^^^^^^^^^
 
 
-<a id="org70e1bf5"></a>
+<a id="org86db852"></a>
 
 ### Save and Resume from camp
 
@@ -1809,12 +1748,12 @@ And, you are in the dungeon again.
 Let's exit from the dungeon and head to Edge of Town > Castle > Lakehouse Inn for some rest.
 
 
-<a id="org9aaf439"></a>
+<a id="orgd45297c"></a>
 
 ## Castle
 
 
-<a id="orge54ce69"></a>
+<a id="org789dfda"></a>
 
 ### The Lakehouse Inn
 
@@ -1857,12 +1796,183 @@ If their e.p. reach the next level, their level will go up while they are asleep
 In DL, age doesn't matter.  They can stay at the inn as long as they wish without getting old.  All the party members stay at the same room type.
 
 
-<a id="orga3949c2"></a>
+<a id="org6c07c8c"></a>
+
+## Multiplayer mode (optional)
+
+
+<a id="orgfd9e5b4"></a>
+
+### Expedition to external dungeon
+
+If you've setup a DL server, you can travel to a remote dungeon in the server.
+To use this feature, you need to configure `dlconf.yaml` file.
+
+    (dl2) [achiwa@localhost dl2]$ cat dlconf.yaml 
+    server:
+      host: localhost
+      port: 8080
+      auth:
+        user: fellow33
+        password: default_pass
+        team: default_team
+
+In this example, DL will connect <http://localhost:8080> with username: `fellow33` and password: `default_pass`, joining the team `default_team`.  You need to use the same team with your friends so that to share messages or other featuers.  You must not use the same username with your friends.
+
+Note: Password change is not supported.  If you change the DL server password, you'll need to ask your DL server admin to remove your user entry from the `users.yaml` file in the server.  A workarond is to use a different user.
+
+If you successfully go into a remote dungeon, the header will be like:
+
+    daemon lord <server> [maze] floor:?? (???/???) ^^^^^^^^^^^^^^^^^^^^^^
+
+Note `- DL -` is replaced with `<server>` to indicate that you are in a remote dungeon.
+
+
+<a id="orgc2aafe1"></a>
+
+### Send messages
+
+If you are in a remote dungeon in a DL server, you can send messages to your friends who are also in the same server dungeon and in the same team.
+
+Type `m` pops up a message edit window.
+
+     daemon lord <server> [maze] floor:?? (???/???) ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#.#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^| * Message to send?                                     |^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^| > Hello, where are you?                                |^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#.#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#.####^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#@..D+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^######^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+And the message is sent to all your friends in the same team, including yourself.
+
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#.####^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#F..@+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^######^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+     # name       class  ac   hp status       ^* west                                       ^
+     1 andy       G-FIG  -5  362 OK           ^* east                                       ^
+     2 bean       G-FIG  -7  310 OK           ^* Message from fellow33:                     ^
+     3 cammy      G-SAM  -6  321 OK           ^  Hello, where are you?                      ^
+
+Do you notice `D` and `F` in the above screenshots?  These are the 1st letter of your friend's username.  In this example, D for default\_user and F for fellow33.  This way, you can see friends moving around on the same map.
+
+
+<a id="orge5fcdd5"></a>
+
+### Battles in a server dungeon
+
+Battles in a server dungeon are more or less the same as in a non-server dungeon with two exceptions.  The 1st exception is that you can have multiplayer battles (see below).  The other exception is that the number of monster groups in a monster party increases up to 6 and it's +20% more likely that monsters come with fellow monsters.
+
+
+<a id="org052f966"></a>
+
+### Multiplayer battles
+
+In a server dungeon, if your friend's party is in a battle, your party can join the battle by moving to the same location (x, y and floor) as the friend's party.
+
+If you do this, you'll share the same monster party with your friends.  That is, if your friend killed a monster, your monster party decreases as well.
+
+This is your friend's screen who is in a battle:
+
+     daemon lord <server> [battle] floor: 1 (  7/  5) <identify> <light> ^^^^^^^^^^^^^^^^
+    ^^^^^|   1) 5 cops                     (5)                                      |^^^^
+    ^^^^^|                                                                          |^^^^
+    ^^^^^|                                                                          |^^^^
+    ^^^^^|                                                                          |^^^^
+    ^^^^^|                                                                          |^^^^
+    ^^^^^|                                                                          |^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^....###@...^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^|   andy's action? > .           || * You encountered cops.               |^^^^^
+    ^^^^^|   andy's action? > .           ||                                       |^^^^^
+
+This is your screen:
+
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^###########^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^###########^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^....#######^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^..<....@+++^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^....###F...^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#######....^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#######....^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^#######^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Your friend's party is fighting one step below you.  If you move to the place where your friend is, you'll join the battle.
+
+This is your screen.
+
+     daemon lord <server> [battle] floor: 1 (  7/  5) <identify> <light> ^^^^^^^^^^^^^^^^
+    ^^^^^|   1) 5 cops                     (5)                                      |^^^^
+    ^^^^^|                                                                          |^^^^
+    ^^^^^|                                                                          |^^^^
+    ^^^^^|                                                                          |^^^^
+    ^^^^^|                                                                          |^^^^
+    ^^^^^|                                                                          |^^^^
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^....###@...^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^| * Options - f)ight s)pell u)se || * You encountered cops.               |^^^^^
+    ^^^^^|   d)ispell p)arry r)un t)ake   ||                                       |^^^^^
+    ^^^^^|   back                         ||                                       |^^^^^
+    ^^^^^|   andy's action? >             ||                                       |^^^^^
+
+See the monsters of your firnd's and yours are the same?  Please ignore that both party has the same member andy as I use the same save data for testing.
+
+Both your party activities and your friend's party activities are displayed on the battle message window.  Your friend's party activities are automatically displayed and start with `-` instead of regular `*`.
+
+This is your screen:
+
+    ^^^^^|   andy's action? > f           || * ed parried.                         |^^^^^
+    ^^^^^|   bean's action? > p           || * andy stabs violently at cop and     |^^^^^
+    ^^^^^|   cammy's action? > p          ||   hits 8 times for 84 damage.         |^^^^^
+    ^^^^^|   dexie's action? > p          ||   cop is killed.                      |^^^^^
+    ^^^^^|   ed's action? > p             || - fun parried.                        |^^^^^
+    ^^^^^|   fun's action? > p            || - bean thrusts violently at cop and   |^^^^^
+    ^^^^^| * Press any key or t)ake back  ||   hits 8 times for 86 damage.         |^^^^^
+     # na|   >                            ||   cop is killed.                      |    ^
+
+This is your friend's screen:
+
+    ^^^^^|   andy's action? > p           || - ed parried.                         |^^^^^
+    ^^^^^|   bean's action? > f           || - andy stabs violently at cop and     |^^^^^
+    ^^^^^|   cammy's action? > p          ||   hits 8 times for 84 damage.         |^^^^^
+    ^^^^^|   dexie's action? > p          ||   cop is killed.                      |^^^^^
+    ^^^^^|   ed's action? > p             || * fun parried.                        |^^^^^
+    ^^^^^|   fun's action? > p            || * bean thrusts violently at cop and   |^^^^^
+     # na| * Press any key or t)ake back  ||   hits 8 times for 86 damage.         |    ^
+     1 an|   >                            ||   cop is killed.                      |    ^
+
+See the difference in `*` and `-` messages?
+
+If your friend killed a monster in a joined battle with you, you'll get a quarter of the moster's exp.  If you killed a monster in a joined battle, you'll get 100% exp of the monster.  
+
+In this battle, your friends killed more monsters.
+Your ernings:
+
+    4 dexie      N-THI   8  246+OK           ^* *** encounter ***                      ^
+    5 ed         G-BIS   8  143 OK           ^  Each survivor gets 180 e.p.            ^
+    6 fun        G-BIS   8  131+OK           ^  Each survivor gets 50 gold.            ^
+
+Your friend's ernings:
+
+    4 dexie      N-THI   8  246+OK           ^* *** encounter ***                      ^
+    5 ed         G-BIS   8  143 OK           ^  Each survivor gets 439 e.p.            ^
+    6 fun        G-BIS   8  131+OK           ^  Each survivor gets 26 gold.            ^
+
+Again, ignore that members of both parties are identical for using the same save data.
+
+This way, if you don't do anything in a joined battle, just looking at your friend's party fighting, you'll get a quarter of the total exp (and gold as well!) without any risks.  If you don't act in a battle, monsters will not attack you.
+
+
+<a id="org47f463b"></a>
 
 # Spells
 
 
-<a id="orgb9f5cd6"></a>
+<a id="org32d3525"></a>
 
 ## Overview
 
@@ -1881,7 +1991,7 @@ In this example, she has 2 MPs remaining for level 1 mage spells.  She will acqu
 The maximum MPs for each spell level is 9.  A high level mage/priest will have `9/9/9/9/9/9/9` MPs.
 
 
-<a id="orgd671817"></a>
+<a id="org72941d8"></a>
 
 ## Usage
 
@@ -1910,7 +2020,7 @@ To use spells from the camp menu, first `i)nspect` a character who would like to
     ^^^^^^^^^^|   i)tems s)pells jk)change member l)leave > s              |^^^^^^
 
 
-<a id="orgbae5ce9"></a>
+<a id="org3a377d0"></a>
 
 ## Mage Spells
 
@@ -2100,7 +2210,7 @@ One of the most useful spells will be newly introduced "tsubasa".  This spell ca
 </table>
 
 
-<a id="orgfda32e0"></a>
+<a id="org56b874c"></a>
 
 ## Priest Spells
 
@@ -2352,12 +2462,12 @@ One of the most useful spells will be newly introduced "tsubasa".  This spell ca
 </table>
 
 
-<a id="orgc8a0b9f"></a>
+<a id="orgb0f409a"></a>
 
 # Monsters
 
 
-<a id="orga12cba9"></a>
+<a id="org3fb0055"></a>
 
 ## Shallow floors
 
@@ -2697,7 +2807,7 @@ Monsters on the second floor are strong.  You could even get poisoned or beheade
 </table>
 
 
-<a id="org43453d7"></a>
+<a id="orgd0c8382"></a>
 
 ## Middle depth floors
 
@@ -3131,7 +3241,7 @@ Monsters on the second floor are strong.  You could even get poisoned or beheade
 </table>
 
 
-<a id="org8273e71"></a>
+<a id="org2930a20"></a>
 
 ## Deep floors
 
@@ -3425,12 +3535,12 @@ Monsters on the second floor are strong.  You could even get poisoned or beheade
 </table>
 
 
-<a id="org28e8353"></a>
+<a id="orgd6b69d3"></a>
 
 ## Boss and special monsters
 
 
-<a id="org9b19b85"></a>
+<a id="orgdc73700"></a>
 
 ### gate keeper
 
@@ -3438,28 +3548,28 @@ Huge scorpion originated in an SNES game, Tenchi-sozo.
 It was a boss monster on floor 1 but hasn't been implemented.  Rather weak on deepest floors.
 
 
-<a id="orged30306"></a>
+<a id="org936df87"></a>
 
 ### d????? ???, t?? ????, a????
 
 Boss monsters.  You'll need special keys to break into the boss rooms.  Special keys should be placed somewhere on the same floor.  Look for `,` floor tile.
 
 
-<a id="org92f32e2"></a>
+<a id="orgba20a2e"></a>
 
 ### d????? ????
 
 The last boss.  He is with mighty earth demons, which makes the last battle most difficult to win.  Hint: Use certain spells.  Though extremely risky, you would have no other choice.
 
 
-<a id="org40bae0d"></a>
+<a id="org92ea079"></a>
 
 ### S???????, N??????
 
 Ancient gods from the past.  You are doomed to be destroyed.  Run away immediately if you see them.
 
 
-<a id="org3032db8"></a>
+<a id="org74c8908"></a>
 
 # Contact
 
@@ -3468,7 +3578,7 @@ Kyosuke Achiwa - @kyos\_achwan - achiwa912+gmail.com (please replace `+` with `@
 Project Link: <https://github.com/achiwa912/daemonlord>
 
 
-<a id="org8315d6d"></a>
+<a id="org29a6b57"></a>
 
 # Acknowledgements
 
