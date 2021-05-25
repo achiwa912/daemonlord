@@ -3610,8 +3610,7 @@ class Battle:
                 if mem.state not in [State.OK]:
                     continue
                 while True:
-                    c = self.cw.input_char(f"{mem.name}'s action?",
-                                           values=['f', 's', 'u', 'p', 'r', 't', 'd'])
+                    c = self.cw.input_char(f"{mem.name}'s action?")
                     monglst = [mong for mong in self.monp if mong.is_valid()]
                     if not monglst:
                         return False
@@ -3682,6 +3681,13 @@ class Battle:
                         mem.action = item
                         self.game.vscr.disp_scrwin()
                         break
+                    elif c == 'm' and game.dungeon.expedition:
+                        mw = Meswin(game.vscr, 10, 8, 60, 2, frame=True)
+                        game.vscr.meswins.append(mw)
+                        mes = mw.input('Message to send?')
+                        sio.emit('message', mes)
+                        game.vscr.meswins.pop()
+                        game.vscr.disp_scrwin()
                 if c == 't':
                     break
             if c != 't':
@@ -4823,6 +4829,7 @@ def getch(wait=True):
                     st = '-'
                 game.vscr.meswins[-1].print(mes, start=st)
                 game.vscr.disp_scrwin()
+            time.sleep(0.05)
 
     finally:
         termios.tcsetattr(sys.stdin, termios.TCSADRAIN, old_settings)
@@ -6132,6 +6139,7 @@ if config['client']:
         """
         Received monp_s from joined client so update mine
         """
+        refresh = False
         monp = game.battle.monp
         if game.party.place != Place.BATTLE or \
            (not monp and game.battle.monp_set):
@@ -6170,10 +6178,14 @@ if config['client']:
                         if mon.state in [State.DEAD, State.ASHED, State.LOST]:
                             # Get a quarter exp if the other party killed a monster
                             game.battle.exp += game.mondef[mong.name].exp // 4
+                            refresh = True
                     if mon_s['silenced']:
                         mon.silenced = True
                     if mon_s['poisoned']:
                         mon.poisoned = True
+        if refresh:
+            game.battle.draw_ew()
+            game.vscr.disp_scrwin()
         game.battle.monp_set = True
 
 game = Game()  # singleton
