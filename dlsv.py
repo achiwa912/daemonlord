@@ -21,6 +21,11 @@ class Evloctype(Enum):
     RANDOM, DOWNSTAIRS = range(2)
 
 
+class Place(Enum):
+    MAZE, EDGE_OF_TOWN, TRAINING_GROUNDS, CASTLE, HAWTHORNE_TAVERN, TRADER_JAYS, LAKEHOUSE_INN, MGH, CAMP, BATTLE, LEAVE_GAME = range(
+        11)
+
+
 login_teams = {}  # key=team: value=Team object
 login_users = {}  # key=user: value=sid
 registered_users = {}
@@ -84,6 +89,49 @@ async def get_plocs(sid):
         team = session['team']
     dungeon = login_teams[team].dungeon
     await sio.emit('send_plocs', dungeon.team_locs, room=sid)
+
+
+@sio.event
+async def get_party(sid, ulist):
+    """
+    Request party info to users in ulist
+    """
+    async with sio.session(sid) as session:
+        requester = session['user']
+    if requester in ulist:
+        print(f"{requester} wants its own party.  Igoring.")
+        ulist.remove(requester)
+    for user in ulist:
+        await sio.emit('get_party', requester, sid=login_users[user])
+        print(f"{requester} requests party update to {user}")
+
+
+@sio.event
+async def update_party(sid, data):
+    """
+    Update sender's party_s to requester
+    If requester is None, emit to all users who are in the same location
+    as the sender and camping (ie, in the joined camp as the sender)
+    """
+    async with sio.session(sid) as session:
+        sender = session['user']
+        team = session['team']
+    dungeon = login_teams[team].dungeon
+    sloc = dungeon.team_locs[sender]
+    if data['requester']:
+        users = [data['requester']]
+        if data['requester'] == sender:
+            print(f"{data['requester']} wants {sender} party.  Aborting.")
+            return
+    else:
+        users = [k for k, v in dungeon.team_locs.items() if v[0] == sloc[0] and
+                 v[1] == sloc[1] and v[2] == sloc[2] and v[3] == Place.CAMP.name
+                 and k != sender]
+    updata = {'sender': sender, 'party_s': data['party_s']}
+    for user in users:
+        await sio.emit('update_party', updata, room=login_users[user])
+        print(f"Update {sender} party_s to {users}")
+        # print(f"{data['party_s']['members']}")
 
 
 @sio.on('disconnect')
@@ -200,6 +248,19 @@ async def load_floor(sid, floor):
                  'rooms': rooms, 'events': events, 'battled': f.battled}
     await sio.emit('floor_dic', floor_dic, room=sid)
     print(f"Sent floor {floor} data to {sid}")
+
+
+@sio.event
+async def cast_spell(sid, sdata):
+    """
+    Cast spell for other party member.
+    """
+    async with sio.session(sid) as session:
+        user = session['user']
+    data = {'user': user, 'spell': sdata['spell'], 'caster': sdata['caster'],
+            'target': sdata['target']}
+    await sio.emit('cast_spell', data, room=login_users[sdata['user']])
+    print(f"Cast {sdata['spell']} for {sdata['target']}({sdata['user']})")
 
 
 class Team:

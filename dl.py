@@ -45,13 +45,6 @@ if config['client']:
     sio = socketio.Client()
 
 
-if os.path.exists("dl.db"):
-    config['newdb'] = False
-engine = create_engine('sqlite:///dl.db')
-Base.metadata.create_all(engine)
-Session = sessionmaker(bind=engine)
-
-
 class Job(Enum):
     FIGHTER, MAGE, PRIEST, THIEF, BISHOP, SAMURAI, LORD, NINJA, UNEMPLOYED = range(
         9)
@@ -179,6 +172,8 @@ class Vscr:
         self.messages = []  # list of tuple(user, message)
         self.battle_messages = []  # list of (start, message)
         self.refresh = False  # someone moved
+        # party owner to show in party window (for joined camp)
+        self.show_puser = config['server']['auth']['user']
 
     def draw_map(self, party, floor_obj):
         """
@@ -286,15 +281,26 @@ class Vscr:
         """
         Display the header info
         """
-        if party.gps:
+        if game.dungeon.expedition and game.dungeon.parties \
+           and game.party.place == Place.CAMP and \
+           game.vscr.show_puser != config['server']['auth']['user']:
+            p = game.dungeon.parties[game.vscr.show_puser]
+        else:
+            p = party
+        if p.gps:
             line = f" daemon lord - dl - [{party.place.name.lower()}] floor:{party.floor:2d} ({party.x:3d}/{party.y:3d}) "
         else:
             line = f" daemon lord - dl - [{party.place.name.lower()}] floor:?? (???/???) "
         if game.dungeon.expedition:
             line = line.replace("- dl -", "<server>")
-        if party.identify:
+        if game.dungeon.expedition and game.dungeon.parties \
+           and game.party.place == Place.CAMP:
+            line = line.replace("camp", "joined camp")
+            if game.vscr.show_puser != config['server']['auth']['user']:
+                line = line.replace("daemon lord ", "[VIEW MODE] ")
+        if p.identify:
             line = line + "<identify> "
-        if party.light_cnt:
+        if p.light_cnt:
             line = line + "<light> "
         self.cur_vscr_view[:len(line)] = line.encode()
 
@@ -303,7 +309,6 @@ class Vscr:
         Display scroll window main
         """
         game = self.game
-        start = time.time()
         party = game.party
         if not floor_obj:
             floor_obj = party.floor_obj
@@ -316,11 +321,15 @@ class Vscr:
                     floor_obj.put_tile(
                         x, y, floor_obj.get_tile(x, y), orig=False)
             self.draw_map(party, floor_obj)
-        self.draw_partywin(party)
+        if game.dungeon.expedition and party.place == Place.CAMP and \
+           game.vscr.show_puser != config['server']['auth']['user']:
+            p = game.dungeon.parties[game.vscr.show_puser]
+            self.draw_partywin(p)
+        else:
+            self.draw_partywin(party)
         self.draw_header(party)
         self.draw_meswins()
         self.display()
-        delta = time.time() - start
         try:
             print(
                 f"\033[{self.height};0H", end='', flush=True)
@@ -412,17 +421,20 @@ class Meswin:
         Input a character in the message window.
         """
         ch = ''
+        self.print(msg+' >', start=' ')
+        self.vscr.disp_scrwin()
+        l = self.mes_lines.pop()
         while ch not in values:
-            self.print(msg+' >', start=' ')
-            self.vscr.disp_scrwin()
             print(f"\033[{self.y+self.cur_y+1};{self.x+len(msg)+8}H",
                   end='', flush=True)
             ch = getch()
-            l = self.mes_lines.pop()
             self.print(''.join([l, ' ', ch])[2:], start=' ')
             self.vscr.disp_scrwin()
+            if ch in values:
+                break
             if not values:
                 break
+            self.mes_lines.pop()
         return ch
 
 
@@ -724,7 +736,11 @@ class Game:
             mem.maxhp = mem_db.maxhp
             mem.hpplus = mem_db.hpplus
             mem.mspells = mem_db.mspells.split(',')
+            if '' in mem.mspells:
+                mem.mspells.remove('')
             mem.pspells = mem_db.pspells.split(',')
+            if '' in mem.pspells:
+                mem.pspells.remove('')
             mem.mspell_cnt = list(map(int, mem_db.mspell_cnt.split(',')))
             mem.pspell_cnt = list(map(int, mem_db.pspell_cnt.split(',')))
             mem.mspell_max = list(map(int, mem_db.mspell_max.split(',')))
@@ -1274,6 +1290,47 @@ class Party:
         self.identify = False  # latumapic
         self.gps = False  # eternal dumapic
 
+    def todic(self):
+        """
+        Return dict of the party (for serialization).  Member objects 
+        are also converted to dict.  Doesn't include floor_obj.
+        """
+        pdic = {
+            'x': self.x, 'y': self.y, 'px': self.px, 'py': self.py,
+            'floor': self.floor, 'pfloor': self.pfloor,
+            'tsubasa_floor': self.tsubasa_floor,
+            'place': self.place.name, 'members': [],
+            'light_cnt': self.light_cnt, 'ac': self.ac,
+            'silenced': self.silenced, 'identify': self.identify,
+            'gps': self.gps,
+        }
+        for m in self.members:
+            pdic['members'].append(m.todic())
+        return pdic
+
+    def fromdic(self, p_s):
+        """
+        Update self with p_s (serialized party dict)
+        """
+        self.x = p_s['x']
+        self.y = p_s['y']
+        self.px = p_s['px']
+        self.py = p_s['py']
+        self.floor = p_s['floor']
+        self.pfloor = p_s['pfloor']
+        self.tsubasa_floor = p_s['tsubasa_floor']
+        self.place = Place[p_s['place']]
+        self.members = []
+        self.light_cnt = p_s['light_cnt']
+        self.ac = p_s['ac']
+        self.silenced = p_s['silenced']
+        self.identify = p_s['identify']
+        self.gps = p_s['gps']
+        for m_s in p_s['members']:
+            m = Member('dummy', Align.GOOD, Race.HUMAN)
+            m.fromdic(m_s)
+            self.members.append(m)
+
     def injured(self):
         """
         Check if someone is injured and return True/False
@@ -1302,6 +1359,16 @@ class Party:
                 else:
                     game.spell.heal(mem, spell, target)
                 game.vscr.disp_scrwin()
+                p = game.party
+                ulist = [user for user, loc in game.dungeon.party_locs.items()
+                         if loc[3] == Place.CAMP.name and loc[0] == p.x and
+                         loc[1] == p.y and loc[2] == p.floor
+                         and user != config['server']['auth']['user']]
+                if ulist:
+                    for owner in ulist:
+                        data = {'user': owner, 'spell': spell,
+                                'caster': mem.name, 'target': target}
+                        sio.emit('cast_spell', data)
                 getch(wait=True)
                 return True
         return False
@@ -1567,6 +1634,61 @@ class Member:
     def __str__(self):
         return f"{self.name[:16].ljust(16)} Lv{self.level:3d} {self.race.name[:3].lower()}-{self.align.name[:1].lower()}-{self.job.name[:3].lower()}"
 
+    def todic(self):
+        """
+        Return the member as a dictionary (for serialization)
+        """
+        mdic = {'name': self.name, 'align': self.align.name,
+                'race': self.race.name, 'level': self.level,
+                'ac': self.ac, 'job': self.job.name,
+                'state': self.state.name, 'poisoned': self.poisoned,
+                'deepest': self.deepest, 'gold': self.gold,
+                'exp': self.exp, 'nextexp': self.nextexp,
+                'marks': self.marks, 'rip': self.rip,
+                'items': self.items[:], 'stat': self.stat[:],
+                'maxhp': self.maxhp, 'hp': self.hp,
+                'hpplus': self.hpplus,
+                'mspells': self.mspells[:],
+                'pspells': self.pspells[:],
+                'mspell_cnt': self.mspell_cnt[:],
+                'pspell_cnt': self.pspell_cnt[:],
+                'mspell_max': self.mspell_max[:],
+                'pspell_max': self.pspell_max[:],
+                }
+        return mdic
+
+    def fromdic(self, m_s):
+        """
+        Update self with m_s (serialized Member dict)
+        """
+        self.name = m_s['name']
+        self.align = Align[m_s['align']]
+        self.race = Race[m_s['race']]
+        self.level = m_s['level']
+        self.ac = m_s['ac']
+        self.job = Job[m_s['job']]
+        self.state = State[m_s['state']]
+        self.poisoned = m_s['poisoned']
+        self.deepest = m_s['deepest']
+        self.gold = m_s['gold']
+        self.exp = m_s['exp']
+        self.nextexp = m_s['nextexp']
+        self.marks = m_s['marks']
+        self.rip = m_s['rip']
+        self.items = m_s['items'][:]
+        self.stat = m_s['stat'][:]
+        self.maxhp = m_s['maxhp']
+        self.hp = m_s['hp']
+        self.hpplus = m_s['hpplus']
+        self.mspells = m_s['mspells'][:]
+        self.pspells = m_s['pspells'][:]
+        self.mspells = m_s['mspells'][:]
+        self.pspells = m_s['pspells'][:]
+        self.mspell_cnt = m_s['mspell_cnt'][:]
+        self.pspell_cnt = m_s['pspell_cnt'][:]
+        self.mspell_max = m_s['mspell_max'][:]
+        self.pspell_max = m_s['pspell_max'][:]
+
     def disp_character(self, game):
         """
         Display a character information in the message window
@@ -1628,8 +1750,14 @@ class Member:
                 break
             self.disp_character(game)
             mw.print(f"", start=' ')
-            c1 = mw.input_char("i)tems s)pells c)lass jk)change member l)leave",
-                               values=['i', 's', 'c', 'j', 'k', 'l'])
+            if game.party.place == Place.CAMP and game.dungeon.expedition\
+               and game.vscr.show_puser != config['server']['auth']['user']:
+                c1 = mw.input_char("jk)change member l)leave",
+                                   values=['j', 'k', 'l'])
+            else:
+                c1 = mw.input_char(
+                    "i)tems s)pells c)lass jk)change member l)leave",
+                    values=['i', 's', 'c', 'j', 'k', 'l'])
             if c1 == 'l':
                 mw.cls()
                 return 0  # leave
@@ -1661,6 +1789,7 @@ class Member:
                     f"{d[name].level} {name.ljust(13)}{d[name].desc[:57]}")
             lines.append("")
         if self.pspells:
+            breakpoint()
             lines.append("Priest spells:")
             for name in self.pspells:
                 lines.append(
@@ -1696,7 +1825,7 @@ class Member:
         Spell menu.  Cast, read spells.
         """
         v = game.vscr
-        mw = Meswin(v, 14, 4, 44, 12, frame=True)
+        mw = Meswin(v, 12, 4, 52, 12, frame=True)
         v.meswins.append(mw)
         while not game.party.floor_move or \
                 game.party.place not in \
@@ -1785,8 +1914,7 @@ class Member:
                         if not sdef.camp:
                             iw.print("Can't use it now.")
                         if sdef.target == 'member':
-                            target = game.party.choose_character(
-                                game)
+                            owner, uidx = choose_party_character()
                             if not target:
                                 # mw = game.vscr.meswins[-1]
                                 iw.print("Aborted.", start=' ')
@@ -2147,11 +2275,35 @@ class Spell:
             return
 
         if sdef.target == 'member':
-            target = self.game.party.choose_character(self.game)
-            if not target:
-                mw = self.game.vscr.meswins[-1]
-                mw.print("Aborted.", start=' ')
-                return
+            if not game.dungeon.expedition or not game.dungeon.parties:
+                target = self.game.party.choose_character(self.game)
+                if not target:
+                    mw = self.game.vscr.meswins[-1]
+                    mw.print("Aborted.", start=' ')
+                    return
+            else:
+                owner, uidx = choose_party_character()
+                if not owner:
+                    mw = self.game.vscr.meswins[-1]
+                    mw.print("Aborted.", start=' ')
+                    return
+                if owner == config['server']['auth']['user']:
+                    target = game.party.members[uidx]
+                else:
+                    # cast spell to other party member
+                    tname = game.dungeon.parties[owner].members[uidx].name
+                    data = {'user': owner, 'spell': s, 'caster': mem.name,
+                            'target': tname}
+                    sio.emit('cast_spell', data)
+                    mw.print(f"{mem.name} started casting {s}", start=' ')
+                    sdef = game.spelldef[s]
+                    if sdef.categ == 'mage':
+                        splcntlst = mem.mspell_cnt
+                    else:
+                        splcntlst = mem.pspell_cnt
+                    splcntlst[sdef.level-1] -= 1
+                    v.disp_scrwin()
+                    return
         elif sdef.target in ['enemy', 'group']:
             target = self.game.battle.choose_group()
             if not target:
@@ -2160,6 +2312,16 @@ class Spell:
                 return
         else:
             target = sdef.target
+            p = game.party
+            ulist = [user for user, loc in game.dungeon.party_locs.items()
+                     if loc[3] == Place.CAMP.name and loc[0] == p.x and
+                     loc[1] == p.y and loc[2] == p.floor
+                     and user != config['server']['auth']['user']]
+            if ulist and s not in ['tsubasa']:
+                for owner in ulist:
+                    data = {'user': owner, 'spell': s, 'caster': mem.name,
+                            'target': target}
+                    sio.emit('cast_spell', data)
 
         splcntlst[sdef.level-1] -= 1
 
@@ -2181,6 +2343,10 @@ class Spell:
             self.cure(invoker, spell, target)
         else:  # etc
             self.etc(invoker, spell, target)
+        if game.dungeon.expedition and game.dungeon.parties:
+            data = {'requester': None,
+                    'party_s': game.party.todic()}
+            sio.emit('update_party', data)  # send my party info
 
     def cure(self, invoker, spell, target):
         """
@@ -2631,7 +2797,9 @@ class Dungeon:
         self.expedition = False  # logging in to an external server
         self.sio = None
         self.loaded = False  # load flag
-        self.party_locs = {}  # {user: (x, y, floor, place)}
+        self.party_locs = {}  # {user: (x, y, floor, place.name)}
+        self.parties = {}  # {user: party object}
+        self.spells_casted = []  # (user, spell, caster, target)
 
     def generate_events(self):
         """
@@ -4818,17 +4986,39 @@ def getch(wait=True):
             if game.vscr.refresh:
                 game.vscr.refresh = False
                 game.vscr.disp_scrwin()
-            if game.vscr.messages:  # one message at a time
-                user, mes = game.vscr.messages.pop(0)
-                game.vscr.meswins[0].print(f"Message from {user}:")
-                game.vscr.meswins[0].print(mes, start=' ')
-                game.vscr.disp_scrwin()
-            if game.vscr.battle_messages:
-                mes, st = game.vscr.battle_messages.pop(0)
-                if st == '*':
-                    st = '-'
-                game.vscr.meswins[-1].print(mes, start=st)
-                game.vscr.disp_scrwin()
+            if game.dungeon.expedition:
+                if game.vscr.messages:  # one message at a time
+                    user, mes = game.vscr.messages.pop(0)
+                    game.vscr.meswins[0].print(f"Message from {user}:")
+                    game.vscr.meswins[0].print(mes, start=' ')
+                    game.vscr.disp_scrwin()
+                if game.vscr.battle_messages:
+                    mes, st = game.vscr.battle_messages.pop(0)
+                    if st == '*':
+                        st = '-'
+                    game.vscr.meswins[-1].print(mes, start=st)
+                    game.vscr.disp_scrwin()
+                if game.party.place == Place.CAMP and \
+                   game.dungeon.spells_casted and \
+                   game.dungeon.parties:
+                    user, spell, caster, target = \
+                        game.dungeon.spells_casted.pop(0)
+                    p = game.dungeon.parties[user]
+                    cas = next(mem for mem in p.members
+                               if mem.name == caster)
+                    mw = game.vscr.meswins[-1]
+                    if target in ['party', 'all', '']:
+                        tgt = target
+                        mw.print(f"{caster}({user}) casted {spell}.",
+                                 start='-')
+                    else:
+                        tgt = next(mem for mem in game.party.members
+                                   if mem.name == target)
+                        mw.print(
+                            f"{caster}({user}) casted {spell} for {target}.",
+                            start='-')
+                    game.spell.cast_spell_dispatch(cas, spell, tgt)
+                    game.vscr.disp_scrwin()
             time.sleep(0.05)
 
     finally:
@@ -4855,6 +5045,35 @@ def dice(valstr):
     for _ in range(int(m[1])):
         total += random.randint(1, int(m[2]))
     return total + plus
+
+
+def choose_party_character():
+    """
+    Return user of the party and character number.
+    Used in joined camp.
+    """
+    mw = game.vscr.meswins[-1]
+    ulist = [config['server']['auth']['user']]
+    ulist.extend(list(game.dungeon.parties.keys()))
+    uidx = 0
+    while True:
+        game.vscr.show_puser = puser = ulist[uidx]
+        ch = mw.input_char(f"Who? - # or p)switch parties l)eave")
+        if ch == 'l':
+            break
+        elif ch == 'p':
+            if (uidx := uidx+1) >= len(ulist):
+                uidx = 0
+        try:
+            if 0 <= (chid := int(ch)-1) < \
+               len(game.dungeon.parties[puser].members):
+                break
+        except:
+            pass
+    game.vscr.show_puser = config['server']['auth']['user']
+    if ch == 'l':
+        return None, None
+    return puser, chid
 
 
 def create_character(game):
@@ -5799,10 +6018,41 @@ def camp(game, floor_obj):
     mw = Meswin(v, 10, 1, 64, 17, frame=True)
     v.meswins.append(mw)
 
+    if game.dungeon.expedition and game.dungeon.party_locs:
+        game.dungeon.parties = {}
+        game.dungeon.spells_casted = []
+        v.show_puser = config['server']['auth']['user']
+        p = game.party
+        ulist = [user for user, loc in game.dungeon.party_locs.items()
+                 if loc[3] == Place.CAMP.name and loc[0] == p.x and
+                 loc[1] == p.y and loc[2] == p.floor
+                 and user != config['server']['auth']['user']]
+        if ulist:
+            sio.emit('get_party', ulist)
+            ustr = ', '.join(ulist)
+            mw.print(f"Joined camp with {ustr}.")
+            time.sleep(0.3)
+
     while not game.party.floor_move:  # tsubasa?
-        mw.print(
-            "*** Camp ***\ni)nspect\nr)eorder party\nh)eal all members\np)rep for adventure\nS)ave and quit game\nl)eave")
-        c = mw.input_char("Command?", values=['i', 'r', 'S', 'l', 'h', 'p'])
+        mw.cls()
+        if game.dungeon.expedition and game.dungeon.parties:
+            if game.vscr.show_puser == config['server']['auth']['user']:
+                mw.print("*** Camp ***\ni)nspect\nr)eorder party")
+                mw.print("h)eal all members\np)rep for adventure", start=' ')
+                mw.print("P)switch parties\nS)ave and quit game\nl)eave",
+                         start=' ')
+                c = mw.input_char("Command?",
+                                  values=['i', 'r', 'S', 'l', 'h', 'p', 'P'])
+            else:
+                mw.print("*** Camp ***\ni)nspect")
+                mw.print("P)switch parties\nS)ave and quit game\nl)eave",
+                         start=' ')
+                c = mw.input_char("Command?", values=['i', 'S', 'l', 'P'])
+        else:
+            mw.print(
+                "*** Camp ***\ni)nspect\nr)eorder party\nh)eal all members\np)rep for adventure\nS)ave and quit game\nl)eave")
+            c = mw.input_char("Command?", values=[
+                              'i', 'r', 'S', 'l', 'h', 'p'])
         if c == 'l':
             break
         elif c == 'r':
@@ -5821,15 +6071,28 @@ def camp(game, floor_obj):
         elif c == 'i':
             idx = 1
             while not game.party.floor_move:  # tsubasa?
-                mem = game.party.members[idx-1]
+                if game.party.place == Place.CAMP and game.dungeon.expedition\
+                   and game.vscr.show_puser != config['server']['auth']['user']:
+                    p = game.dungeon.parties[game.vscr.show_puser]
+                else:
+                    p = game.party
+                mem = p.members[idx-1]
                 rtn = mem.inspect_character(game)
                 if rtn == 0:
                     break
                 idx += rtn
                 if idx < 0:
-                    idx = len(game.party.members) - 1
-                elif idx >= len(game.party.members):
+                    idx = len(p.members) - 1
+                elif idx >= len(p.members):
                     idx = 0
+        elif c == 'P':
+            ulist = [config['server']['auth']['user']]
+            ulist.extend(list(game.dungeon.parties.keys()))
+            u = game.vscr.show_puser
+            uidx = ulist.index(u)
+            if (uidx := uidx + 1) >= len(ulist):
+                uidx = 0
+            game.vscr.show_puser = ulist[uidx]
 
     v.disp_scrwin(floor_obj)
     v.meswins.pop()
@@ -6126,6 +6389,35 @@ if config['client']:
         game.dungeon.floor_obj = f
 
     @sio.event
+    def get_party(requester):
+        """
+        Requester requests my party so send it back and request
+        its party as well
+        """
+        if requester == config['server']['auth']['user']:
+            return
+        data = {'requester': requester,
+                'party_s': game.party.todic()}
+        sio.emit('update_party', data)  # send my party info
+        if requester not in game.dungeon.parties:
+            sio.emit('get_party', [requester])  # request its party info
+
+    @sio.event
+    def update_party(data):
+        """
+        """
+        user = data['sender']
+        ul = game.dungeon.party_locs[user]
+        p = game.party
+
+        if p.place == Place.CAMP and p.x == ul[0] and p.y == ul[1] and \
+           p.floor == ul[2] and p.place.name == ul[3] and \
+           user != config['server']['auth']['user']:
+            pt = Party(0, 0, 0)
+            pt.fromdic(data['party_s'])
+            game.dungeon.parties[user] = pt
+
+    @sio.event
     def get_monp(requester):
         """
         Requester requests my monp so send it back
@@ -6188,7 +6480,22 @@ if config['client']:
             game.vscr.disp_scrwin()
         game.battle.monp_set = True
 
+    @sio.event
+    def cast_spell(data):
+        """
+        Other party member casted a spell for you.
+        Used only in a joined camp.
+        """
+        t = (data['user'], data['spell'], data['caster'], data['target'])
+        game.dungeon.spells_casted.append(t)
+
 game = Game()  # singleton
+
+if os.path.exists("dl.db"):
+    config['newdb'] = False
+engine = create_engine('sqlite:///dl.db')
+Base.metadata.create_all(engine)
+Session = sessionmaker(bind=engine)
 
 
 def main():
