@@ -172,7 +172,7 @@ class Vscr:
         self.messages = []  # list of tuple(user, message)
         self.battle_messages = []  # list of (start, message)
         self.refresh = False  # someone moved
-        # party owner to show in party window (for joined camp)
+        # party owner to show in party window (for group camp)
         self.show_puser = config['server']['auth']['user']
 
     def draw_map(self, party, floor_obj):
@@ -295,7 +295,7 @@ class Vscr:
             line = line.replace("- dl -", "<server>")
         if game.dungeon.expedition and game.dungeon.parties \
            and game.party.place == Place.CAMP:
-            line = line.replace("camp", "joined camp")
+            line = line.replace("camp", "group camp")
             if game.vscr.show_puser != config['server']['auth']['user']:
                 line = line.replace("daemon lord ", "[VIEW MODE] ")
         if p.identify:
@@ -1333,7 +1333,7 @@ class Party:
 
     def injured(self):
         """
-        Check if someone is injured and return True/False
+        Check if someone (in group camp) is injured and return True/False
         dead, ashed, lost members are not counted
         """
         for mem in self.members:
@@ -1341,6 +1341,15 @@ class Party:
                 continue
             if mem.hp < mem.maxhp:
                 return True
+
+        ulist = game.dungeon.get_gcamp_users()
+        for user in ulist:
+            p = game.dungeon.parties[user]
+            for mem in p.members:
+                if mem.state in [State.DEAD, State.ASHED, State.LOST]:
+                    continue
+                if mem.hp < mem.maxhp:
+                    return True
         return False
 
     def cast_spell(self, game, spell, target='party'):
@@ -1753,11 +1762,11 @@ class Member:
             if game.party.place == Place.CAMP and game.dungeon.expedition\
                and game.vscr.show_puser != config['server']['auth']['user']:
                 c1 = mw.input_char("jk)change member l)leave",
-                                   values=['j', 'k', 'l'])
+                                   values=['j', 'k', 'l', 'm'])
             else:
                 c1 = mw.input_char(
                     "i)tems s)pells c)lass jk)change member l)leave",
-                    values=['i', 's', 'c', 'j', 'k', 'l'])
+                    values=['i', 's', 'c', 'j', 'k', 'l', 'm'])
             if c1 == 'l':
                 mw.cls()
                 return 0  # leave
@@ -1771,6 +1780,14 @@ class Member:
                 return 1  # next member
             elif c1 == 'k':
                 return -1  # previous member
+            elif c1 == 'm':
+                if game.dungeon.expedition:
+                    vscr = game.vscr
+                    mw = Meswin(vscr, 6, 2, 64, 2, frame=True)
+                    vscr.meswins.append(mw)
+                    mes = mw.input('Message to send?')
+                    sio.emit('message', mes)
+                    vscr.meswins.pop()
         return 0
 
     def view_spells(self, game):
@@ -1789,7 +1806,6 @@ class Member:
                     f"{d[name].level} {name.ljust(13)}{d[name].desc[:57]}")
             lines.append("")
         if self.pspells:
-            breakpoint()
             lines.append("Priest spells:")
             for name in self.pspells:
                 lines.append(
@@ -1853,7 +1869,7 @@ class Member:
         Item menu.  Use, equip, trade, drop an item.
         """
         vscr = game.vscr
-        iw = Meswin(vscr, 14, 2, 44, 8, frame=True)
+        iw = Meswin(vscr, 14, 2, 50, 8, frame=True)
         vscr.meswins.append(iw)
         while True:
             iw.print("which item?  # or l)leave")
@@ -1882,54 +1898,76 @@ class Member:
                     iw.print(
                         ".. but don't know how to use it.", start=' ')
                     vscr.disp_scrwin()
-                else:
-                    itemdef = game.itemdef[self.items[inum][0]]
-                    if not itemdef.use:
-                        iw.print(f"Tried to use {dispname}.")
-                        iw.print(".. but wasn't able to.", start=' ')
-                        vscr.disp_scrwin()
-                    elif itemdef.use == 'etc':
-                        iw.print(f"Used {dispname}.")
-                        vscr.disp_scrwin()
-                        if self.items[inum][0] == 'murasama blade':
-                            self.stat[0] += 1  # str+1
-                        elif self.items[inum][0] == 'kaiser knuckles':
-                            self.maxhp += 1  # hp+1
-                        elif self.items[inum][0] == 'armor of lords':
-                            for m in game.party.members:
-                                m.hp = m.maxhp
-                        elif self.items[inum][0] == 'ninja dagger':
-                            self.job = Job.NINJA
-                            for i in self.items:
-                                i[1] = False
-                        if itemdef.brk > random.randrange(100):
-                            self.items[inum][0] = 'broken item'
-                            self.items[inum][1] = False
-                        getch(wait=True)
-                        vscr.meswins.pop()
-                        vscr.cls()
-                        return
-                    else:  # magic spell
-                        sdef = game.spelldef[itemdef.use]
-                        if not sdef.camp:
-                            iw.print("Can't use it now.")
-                        if sdef.target == 'member':
-                            owner, uidx = choose_party_character()
+                    continue
+                itemdef = game.itemdef[self.items[inum][0]]
+                if not itemdef.use:
+                    iw.print(f"Tried to use {dispname}.")
+                    iw.print(".. but wasn't able to.", start=' ')
+                    vscr.disp_scrwin()
+                elif itemdef.use == 'etc':
+                    iw.print(f"Used {dispname}.")
+                    vscr.disp_scrwin()
+                    if self.items[inum][0] == 'murasama blade':
+                        self.stat[0] += 1  # str+1
+                    elif self.items[inum][0] == 'kaiser knuckles':
+                        self.maxhp += 1  # hp+1
+                    elif self.items[inum][0] == 'armor of lords':
+                        for m in game.party.members:
+                            m.hp = m.maxhp
+                    elif self.items[inum][0] == 'ninja dagger':
+                        self.job = Job.NINJA
+                        for i in self.items:
+                            i[1] = False
+                    if itemdef.brk > random.randrange(100):
+                        self.items[inum][0] = 'broken item'
+                        self.items[inum][1] = False
+                    getch(wait=True)
+                    vscr.meswins.pop()
+                    vscr.cls()
+                    return
+                else:  # magic spell
+                    sdef = game.spelldef[itemdef.use]
+                    if not sdef.camp:
+                        iw.print("Can't use it now.")
+                    if sdef.target == 'member':
+                        if not game.dungeon.get_gcamp_users():
+                            target = game.party.choose_character(game)
                             if not target:
-                                # mw = game.vscr.meswins[-1]
                                 iw.print("Aborted.", start=' ')
                                 continue
                         else:
-                            target = sdef.target
-                        iw.print(f"Used {dispname}.")
-                        vscr.disp_scrwin()
-                        game.spell.cast_spell_dispatch(
-                            self, itemdef.use, target)
-                        if itemdef.brk > random.randrange(100):
-                            self.items[inum][0] = 'broken item'
-                        vscr.meswins.pop()
-                        vscr.cls()
-                        return
+                            owner, uidx = choose_party_character()
+                            if not owner:
+                                iw.print("Aborted.", start=' ')
+                                continue
+                            if owner == config['server']['auth']['user']:
+                                target = game.party.members[uidx]
+                            else:
+                                # Use item to other party member
+                                tname = game.dungeon.parties[owner].members[uidx].name
+                                data = {'user': owner,
+                                        'spell': itemdef.use,
+                                        'caster': self.name,
+                                        'target': tname}
+                                sio.emit('cast_spell', data)
+                                iw.print(f"Used {dispname}.")
+                                vscr.disp_scrwin()
+                                if itemdef.brk > random.randrange(100):
+                                    self.items[inum][0] = 'broken item'
+                                vscr.meswins.pop()
+                                vscr.cls()
+                                return
+                    else:
+                        target = sdef.target
+                    iw.print(f"Used {dispname}.")
+                    vscr.disp_scrwin()
+                    game.spell.cast_spell_dispatch(
+                        self, itemdef.use, target)
+                    if itemdef.brk > random.randrange(100):
+                        self.items[inum][0] = 'broken item'
+                    vscr.meswins.pop()
+                    vscr.cls()
+                    return
             elif c == 't':
                 if self.items[inum][2]:
                     iw.print(f"Cursed.")
@@ -2800,6 +2838,22 @@ class Dungeon:
         self.party_locs = {}  # {user: (x, y, floor, place.name)}
         self.parties = {}  # {user: party object}
         self.spells_casted = []  # (user, spell, caster, target)
+
+    def get_gcamp_users(self):
+        """
+        Get group camp user list with the party
+        Return [] if not in a group camp
+        """
+        if self.expedition and self.party_locs and \
+           game.party.place == Place.CAMP:
+            p = game.party
+            ulist = [user for user, loc in self.party_locs.items()
+                     if loc[3] == Place.CAMP.name and loc[0] == p.x
+                     and loc[1] == p.y and loc[2] == p.floor and
+                     user != config['server']['auth']['user']]
+            return ulist
+        else:
+            return []
 
     def generate_events(self):
         """
@@ -5050,7 +5104,7 @@ def dice(valstr):
 def choose_party_character():
     """
     Return user of the party and character number.
-    Used in joined camp.
+    Used in group camp.
     """
     mw = game.vscr.meswins[-1]
     ulist = [config['server']['auth']['user']]
@@ -6017,42 +6071,41 @@ def camp(game, floor_obj):
     v = game.vscr
     mw = Meswin(v, 10, 1, 64, 17, frame=True)
     v.meswins.append(mw)
+    dg = game.dungeon
 
-    if game.dungeon.expedition and game.dungeon.party_locs:
-        game.dungeon.parties = {}
-        game.dungeon.spells_casted = []
+    if dg.expedition and dg.party_locs:
+        dg.parties = {}
+        dg.spells_casted = []
         v.show_puser = config['server']['auth']['user']
         p = game.party
-        ulist = [user for user, loc in game.dungeon.party_locs.items()
-                 if loc[3] == Place.CAMP.name and loc[0] == p.x and
-                 loc[1] == p.y and loc[2] == p.floor
-                 and user != config['server']['auth']['user']]
+        ulist = dg.get_gcamp_users()
         if ulist:
             sio.emit('get_party', ulist)
             ustr = ', '.join(ulist)
-            mw.print(f"Joined camp with {ustr}.")
+            mw.print(f"group camp with {ustr}.")
             time.sleep(0.3)
 
     while not game.party.floor_move:  # tsubasa?
         mw.cls()
-        if game.dungeon.expedition and game.dungeon.parties:
+        if dg.get_gcamp_users():
             if game.vscr.show_puser == config['server']['auth']['user']:
-                mw.print("*** Camp ***\ni)nspect\nr)eorder party")
+                mw.print("*** group camp menu ***\ni)nspect\nr)eorder party")
                 mw.print("h)eal all members\np)rep for adventure", start=' ')
                 mw.print("P)switch parties\nS)ave and quit game\nl)eave",
                          start=' ')
                 c = mw.input_char("Command?",
-                                  values=['i', 'r', 'S', 'l', 'h', 'p', 'P'])
+                                  values=['i', 'r', 'S', 'l',
+                                          'h', 'p', 'P', 'm'])
             else:
-                mw.print("*** Camp ***\ni)nspect")
+                mw.print("*** group camp menu (view) ***\ni)nspect")
                 mw.print("P)switch parties\nS)ave and quit game\nl)eave",
                          start=' ')
-                c = mw.input_char("Command?", values=['i', 'S', 'l', 'P'])
+                c = mw.input_char("Command?", values=['i', 'S', 'l', 'P', 'm'])
         else:
             mw.print(
-                "*** Camp ***\ni)nspect\nr)eorder party\nh)eal all members\np)rep for adventure\nS)ave and quit game\nl)eave")
+                "*** camp menu ***\ni)nspect\nr)eorder party\nh)eal all members\np)rep for adventure\nS)ave and quit game\nl)eave")
             c = mw.input_char("Command?", values=[
-                              'i', 'r', 'S', 'l', 'h', 'p'])
+                              'i', 'r', 'S', 'l', 'h', 'p', 'm'])
         if c == 'l':
             break
         elif c == 'r':
@@ -6073,7 +6126,7 @@ def camp(game, floor_obj):
             while not game.party.floor_move:  # tsubasa?
                 if game.party.place == Place.CAMP and game.dungeon.expedition\
                    and game.vscr.show_puser != config['server']['auth']['user']:
-                    p = game.dungeon.parties[game.vscr.show_puser]
+                    p = dg.parties[game.vscr.show_puser]
                 else:
                     p = game.party
                 mem = p.members[idx-1]
@@ -6087,12 +6140,21 @@ def camp(game, floor_obj):
                     idx = 0
         elif c == 'P':
             ulist = [config['server']['auth']['user']]
-            ulist.extend(list(game.dungeon.parties.keys()))
+            ulist.extend(dg.get_gcamp_users())
             u = game.vscr.show_puser
             uidx = ulist.index(u)
             if (uidx := uidx + 1) >= len(ulist):
                 uidx = 0
             game.vscr.show_puser = ulist[uidx]
+        elif c == 'm':
+            if game.dungeon.expedition:
+                vscr = game.vscr
+                mw = Meswin(vscr, 6, 2, 64, 2, frame=True)
+                vscr.meswins.append(mw)
+                mes = mw.input('Message to send?')
+                sio.emit('message', mes)
+                vscr.meswins.pop()
+            continue
 
     v.disp_scrwin(floor_obj)
     v.meswins.pop()
@@ -6125,6 +6187,9 @@ def maze(game):
             dungeon.uuid = uuid.uuid1().hex
         party.floor_obj = floor_obj = None
     party.resumed = False
+    dungeon.party_locs = {}
+    dungeon.parties = {}
+    dungeon.spells_casted = []
 
     loop_cnt = 0
     checked = False
@@ -6484,7 +6549,7 @@ if config['client']:
     def cast_spell(data):
         """
         Other party member casted a spell for you.
-        Used only in a joined camp.
+        Used only in a group camp.
         """
         t = (data['user'], data['spell'], data['caster'], data['target'])
         game.dungeon.spells_casted.append(t)

@@ -1,75 +1,78 @@
 
 # Table of Contents
 
-1.  [dl.py - Daemon Lord](#org3d12207)
-    1.  [Overview](#orgb9e3655)
-        1.  [Wizardry clone](#orgb5554e8)
-        2.  [Rogue-like dungeon maps](#org334119f)
-        3.  [Auto-generated maps w/o resetting levels and items of characters](#org1741967)
-        4.  [Multiplayer mode (new; optional)](#orga490cd0)
-        5.  [A little more user friendly than Wizardry](#org5c65506)
-    2.  [Important notice: alpha quality](#org25b27ce)
-    3.  [Getting started](#org9d5ac9b)
-        1.  [Prerequisites](#org48d25bc)
-        2.  [Installation](#org3854648)
-        3.  [DL server installation (optional)](#orgde6a79c)
-    4.  [How to Play](#orgf035b61)
-        1.  [Tips](#org04d7390)
-    5.  [What's new](#org40b3e87)
-        1.  [Implemented multiplayer mode (6/2/2021 updated)](#org9b3b151)
-        2.  [Now using database to save/load status (5/7/2021)](#orgb6887c6)
-2.  [Contributing](#orgd090983)
-3.  [License](#org7ac91d5)
-4.  [Quick Tour of Daemon Lord](#org16b53cc)
-    1.  [Game start](#orgdd67d5b)
-    2.  [Edge of Town](#orgd60e907)
-        1.  [Training Grounds](#org8070ae1)
-    3.  [Castle](#orgb4f65d2)
-        1.  [Hawthorne Tavern](#org4664620)
-        2.  [Trader Jay's](#org2ec6b84)
-        3.  [Equip](#org8c81ee1)
-    4.  [Save and Resume](#orgf6ee8dd)
-    5.  [Dungeon](#orgeeaab4b)
-        1.  [Walk around the Dungeon](#org04d43ea)
-        2.  [Battle](#org8903b6b)
-        3.  [Surprise attacks](#org5029dc4)
-        4.  [Chest](#orgd9bb3fd)
-        5.  [Friendly monsters](#org313eae8)
-        6.  [Get ouf of the Dungeon](#org4207ac1)
-        7.  [A new dungeon!](#org3f5015c)
-        8.  [A new remote dungeon in the DL server (optional; requires a DL server)](#org7d7ddea)
-        9.  [Camp](#orgfe7e436)
-        10. [Heal all members](#org3176b7f)
-        11. [Prep for adventure](#orga8df3ef)
-        12. [Save and Resume from camp](#orgc280ac8)
-    6.  [Castle](#orgfee9194)
-        1.  [The Lakehouse Inn](#org69bea50)
-    7.  [Multiplayer mode (optional)](#orgf9626f4)
-        1.  [Expedition to external dungeon](#org07db23c)
-        2.  [Send messages](#org8194dbc)
-        3.  [Battles in a server dungeon](#orge37e2e8)
-        4.  [Multiplayer battles](#org835e38c)
-        5.  [Joined camp](#orga23b066)
-5.  [Spells](#org5db40cf)
-    1.  [Overview](#orgf1d5f59)
-    2.  [Usage](#org9aaf8c8)
-    3.  [Mage Spells](#org093e2e3)
-    4.  [Priest Spells](#org2a97e34)
-6.  [Monsters](#org94c2fb2)
-    1.  [Shallow floors](#org36160f4)
-    2.  [Middle depth floors](#org1f13247)
-    3.  [Deep floors](#org37d6da0)
-    4.  [Boss and special monsters](#orgf1d405e)
-        1.  [gate keeper](#org0ce7472)
-        2.  [d????? ???, t?? ????, a????](#org941708a)
-        3.  [d????? ????](#orge7098b3)
-        4.  [S???????, N??????](#org48af79f)
-7.  [Contact](#orgfe8e984)
-8.  [Acknowledgements](#org1a68ec1)
+1.  [dl.py - Daemon Lord](#org2dad794)
+    1.  [Overview](#org0e3af25)
+        1.  [Wizardry clone](#orge662a77)
+        2.  [Rogue-like dungeon maps](#org383c8a3)
+        3.  [Auto-generated maps w/o resetting levels and items of characters](#org9b5de11)
+        4.  [Multiplayer mode (new; optional)](#org9ec4fb1)
+        5.  [A little more user friendly than Wizardry](#orga09c1c2)
+    2.  [Important notice: alpha quality](#orgf6a99cf)
+    3.  [Getting started](#org0fee3e4)
+        1.  [Prerequisites](#orgb86f0bd)
+        2.  [Installation](#orgddca103)
+        3.  [DL server installation (optional)](#org2087299)
+    4.  [How to Play](#orgdae62b2)
+        1.  [Tips](#orgbb4a74d)
+    5.  [What's new](#orgb86c23a)
+        1.  [Implemented multiplayer mode (6/3/2021 updated)](#orge1e204c)
+2.  [Contributing](#orgbc98978)
+3.  [License](#org61b235d)
+4.  [Quick Tour of Daemon Lord](#orgb3acda0)
+    1.  [Game start](#org68b914b)
+    2.  [Edge of Town](#orge386889)
+        1.  [Training Grounds](#orgbea6261)
+    3.  [Castle](#orgeb2e6e9)
+        1.  [Hawthorne Tavern](#org57deb3a)
+        2.  [Trader Jay's](#org8d56739)
+        3.  [Equip](#orgaf8756d)
+    4.  [Save and Resume](#orgbbe0d36)
+    5.  [Dungeon](#org4202b5b)
+        1.  [Walk around the Dungeon](#org635fdc7)
+        2.  [Battle](#org089ae7e)
+        3.  [Surprise attacks](#orgd91e962)
+        4.  [Chest](#org315081d)
+        5.  [Friendly monsters](#org1c69e49)
+        6.  [Get ouf of the Dungeon](#org9c07118)
+        7.  [A new dungeon!](#org20ab497)
+        8.  [A new remote dungeon in the DL server (optional; requires a DL server)](#orgfe7d26a)
+        9.  [Camp](#org50e131e)
+        10. [Heal all members](#orgf3b57c2)
+        11. [Prep for adventure](#orgb14eb43)
+        12. [Save and Resume from camp](#orgeffcb63)
+    6.  [Castle](#org1c4538c)
+        1.  [The Lakehouse Inn](#org776d2f3)
+5.  [Multiplayer mode (optional)](#org20481de)
+    1.  [Expedition to external dungeon](#org83b6fc6)
+    2.  [Send messages](#org998299f)
+    3.  [Battles in a server dungeon](#orge2e990b)
+    4.  [Multiplayer battles](#org6715e13)
+    5.  [Group camp](#orgb17a81a)
+        1.  [View other parties](#orgd6bdf08)
+        2.  [Heal/cure other party members](#orgcf41ad6)
+        3.  [Group spells and prep for adventure](#orgac8476a)
+        4.  [Heal all members](#orge4a7148)
+6.  [Spells](#orgec1670a)
+    1.  [Overview](#org0ab1b12)
+    2.  [Usage](#orgb8c99b7)
+    3.  [Mage Spells](#org053c879)
+    4.  [Priest Spells](#org25f900c)
+7.  [Monsters](#org799e956)
+    1.  [Shallow floors](#org24e934e)
+    2.  [Middle depth floors](#org4a06488)
+    3.  [Deep floors](#org5ac7f91)
+    4.  [Boss and special monsters](#org919c21c)
+        1.  [gate keeper](#org2607dce)
+        2.  [d????? ???, t?? ????, a????](#orgf15c069)
+        3.  [d????? ????](#org205a2ad)
+        4.  [S???????, N??????](#orgb3b4af2)
+8.  [Contact](#org894f000)
+9.  [Acknowledgements](#org81f34c1)
 
 
 
-<a id="org3d12207"></a>
+<a id="org2dad794"></a>
 
 # dl.py - Daemon Lord
 
@@ -111,12 +114,12 @@ Daemon Lord is a Wizardry-clone RPG with rogue-like (ie, text-based), randomly-c
      6 fun        G-MAG   8   35 shunmin      ^* *** encounter ***                    ^
 
 
-<a id="orgb9e3655"></a>
+<a id="org0e3af25"></a>
 
 ## Overview
 
 
-<a id="orgb5554e8"></a>
+<a id="orge662a77"></a>
 
 ### Wizardry clone
 
@@ -129,7 +132,7 @@ Daemon Lord is a Wizardry-clone RPG with rogue-like (ie, text-based), randomly-c
 -   Need to type spells and chest traps accurately
 
 
-<a id="org334119f"></a>
+<a id="org383c8a3"></a>
 
 ### Rogue-like dungeon maps
 
@@ -139,7 +142,7 @@ Daemon Lord is a Wizardry-clone RPG with rogue-like (ie, text-based), randomly-c
 -   Maps are auto-generated.
 
 
-<a id="org1741967"></a>
+<a id="org9b5de11"></a>
 
 ### Auto-generated maps w/o resetting levels and items of characters
 
@@ -151,7 +154,7 @@ Daemon Lord is a Wizardry-clone RPG with rogue-like (ie, text-based), randomly-c
 -   You can restart your adventure from a floor that should match your character levels
 
 
-<a id="orga490cd0"></a>
+<a id="org9ec4fb1"></a>
 
 ### Multiplayer mode (new; optional)
 
@@ -160,12 +163,11 @@ Daemon Lord is a Wizardry-clone RPG with rogue-like (ie, text-based), randomly-c
 -   You'll see your friends' parties moving around on the map
 -   Send/receive messages to/from your friends
 -   You can join battles with your friends
--   Joined camp with your friends
+-   Group camp with your friends
 -   Support save/resume in a server-generated dungeon
--   More to come!!
 
 
-<a id="org5c65506"></a>
+<a id="orga09c1c2"></a>
 
 ### A little more user friendly than Wizardry
 
@@ -177,7 +179,7 @@ Daemon Lord is a Wizardry-clone RPG with rogue-like (ie, text-based), randomly-c
 -   Group heal spells for the entire party
 
 
-<a id="org25b27ce"></a>
+<a id="orgf6a99cf"></a>
 
 ## Important notice: alpha quality
 
@@ -186,12 +188,12 @@ Currently, DL (daemon lord) is under development and it's in an alpha code quali
 Please file issues on github, or send bug reports (or comments) to achiwa912+gmail.com (replace '+' with '@').
 
 
-<a id="org9d5ac9b"></a>
+<a id="org0fee3e4"></a>
 
 ## Getting started
 
 
-<a id="org48d25bc"></a>
+<a id="orgb86f0bd"></a>
 
 ### Prerequisites
 
@@ -207,7 +209,7 @@ Please file issues on github, or send bug reports (or comments) to achiwa912+gma
 -   dlconf.yaml - server config file
 
 
-<a id="org3854648"></a>
+<a id="orgddca103"></a>
 
 ### Installation
 
@@ -219,20 +221,22 @@ Please file issues on github, or send bug reports (or comments) to achiwa912+gma
 6.  Run "python dl.py"
 
 
-<a id="orgde6a79c"></a>
+<a id="org2087299"></a>
 
 ### DL server installation (optional)
 
+Multiplayer mode requires a DL server.
+
 1.  Setup python 3.8 or later
-2.  Install aiohttp: `pip aiohttp`
-3.  Install Socket.IO server: `pip python-socketio`
-4.  Install aiofiles: `pip aiofiles`
+2.  Install aiohttp: `pip install aiohttp`
+3.  Install Socket.IO server: `pip install python-socketio`
+4.  Install aiofiles: `pip install aiofiles`
 5.  Install PyYAML: `pip install pyyaml`
 6.  Place dlsv.py in a directory on the same PC as dl.py (DL client)
 7.  Run "python dlsv.py"
 
 
-<a id="orgf035b61"></a>
+<a id="orgdae62b2"></a>
 
 ## How to Play
 
@@ -249,7 +253,7 @@ You can save either at Edge of Town or from the Camp menu.
 You can perform resume operation only from Edge of Town.
 
 
-<a id="org04d7390"></a>
+<a id="orgbb4a74d"></a>
 
 ### Tips
 
@@ -260,14 +264,14 @@ You can perform resume operation only from Edge of Town.
 -   You can Q)uit game on a prompt (press 'Q' (shift-q)) to quit game (you might need additional ctrl+c)
 
 
-<a id="org40b3e87"></a>
+<a id="orgb86c23a"></a>
 
 ## What's new
 
 
-<a id="org9b3b151"></a>
+<a id="orge1e204c"></a>
 
-### Implemented multiplayer mode (6/2/2021 updated)
+### Implemented multiplayer mode (6/3/2021 updated)
 
 Implemented:
 
@@ -278,40 +282,26 @@ Implemented:
     -   Just to move to your friend's location who is in a battle
     -   Share enemy monsters and their status/HPs
     -   You can see friend's activities as well as yours
--   You can have joined camps with your friends (new)
+-   You can have group camps with your friends (new)
     -   You can view fellow party members
     -   You can cast spells to other party members
-    -   Party spells such as gps, hogo and zenkai will be shared among all parties except for 'tsubasa'
-    -   Prep for adventure is shared among all parties
-    -   Heal all members is partially supported
+    -   Group spells such as gps, hogo and zenkai will affect all parties except for 'tsubasa'
+    -   You can use items to other party members
+    -   Prep for adventure affects all parties
 -   You can send/receive messages to/from your friends
 -   Expedition supports save/resume in a remote dungeon
 -   Automatic user registration and authentication
--   Tested with localhost only
+-   Tested with a DL server on the same local network
 
-Enhancement candidates (TBD; wishlist):
+Enhancement candidates (TBD):
 
--   Camping with your friends
-    -   Heal all members
-    -   Use items to your friend's characters
+-   Remaining items for group camp
     -   Trade items
-    -   Exchange messages
 -   Additional monsters defined in a server
 -   Server access via the internet
 
 
-<a id="orgb6887c6"></a>
-
-### Now using database to save/load status (5/7/2021)
-
--   DL used to save/load game status to a file `savedata.pickle`
--   It now saves/loads status to a sqlite3 file `dl.db` using SQLAlchemy
--   Support seamless migration from the saved file to the database
-    -   If `dl.db` file is not present, DL tries to load status from `savedata.pickle` file
-    -   Subsequent save/load will go to the database.  Saving to `savedata.pickle` is not supported anymore
-
-
-<a id="orgd090983"></a>
+<a id="orgbc98978"></a>
 
 # Contributing
 
@@ -324,19 +314,19 @@ Any contributions you make are greatly appreciated.
 5.  Open a Pull Request
 
 
-<a id="org7ac91d5"></a>
+<a id="org61b235d"></a>
 
 # License
 
 Daemon Lord is under [MIT license](https://en.wikipedia.org/wiki/MIT_License).
 
 
-<a id="org16b53cc"></a>
+<a id="orgb3acda0"></a>
 
 # Quick Tour of Daemon Lord
 
 
-<a id="orgdd67d5b"></a>
+<a id="org68b914b"></a>
 
 ## Game start
 
@@ -370,12 +360,12 @@ DL (Daemon Lord) starts with the screen below at the Castle.
 When you first start the game, you need to go to Edge of Town (press `e`) > Training Grounds (press `t`), and then create characters (press `c`).
 
 
-<a id="orgd60e907"></a>
+<a id="orge386889"></a>
 
 ## Edge of Town
 
 
-<a id="org8070ae1"></a>
+<a id="orgbea6261"></a>
 
 ### Training Grounds
 
@@ -731,7 +721,7 @@ As you have already noticed, DL gives you a guide of which letter you can type w
 Have you created six characters?  Then, you should go to Castle > Hawthorne Tavern to form a party.  Type `l` to leave the Training Grounds and then type `c` to go to Castle.
 
 
-<a id="orgb4f65d2"></a>
+<a id="orgeb2e6e9"></a>
 
 ## Castle
 
@@ -746,7 +736,7 @@ Have you created six characters?  Then, you should go to Castle > Hawthorne Tave
 From the Castle menu, you can visit several places, but you want to go to Hawthorne Tavern now so type `h`.
 
 
-<a id="org4664620"></a>
+<a id="org57deb3a"></a>
 
 ### Hawthorne Tavern
 
@@ -778,7 +768,7 @@ Now, they are shown in the party window at the bottom left of the screen.
     6 faun       G-MAG  10    7 OK
 
 
-<a id="org2ec6b84"></a>
+<a id="org8d56739"></a>
 
 ### Trader Jay's
 
@@ -839,7 +829,7 @@ Basically, the front (ie, the first three) members should equip heavily because 
 sling is a long-range weapon that everyone can use.  You can't expect much from sling and its damage is at best 1 or 2, but better than nothing.  Long-ranged weapons tend to be less powerful and more expensive than short-range ones.
 
 
-<a id="org8c81ee1"></a>
+<a id="orgaf8756d"></a>
 
 ### Equip
 
@@ -867,7 +857,7 @@ At Hatthorne Tavern, first `i)nspect` a character and then choose `i)tems` > ite
 Equipped items will have `*` mark next to the item name.  You need to equip one item at a time and for each member.  To change members, type `j, k` .
 
 
-<a id="orgf6ee8dd"></a>
+<a id="orgbbe0d36"></a>
 
 ## Save and Resume
 
@@ -887,7 +877,7 @@ To save and quit the game, go to Edge of Town and type `S` (capital-S).
 You need to run `python dl.py` again to restart and resume the game.  After restarting the game, go to Edge of Town and choose `R)esume from saved data` .  That is, capital-R.  Automatic resume is not supported.
 
 
-<a id="orgeeaab4b"></a>
+<a id="org4202b5b"></a>
 
 ## Dungeon
 
@@ -923,7 +913,7 @@ You (`@`) are now in the dungeon and on the upstairs to the outside world.
 `^` indicates areas that you have not visited yet.  `.` is a floor tile that you can walk on.  
 
 
-<a id="org04d43ea"></a>
+<a id="org635fdc7"></a>
 
 ### Walk around the Dungeon
 
@@ -1140,7 +1130,7 @@ Oops, another door.  Let's open again.
     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^###+###^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
-<a id="org8903b6b"></a>
+<a id="org089ae7e"></a>
 
 ### Battle
 
@@ -1255,7 +1245,7 @@ The party killed all three slimes.
 Yeah!  Each survivor received 27 experience points and 9 gold from this battle.
 
 
-<a id="org5029dc4"></a>
+<a id="orgd91e962"></a>
 
 ### Surprise attacks
 
@@ -1273,7 +1263,7 @@ On the other hand, monsters might surprise your party.  If this occurs, monsters
     ^^^^^^^^^^^^^|    - press space bar                                                     |^^^^^^^^^^^^^^^
 
 
-<a id="orgd9bb3fd"></a>
+<a id="org315081d"></a>
 
 ### Chest
 
@@ -1418,7 +1408,7 @@ Here's the trap list.
 </table>
 
 
-<a id="org313eae8"></a>
+<a id="org1c69e49"></a>
 
 ### Friendly monsters
 
@@ -1439,7 +1429,7 @@ Of course, you will get no e.p. or gold if you chose to walk away.
     6 faun       G-MAG  10    7 OK           ^  Each survivor gets 0 gold.      ^
 
 
-<a id="org4207ac1"></a>
+<a id="org9c07118"></a>
 
 ### Get ouf of the Dungeon
 
@@ -1498,7 +1488,7 @@ Having walked around a lot on this floor, and now the mage's MP is exhausted and
 The party is back at Edge of Town.  It should take a while to get used to the brightness but they are safe again!
 
 
-<a id="org3f5015c"></a>
+<a id="org20ab497"></a>
 
 ### A new dungeon!
 
@@ -1550,7 +1540,7 @@ What?  We can only see 3x3 tiles around the party.  Where has the map data gone?
 See the map is different this time?
 
 
-<a id="org7d7ddea"></a>
+<a id="orgfe7d26a"></a>
 
 ### A new remote dungeon in the DL server (optional; requires a DL server)
 
@@ -1559,7 +1549,7 @@ If all your friends in the same team got out of the remote/server dungeon, the s
 Currently, the DL server doesn't support save/load dungeons.  If a DL server reboots and the next time you resume your adventure in a dungeon on the server, the dungeon data is already lost and you will be navigated to the 1st floor in a new dungeon.
 
 
-<a id="orgfe7e436"></a>
+<a id="org50e131e"></a>
 
 ### Camp
 
@@ -1650,7 +1640,7 @@ Looks like, Ben's HP is fully restored.  Do the same for Cam.
 Great!
 
 
-<a id="org3176b7f"></a>
+<a id="orgf3b57c2"></a>
 
 ### Heal all members
 
@@ -1676,8 +1666,10 @@ Before you get out of the dungeon, you usually heal (ie, recover HP) all party m
 
 Note that this option doesn't cure status anomallies such as paralyzed or even ashed.  Also, the algorithm is not very smart.
 
+Also, this command will use from most powerful healing spells regardless of actual damages of members.  Thus, you wouldn't want to use this command in the beginning or the middle of adventures.  Heal all members is casual and convenient, but not very smart.
 
-<a id="orga8df3ef"></a>
+
+<a id="orgb14eb43"></a>
 
 ### Prep for adventure
 
@@ -1698,7 +1690,7 @@ This is also an automatic-spell-cast option.  When you just go into the dungeon,
     ^^^^^^^^^^| * ed casted hikarinotama                                   |^^^^^^^^^^^^
 
 
-<a id="orgc280ac8"></a>
+<a id="orgeffcb63"></a>
 
 ### Save and Resume from camp
 
@@ -1758,12 +1750,12 @@ And, you are in the dungeon again.
 Let's exit from the dungeon and head to Edge of Town > Castle > Lakehouse Inn for some rest.
 
 
-<a id="orgfee9194"></a>
+<a id="org1c4538c"></a>
 
 ## Castle
 
 
-<a id="org69bea50"></a>
+<a id="org776d2f3"></a>
 
 ### The Lakehouse Inn
 
@@ -1806,14 +1798,16 @@ If their e.p. reach the next level, their level will go up while they are asleep
 In DL, age doesn't matter.  They can stay at the inn as long as they wish without getting old.  All the party members stay at the same room type.
 
 
-<a id="orgf9626f4"></a>
+<a id="org20481de"></a>
 
-## Multiplayer mode (optional)
+# Multiplayer mode (optional)
+
+Multiplayer mode requires an optional DL server.
 
 
-<a id="org07db23c"></a>
+<a id="org83b6fc6"></a>
 
-### Expedition to external dungeon
+## Expedition to external dungeon
 
 If you've setup a DL server, you can travel to a remote dungeon in the server.
 To use this feature, you need to configure `dlconf.yaml` file for `dl.py`.
@@ -1842,11 +1836,18 @@ If you successfully go into a remote dungeon, the header will be like:
 Note `- DL -` is replaced with `<server>` to indicate that you are in a remote dungeon.
 
 
-<a id="org8194dbc"></a>
+<a id="org998299f"></a>
 
-### Send messages
+## Send messages
 
 If you are in a remote dungeon in a DL server, you can send messages to your friends who are also in the same server dungeon and in the same team.
+
+You can send messages when you are:
+
+-   Moving around the dungeon
+-   Choosing actions in a battle
+-   On the camp menu
+-   Inspecting a character at camp
 
 Type `m` pops up a message edit window.
 
@@ -1876,19 +1877,20 @@ And the message is sent to all your friends in the same team, including yourself
 
 Do you notice `D` and `F` in the above screenshots?  These are the 1st letter of your friend's username.  In this example, D for default\_user and F for fellow33.  This way, you can see friends moving around on the same map.
 
-You can also send messages in battles when you are prompted for actions.
+You can also send messages in battles when you are prompted for actions or at camp.
+Note that `m` action is not shown in the battle or camp menu but `m` just works.
 
 
-<a id="orge37e2e8"></a>
+<a id="orge2e990b"></a>
 
-### Battles in a server dungeon
+## Battles in a server dungeon
 
 Battles in a server dungeon are more or less the same as in a non-server dungeon with two exceptions.  The 1st exception is that you can have multiplayer battles (see below).  The other exception is that the number of monster groups in a monster party increases up to 6 and it's +20% more likely that monsters come with fellow monsters.
 
 
-<a id="org835e38c"></a>
+<a id="org6715e13"></a>
 
-### Multiplayer battles
+## Multiplayer battles
 
 In a server dungeon, if your friend's party is in a battle, your party can join the battle by moving to the same location (x, y and floor) as the friend's party.
 
@@ -1982,183 +1984,202 @@ Your friend's ernings:
 This way, if you don't do anything in a joined battle, just looking at your friend's party fighting, you'll get a quarter of the total exp (and gold as well!) without any risks.  If you don't act in a battle, monsters will not attack you.  This feature might be useful when strong monsters surprised you.
 
 
-<a id="orga23b066"></a>
+<a id="orgb17a81a"></a>
 
-### Joined camp
+## Group camp
 
-If you and your friend(s) camp at the same location on the same floor, it will be a joined or group camp.  In a joined camp, you can:
+If you and your friend(s) camp at the same location on the same floor, it will be a group camp.  In a group camp, you can:
 
 -   view (inspect) your friend's party members
 -   cast a heal/cure spell to a member of your friend's party
 -   group spells will affect your friend's party as well (except 'tsubasa')
     -   prep for adventure will affect your friend's party as well
-
-1.  View other parties
-
-    If you press `P` on the (joined) camp menu, the header will change and the party window will switch to other party.
-    
-    The header indicates it is in a VIEW MODE, meaning you can only view other party members.
-    
-         [VIEW MODE] <server> [joined camp] floor:?? (???/???) ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-        ^^^^^^^^^^| * *** Camp ***                                             |^^^^^^^^^^
-        ^^^^^^^^^^|   i)nspect                                                 |^^^^^^^^^^
-        ^^^^^^^^^^|   P)switch parties                                         |^^^^^^^^^^
-        ^^^^^^^^^^|   S)ave and quit game                                      |^^^^^^^^^^
-        ^^^^^^^^^^|   l)eave                                                   |^^^^^^^^^^
-        ^^^^^^^^^^|   Command? >                                               |^^^^^^^^^^
-    
-    The party window now shows your friend's party members.
-    
-        # name       class  ac   hp status       ^  Exit from dungeon? (y/n) > n        ^
-        1 avocado    G-FIG   4   10 OK           ^* south                               ^
-        2 beets      G-FIG   4    9 OK           ^* south                               ^
-        3 carrot     G-FIG   4   12 OK           ^* west                                ^
-        4 daikon     N-THI  10    8 OK           ^* west                                ^
-        5 eggplant   G-PRI  10    6 OK           ^* east                                ^
-        6 fennel     G-MAG  10    7 OK           ^* east                                
-    
-    If you press `i`, you can view your friend's party members.  You can switch members with `j/k` keys but you can't cast a spell or use an item for your friend's party members.
-    
-         [VIEW MODE] <server> [joined camp] floor:?? (???/???) ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-        ^^^^^^^^^^|   avocado          L  1 g-fig dwarf                        |^^^^^^^^^^
-        ^^^^^^^^^^|                                                            |^^^^^^^^^^
-        ^^^^^^^^^^|   strength 20  gold               13   lvl     1           |^^^^^^^^^^
-        ^^^^^^^^^^|       i.q.  7  e.p.               45   rip     0           |^^^^^^^^^^
-        ^^^^^^^^^^|      piety 10  next             1000   a.c.    4           |^^^^^^^^^^
-        ^^^^^^^^^^|   vitality 10  marks               2   depth   1           |^^^^^^^^^^
-        ^^^^^^^^^^|    agility 11  h.p.       10/     10                       |^^^^^^^^^^
-        ^^^^^^^^^^|       luck  6  status   OK                                 |^^^^^^^^^^
-        ^^^^^^^^^^|                                                            |^^^^^^^^^^
-        ^^^^^^^^^^|   mage  0/0/0/0/0/0/0   priest  0/0/0/0/0/0/0/             |^^^^^^^^^^
-        ^^^^^^^^^^|   1) *long sword        2) *chain mail                     |^^^^^^^^^^
-        ^^^^^^^^^^|   3) *large shield      4)                                 |^^^^^^^^^^
-        ^^^^^^^^^^|   5)                    6)                                 |^^^^^^^^^^
-        ^^^^^^^^^^|   7)                    8)                                 |^^^^^^^^^^
-        ^^^^^^^^^^|                                                            |^^^^^^^^^^
-        ^^^^^^^^^^|   jk)change member l)leave >                               |^^^^^^^^^^
-
-2.  Heal/cure other party members
-
-    When your member tries to cast a heal/cure spell, you can press `p` to switch party.
-    
-         daemon lord <server> [joined camp] floor:?? (???/???) ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-        ^^^^^^^^^^|   fun              L 26 g-bis elf                          |^^^^^^^^^^
-        ^^^^^^^^^^|                                                            |^^^^^^^^^^
-        ^^^^^^^^^^|   strength 12  gold           865167   lvl    26           |^^^^^^^^^^
-        ^^^^^^^^^^| | * Spell memu:                                  |         |^^^^^^^^^^
-        ^^^^^^^^^^| |   c)ast spell v)iew list l)eave > c            |         |^^^^^^^^^^
-        ^^^^^^^^^^| | * What spell to cast?                          |         |^^^^^^^^^^
-        ^^^^^^^^^^| | > jiai                                         |         |^^^^^^^^^^
-        ^^^^^^^^^^| |   Who? - # or p)switch parties l)eave >        |         |^^^^^^^^^^
-    
-    If you do this, you'll see your friend's party members in the party window and you can specify a member in the party.
-    
-        # name       class  ac   hp status       ^  Exit from dungeon? (y/n) > n        ^
-        1 avocado    G-FIG   4   10 OK           ^* south                               ^
-        2 beets      G-FIG   4    9 OK           ^* south                               ^
-        3 carrot     G-FIG   4   12 OK           ^* west                                ^
-        4 daikon     N-THI  10    8 OK           ^* west                                ^
-        5 eggplant   G-PRI  10    6 OK           ^* east                                ^
-        6 fennel     G-MAG  10    7 OK           ^* east                                ^
-    
-    You specified 2 - beets.
-    
-        ^^^^^^^^^^| | * Spell memu:                                  |         |^^^^^^^^^^
-        ^^^^^^^^^^| |   c)ast spell v)iew list l)eave > c            |         |^^^^^^^^^^
-        ^^^^^^^^^^| | * What spell to cast?                          |         |^^^^^^^^^^
-        ^^^^^^^^^^| | > jiai                                         |         |^^^^^^^^^^
-        ^^^^^^^^^^| |   Who? - # or p)switch parties l)eave > p      |         |^^^^^^^^^^
-        ^^^^^^^^^^| |   Who? - # or p)switch parties l)eave > 2      |         |^^^^^^^^^^
-        ^^^^^^^^^^| |   fun started casting jiai                     |         |^^^^^^^^^^
-        ^^^^^^^^^^| | * Spell memu:                                  |         |^^^^^^^^^^
-        ^^^^^^^^^^| |   c)ast spell v)iew list l)eave >              |         |^^^^^^^^^^
-    
-    Let's look at your friend's screen.  The last two lines show that `fun` in the other party casted 'jiai' to heal beets' HP.
-    
-         daemon lord <server> [joined camp] floor:?? (???/???) ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-        ^^^^^^^^^^| * *** Camp ***                                             |^^^^^^^^^^
-        ^^^^^^^^^^|   i)nspect                                                 |^^^^^^^^^^
-        ^^^^^^^^^^|   r)eorder party                                           |^^^^^^^^^^
-        ^^^^^^^^^^|   h)eal all members                                        |^^^^^^^^^^
-        ^^^^^^^^^^|   p)rep for adventure                                      |^^^^^^^^^^
-        ^^^^^^^^^^|   S)ave and quit game                                      |^^^^^^^^^^
-        ^^^^^^^^^^|   l)eave                                                   |^^^^^^^^^^
-        ^^^^^^^^^^| - fun(default_user) casted jiai for beets.                 |^^^^^^^^^^
-        ^^^^^^^^^^|   beets's HP was fully restored.                           |^^^^^^^^^^
-
-3.  Group spells and prep for adventure
-
-    In a joined camp, group spells affect the other parties as well.  If your member casts "kanzen" which is a group heal spell, all members in the joint parties will be healed.
-    
-    Here, `ed` in your party casted zenkai.
-    
-         daemon lord <server> [joined camp] floor:?? (???/???) ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-        ^^^^^^^^^^|   ed               L 21 g-bis gnome                        |^^^^^^^^^^
-        ^^^^^^^^^^|                                                            |^^^^^^^^^^
-        ^^^^^^^^^^|   strength 15  gold          1039893   lvl    21           |^^^^^^^^^^
-        ^^^^^^^^^^| |   c)ast spell v)iew list l)eave > c            |         |^^^^^^^^^^
-        ^^^^^^^^^^| | * What spell to cast?                          |         |^^^^^^^^^^
-        ^^^^^^^^^^| | > zenkai                                       |         |^^^^^^^^^^
-        ^^^^^^^^^^| |   ed started casting zenkai                    |         |^^^^^^^^^^
-        ^^^^^^^^^^| |   andy's HP was fully restored.                |         |^^^^^^^^^^
-        ^^^^^^^^^^| |   bean's HP was fully restored.                |         |^^^^^^^^^^
-        ^^^^^^^^^^| |   cammy's HP was fully restored.               |         |^^^^^^^^^^
-        ^^^^^^^^^^| |   dexie's HP was fully restored.               |         |^^^^^^^^^^
-        ^^^^^^^^^^| |   ed's HP was fully restored.                  |         |^^^^^^^^^^
-        ^^^^^^^^^^| |   fun's HP was fully restored.                 |         |^^^^^^^^^^
-    
-    Let's look at your friend's screen again.
-    
-        ^^^^^^^^^^| - ed(default_user) casted zenkai.                          |^^^^^^^^^^
-        ^^^^^^^^^^|   avocado's HP was fully restored.                         |^^^^^^^^^^
-        ^^^^^^^^^^|   beets's HP was fully restored.                           |^^^^^^^^^^
-        ^^^^^^^^^^|   carrot's HP was fully restored.                          |^^^^^^^^^^
-        ^^^^^^^^^^|   daikon's HP was fully restored.                          |^^^^^^^^^^
-        ^^^^^^^^^^|   eggplant's HP was fully restored.                        |^^^^^^^^^^
-        ^^^^^^^^^^|   fennel's HP was fully restored.                          |^^^^^^^^^^
-    
-    Similarly, if you do "prep for adventure", these spells affect all the parties.
-    
-         daemon lord <server> [joined camp] floor: 1 (  3/ 14) <identify> <light> ^^^^^^^^
-        ^^^^^^^^^^| * *** Camp ***                                             |^^^^^^^^^^
-        ^^^^^^^^^^|   i)nspect                                                 |^^^^^^^^^^
-        ^^^^^^^^^^|   r)eorder party                                           |^^^^^^^^^^
-        ^^^^^^^^^^|   h)eal all members                                        |^^^^^^^^^^
-        ^^^^^^^^^^|   p)rep for adventure                                      |^^^^^^^^^^
-        ^^^^^^^^^^|   P)switch parties                                         |^^^^^^^^^^
-        ^^^^^^^^^^|   S)ave and quit game                                      |^^^^^^^^^^
-        ^^^^^^^^^^|   l)eave                                                   |^^^^^^^^^^
-        ^^^^^^^^^^|   Command? > p                                             |^^^^^^^^^^
-        ^^^^^^^^^^| * ed casted hogo                                           |^^^^^^^^^^
-        ^^^^^^^^^^| * ed casted shikibetsu                                     |^^^^^^^^^^
-        ^^^^^^^^^^| * cammy casted gps                                         |^^^^^^^^^^
-        ^^^^^^^^^^| * fun casted hikarinotama                                  |^^^^^^^^^^
-    
-    How about your friend's party?
-    
-         daemon lord <server> [joined camp] floor: 1 (  3/ 14) <identify> <light> ^^^^^^^^
-        ^^^^^^^^^^| * *** Camp ***                                             |^^^^^^^^^^
-        ^^^^^^^^^^|   i)nspect                                                 |^^^^^^^^^^
-        ^^^^^^^^^^|   r)eorder party                                           |^^^^^^^^^^
-        ^^^^^^^^^^|   h)eal all members                                        |^^^^^^^^^^
-        ^^^^^^^^^^|   p)rep for adventure                                      |^^^^^^^^^^
-        ^^^^^^^^^^|   S)ave and quit game                                      |^^^^^^^^^^
-        ^^^^^^^^^^|   l)eave                                                   |^^^^^^^^^^
-        ^^^^^^^^^^| - ed(default_user) casted hogo.                            |^^^^^^^^^^
-        ^^^^^^^^^^| - ed(default_user) casted shikibetsu.                      |^^^^^^^^^^
-        ^^^^^^^^^^| - cammy(default_user) casted gps.                          |^^^^^^^^^^
-        ^^^^^^^^^^| - fun(default_user) casted hikarinotama.                   |^^^^^^^^^^
-    
-    This party members are all Lv 1 and don't know hogo, shikibetsu, gps or hikarinotama.
-    Very convenient.
+-   use an item to a member of your friend's party
 
 
-<a id="org5db40cf"></a>
+<a id="orgd6bdf08"></a>
+
+### View other parties
+
+If you press `P` on the (joined) camp menu, the header will change and the party window will switch to other party.
+
+The header indicates it is in a VIEW MODE, meaning you can only view other party members.
+
+     [VIEW MODE] <server> [joined camp] floor:?? (???/???) ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^| * *** Camp ***                                             |^^^^^^^^^^
+    ^^^^^^^^^^|   i)nspect                                                 |^^^^^^^^^^
+    ^^^^^^^^^^|   P)switch parties                                         |^^^^^^^^^^
+    ^^^^^^^^^^|   S)ave and quit game                                      |^^^^^^^^^^
+    ^^^^^^^^^^|   l)eave                                                   |^^^^^^^^^^
+    ^^^^^^^^^^|   Command? >                                               |^^^^^^^^^^
+
+The party window now shows your friend's party members.
+
+    # name       class  ac   hp status       ^  Exit from dungeon? (y/n) > n        ^
+    1 avocado    G-FIG   4   10 OK           ^* south                               ^
+    2 beets      G-FIG   4    9 OK           ^* south                               ^
+    3 carrot     G-FIG   4   12 OK           ^* west                                ^
+    4 daikon     N-THI  10    8 OK           ^* west                                ^
+    5 eggplant   G-PRI  10    6 OK           ^* east                                ^
+    6 fennel     G-MAG  10    7 OK           ^* east                                
+
+If you press `i`, you can view your friend's party members.  You can switch members with `j/k` keys but you can't cast a spell or use an item for your friend's party members.
+
+     [VIEW MODE] <server> [joined camp] floor:?? (???/???) ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^|   avocado          L  1 g-fig dwarf                        |^^^^^^^^^^
+    ^^^^^^^^^^|                                                            |^^^^^^^^^^
+    ^^^^^^^^^^|   strength 20  gold               13   lvl     1           |^^^^^^^^^^
+    ^^^^^^^^^^|       i.q.  7  e.p.               45   rip     0           |^^^^^^^^^^
+    ^^^^^^^^^^|      piety 10  next             1000   a.c.    4           |^^^^^^^^^^
+    ^^^^^^^^^^|   vitality 10  marks               2   depth   1           |^^^^^^^^^^
+    ^^^^^^^^^^|    agility 11  h.p.       10/     10                       |^^^^^^^^^^
+    ^^^^^^^^^^|       luck  6  status   OK                                 |^^^^^^^^^^
+    ^^^^^^^^^^|                                                            |^^^^^^^^^^
+    ^^^^^^^^^^|   mage  0/0/0/0/0/0/0   priest  0/0/0/0/0/0/0/             |^^^^^^^^^^
+    ^^^^^^^^^^|   1) *long sword        2) *chain mail                     |^^^^^^^^^^
+    ^^^^^^^^^^|   3) *large shield      4)                                 |^^^^^^^^^^
+    ^^^^^^^^^^|   5)                    6)                                 |^^^^^^^^^^
+    ^^^^^^^^^^|   7)                    8)                                 |^^^^^^^^^^
+    ^^^^^^^^^^|                                                            |^^^^^^^^^^
+    ^^^^^^^^^^|   jk)change member l)leave >                               |^^^^^^^^^^
+
+
+<a id="orgcf41ad6"></a>
+
+### Heal/cure other party members
+
+When your member tries to cast a heal/cure spell, you can press `p` to switch party.
+
+     daemon lord <server> [joined camp] floor:?? (???/???) ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^|   fun              L 26 g-bis elf                          |^^^^^^^^^^
+    ^^^^^^^^^^|                                                            |^^^^^^^^^^
+    ^^^^^^^^^^|   strength 12  gold           865167   lvl    26           |^^^^^^^^^^
+    ^^^^^^^^^^| | * Spell memu:                                  |         |^^^^^^^^^^
+    ^^^^^^^^^^| |   c)ast spell v)iew list l)eave > c            |         |^^^^^^^^^^
+    ^^^^^^^^^^| | * What spell to cast?                          |         |^^^^^^^^^^
+    ^^^^^^^^^^| | > jiai                                         |         |^^^^^^^^^^
+    ^^^^^^^^^^| |   Who? - # or p)switch parties l)eave >        |         |^^^^^^^^^^
+
+If you do this, you'll see your friend's party members in the party window and you can specify a member in the party.
+
+    # name       class  ac   hp status       ^  Exit from dungeon? (y/n) > n        ^
+    1 avocado    G-FIG   4   10 OK           ^* south                               ^
+    2 beets      G-FIG   4    9 OK           ^* south                               ^
+    3 carrot     G-FIG   4   12 OK           ^* west                                ^
+    4 daikon     N-THI  10    8 OK           ^* west                                ^
+    5 eggplant   G-PRI  10    6 OK           ^* east                                ^
+    6 fennel     G-MAG  10    7 OK           ^* east                                ^
+
+You specified 2 - beets.
+
+    ^^^^^^^^^^| | * Spell memu:                                  |         |^^^^^^^^^^
+    ^^^^^^^^^^| |   c)ast spell v)iew list l)eave > c            |         |^^^^^^^^^^
+    ^^^^^^^^^^| | * What spell to cast?                          |         |^^^^^^^^^^
+    ^^^^^^^^^^| | > jiai                                         |         |^^^^^^^^^^
+    ^^^^^^^^^^| |   Who? - # or p)switch parties l)eave > p      |         |^^^^^^^^^^
+    ^^^^^^^^^^| |   Who? - # or p)switch parties l)eave > 2      |         |^^^^^^^^^^
+    ^^^^^^^^^^| |   fun started casting jiai                     |         |^^^^^^^^^^
+    ^^^^^^^^^^| | * Spell memu:                                  |         |^^^^^^^^^^
+    ^^^^^^^^^^| |   c)ast spell v)iew list l)eave >              |         |^^^^^^^^^^
+
+Let's look at your friend's screen.  The last two lines show that `fun` in the other party casted 'jiai' to heal beets' HP.
+
+     daemon lord <server> [joined camp] floor:?? (???/???) ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^| * *** Camp ***                                             |^^^^^^^^^^
+    ^^^^^^^^^^|   i)nspect                                                 |^^^^^^^^^^
+    ^^^^^^^^^^|   r)eorder party                                           |^^^^^^^^^^
+    ^^^^^^^^^^|   h)eal all members                                        |^^^^^^^^^^
+    ^^^^^^^^^^|   p)rep for adventure                                      |^^^^^^^^^^
+    ^^^^^^^^^^|   S)ave and quit game                                      |^^^^^^^^^^
+    ^^^^^^^^^^|   l)eave                                                   |^^^^^^^^^^
+    ^^^^^^^^^^| - fun(default_user) casted jiai for beets.                 |^^^^^^^^^^
+    ^^^^^^^^^^|   beets's HP was fully restored.                           |^^^^^^^^^^
+
+
+<a id="orgac8476a"></a>
+
+### Group spells and prep for adventure
+
+In a joined camp, group spells affect the other parties as well.  If your member casts "kanzen" which is a group heal spell, all members in the joint parties will be healed.
+
+Here, `ed` in your party casted zenkai.
+
+     daemon lord <server> [joined camp] floor:?? (???/???) ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ^^^^^^^^^^|   ed               L 21 g-bis gnome                        |^^^^^^^^^^
+    ^^^^^^^^^^|                                                            |^^^^^^^^^^
+    ^^^^^^^^^^|   strength 15  gold          1039893   lvl    21           |^^^^^^^^^^
+    ^^^^^^^^^^| |   c)ast spell v)iew list l)eave > c            |         |^^^^^^^^^^
+    ^^^^^^^^^^| | * What spell to cast?                          |         |^^^^^^^^^^
+    ^^^^^^^^^^| | > zenkai                                       |         |^^^^^^^^^^
+    ^^^^^^^^^^| |   ed started casting zenkai                    |         |^^^^^^^^^^
+    ^^^^^^^^^^| |   andy's HP was fully restored.                |         |^^^^^^^^^^
+    ^^^^^^^^^^| |   bean's HP was fully restored.                |         |^^^^^^^^^^
+    ^^^^^^^^^^| |   cammy's HP was fully restored.               |         |^^^^^^^^^^
+    ^^^^^^^^^^| |   dexie's HP was fully restored.               |         |^^^^^^^^^^
+    ^^^^^^^^^^| |   ed's HP was fully restored.                  |         |^^^^^^^^^^
+    ^^^^^^^^^^| |   fun's HP was fully restored.                 |         |^^^^^^^^^^
+
+Let's look at your friend's screen again.
+
+    ^^^^^^^^^^| - ed(default_user) casted zenkai.                          |^^^^^^^^^^
+    ^^^^^^^^^^|   avocado's HP was fully restored.                         |^^^^^^^^^^
+    ^^^^^^^^^^|   beets's HP was fully restored.                           |^^^^^^^^^^
+    ^^^^^^^^^^|   carrot's HP was fully restored.                          |^^^^^^^^^^
+    ^^^^^^^^^^|   daikon's HP was fully restored.                          |^^^^^^^^^^
+    ^^^^^^^^^^|   eggplant's HP was fully restored.                        |^^^^^^^^^^
+    ^^^^^^^^^^|   fennel's HP was fully restored.                          |^^^^^^^^^^
+
+Similarly, if you do "prep for adventure", these spells affect all the parties.
+
+     daemon lord <server> [joined camp] floor: 1 (  3/ 14) <identify> <light> ^^^^^^^^
+    ^^^^^^^^^^| * *** Camp ***                                             |^^^^^^^^^^
+    ^^^^^^^^^^|   i)nspect                                                 |^^^^^^^^^^
+    ^^^^^^^^^^|   r)eorder party                                           |^^^^^^^^^^
+    ^^^^^^^^^^|   h)eal all members                                        |^^^^^^^^^^
+    ^^^^^^^^^^|   p)rep for adventure                                      |^^^^^^^^^^
+    ^^^^^^^^^^|   P)switch parties                                         |^^^^^^^^^^
+    ^^^^^^^^^^|   S)ave and quit game                                      |^^^^^^^^^^
+    ^^^^^^^^^^|   l)eave                                                   |^^^^^^^^^^
+    ^^^^^^^^^^|   Command? > p                                             |^^^^^^^^^^
+    ^^^^^^^^^^| * ed casted hogo                                           |^^^^^^^^^^
+    ^^^^^^^^^^| * ed casted shikibetsu                                     |^^^^^^^^^^
+    ^^^^^^^^^^| * cammy casted gps                                         |^^^^^^^^^^
+    ^^^^^^^^^^| * fun casted hikarinotama                                  |^^^^^^^^^^
+
+How about your friend's party?
+
+     daemon lord <server> [joined camp] floor: 1 (  3/ 14) <identify> <light> ^^^^^^^^
+    ^^^^^^^^^^| * *** Camp ***                                             |^^^^^^^^^^
+    ^^^^^^^^^^|   i)nspect                                                 |^^^^^^^^^^
+    ^^^^^^^^^^|   r)eorder party                                           |^^^^^^^^^^
+    ^^^^^^^^^^|   h)eal all members                                        |^^^^^^^^^^
+    ^^^^^^^^^^|   p)rep for adventure                                      |^^^^^^^^^^
+    ^^^^^^^^^^|   S)ave and quit game                                      |^^^^^^^^^^
+    ^^^^^^^^^^|   l)eave                                                   |^^^^^^^^^^
+    ^^^^^^^^^^| - ed(default_user) casted hogo.                            |^^^^^^^^^^
+    ^^^^^^^^^^| - ed(default_user) casted shikibetsu.                      |^^^^^^^^^^
+    ^^^^^^^^^^| - cammy(default_user) casted gps.                          |^^^^^^^^^^
+    ^^^^^^^^^^| - fun(default_user) casted hikarinotama.                   |^^^^^^^^^^
+
+This party members are all Lv 1 and don't know hogo, shikibetsu, gps or hikarinotama.
+Very convenient.
+
+
+<a id="orge4a7148"></a>
+
+### Heal all members
+
+Heal all members `p` is a casual, but not very smart auto heal command.  At a group camp, heal all members checks injured members in other parties only for group heal spells (ie, zenjiai and zenkai).  
+
+This design is on purpose.  Otherwise, you wouldn't want to use this command in group camps for fear of using up "kanzen" and other powerful healing spells.
+
+
+<a id="orgec1670a"></a>
 
 # Spells
 
 
-<a id="orgf1d5f59"></a>
+<a id="org0ab1b12"></a>
 
 ## Overview
 
@@ -2177,7 +2198,7 @@ In this example, she has 2 MPs remaining for level 1 mage spells.  She will acqu
 The maximum MPs for each spell level is 9.  A high level mage/priest will have `9/9/9/9/9/9/9` MPs.
 
 
-<a id="org9aaf8c8"></a>
+<a id="orgb8c99b7"></a>
 
 ## Usage
 
@@ -2206,7 +2227,7 @@ To use spells from the camp menu, first `i)nspect` a character who would like to
     ^^^^^^^^^^|   i)tems s)pells jk)change member l)leave > s              |^^^^^^
 
 
-<a id="org093e2e3"></a>
+<a id="org053c879"></a>
 
 ## Mage Spells
 
@@ -2396,7 +2417,7 @@ One of the most useful spells will be newly introduced "tsubasa".  This spell ca
 </table>
 
 
-<a id="org2a97e34"></a>
+<a id="org25f900c"></a>
 
 ## Priest Spells
 
@@ -2648,12 +2669,12 @@ One of the most useful spells will be newly introduced "tsubasa".  This spell ca
 </table>
 
 
-<a id="org94c2fb2"></a>
+<a id="org799e956"></a>
 
 # Monsters
 
 
-<a id="org36160f4"></a>
+<a id="org24e934e"></a>
 
 ## Shallow floors
 
@@ -2993,7 +3014,7 @@ Monsters on the second floor are strong.  You could even get poisoned or beheade
 </table>
 
 
-<a id="org1f13247"></a>
+<a id="org4a06488"></a>
 
 ## Middle depth floors
 
@@ -3427,7 +3448,7 @@ Monsters on the second floor are strong.  You could even get poisoned or beheade
 </table>
 
 
-<a id="org37d6da0"></a>
+<a id="org5ac7f91"></a>
 
 ## Deep floors
 
@@ -3721,12 +3742,12 @@ Monsters on the second floor are strong.  You could even get poisoned or beheade
 </table>
 
 
-<a id="orgf1d405e"></a>
+<a id="org919c21c"></a>
 
 ## Boss and special monsters
 
 
-<a id="org0ce7472"></a>
+<a id="org2607dce"></a>
 
 ### gate keeper
 
@@ -3734,28 +3755,28 @@ Huge scorpion originated in an SNES game, Tenchi-sozo.
 It was a boss monster on floor 1 but hasn't been implemented.  Rather weak on deepest floors.
 
 
-<a id="org941708a"></a>
+<a id="orgf15c069"></a>
 
 ### d????? ???, t?? ????, a????
 
 Boss monsters.  You'll need special keys to break into the boss rooms.  Special keys should be placed somewhere on the same floor.  Look for `,` floor tile.
 
 
-<a id="orge7098b3"></a>
+<a id="org205a2ad"></a>
 
 ### d????? ????
 
 The last boss.  He is with mighty earth demons, which makes the last battle most difficult to win.  Hint: Use certain spells.  Though extremely risky, you would have no other choice.
 
 
-<a id="org48af79f"></a>
+<a id="orgb3b4af2"></a>
 
 ### S???????, N??????
 
 Ancient gods from the past.  You are doomed to be destroyed.  Run away immediately if you see them.
 
 
-<a id="orgfe8e984"></a>
+<a id="org894f000"></a>
 
 # Contact
 
@@ -3764,7 +3785,7 @@ Kyosuke Achiwa - @kyos\_achwan - achiwa912+gmail.com (please replace `+` with `@
 Project Link: <https://github.com/achiwa912/daemonlord>
 
 
-<a id="org1a68ec1"></a>
+<a id="org81f34c1"></a>
 
 # Acknowledgements
 
