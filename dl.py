@@ -538,6 +538,7 @@ class Game:
 
             # Save member items
             for i in mem.items:
+                # We can't save "on sale" status as added later
                 mi_db = Memitems_db(name=i[0], equipped=i[1],
                                     cursed=i[2], unidentified=i[3],
                                     member_id=mem_db.id)
@@ -755,7 +756,7 @@ class Game:
                     Memitems_db).filter_by(member_id=mem_db.id).order_by(
                         Memitems_db.id):
                 mem.items.append([mi_db.name, mi_db.equipped, mi_db.cursed,
-                                  mi_db.unidentified])
+                                  mi_db.unidentified, False])
 
         # load party members
         self.party.members = []
@@ -1623,7 +1624,8 @@ class Member:
         self.nextexp = 0
         self.marks = 0
         self.rip = 0
-        self.items = []  # 0name, 1equipped, 2cursed, 3unidentified
+        self.items = []  # [0name, 1equipped, 2cursed, 3unidentified, 4onsale]
+        # on sale status is only used in group camps and not saved/loaded
         self.stat = [0, 0, 0, 0, 0, 0]
         self.stat[0], self.stat[1], self.stat[2], self.stat[3], self.stat[4], \
             self.stat[5] = race_status[race]
@@ -1733,6 +1735,8 @@ class Member:
                 if self.job.name[:1].lower() not in \
                    game.itemdef[item[0]].jobs.lower():
                     m = '#'  # can't equip
+                if item[4]:
+                    m = '$'  # on sale
                 if item[1]:
                     m = '*'  # equipped
                 if item[2]:
@@ -1763,6 +1767,11 @@ class Member:
                and game.vscr.show_puser != config['server']['auth']['user']:
                 c1 = mw.input_char("jk)change member l)leave",
                                    values=['j', 'k', 'l', 'm'])
+            elif game.party.place == Place.CAMP and \
+                    (ulist := game.dungeon.get_gcamp_users()):
+                c1 = mw.input_char(
+                    "i)tems s)pells c)lass b)uy jk)change member l)leave",
+                    values=['i', 's', 'c', 'b', 'j', 'k', 'l', 'm'])
             else:
                 c1 = mw.input_char(
                     "i)tems s)pells c)lass jk)change member l)leave",
@@ -1781,14 +1790,62 @@ class Member:
             elif c1 == 'k':
                 return -1  # previous member
             elif c1 == 'm':
-                if game.dungeon.expedition:
-                    vscr = game.vscr
-                    mw = Meswin(vscr, 6, 2, 64, 2, frame=True)
-                    vscr.meswins.append(mw)
-                    mes = mw.input('Message to send?')
-                    sio.emit('message', mes)
-                    vscr.meswins.pop()
+                send_message()
+            elif c1 == 'b':  # see on sale items
+                self.buy_onsale(ulist)
         return 0
+
+    def buy_onsale(self, ulist):
+        """
+        See on sale items in the group camp users
+        sio.emit('buy', buy_item_dict) if you chose to buy one
+        """
+        if not ulist:
+            return
+        mw = Meswin(game.vscr, 14, 4, 52, 12, frame=True)
+        game.vscr.meswins.append(mw)
+        mw.print("These items are on sale:")
+        items = []  # (idx, user, mem, item, price)
+        idx = 1
+        for user in ulist:
+            for mem in game.dungeon.parties[user].members:
+                for item_idx, item in enumerate(mem.items):
+                    if game.itemdef[item[0]].level < 10 and \
+                       not item[1] and not item[2] and not item[3] \
+                       and item[4]:
+                        idct = {'idx': idx, 'seller': user,
+                                'buyer': config['server']['auth']['user'],
+                                'member': mem.name, 'item': item[0],
+                                'item_idx': item_idx,
+                                'price': game.itemdef[item[0]].price*7//10,
+                                'buyer_member': self.name}
+                        items.append(idct)
+                        idx += 1
+        for i in items:
+            mw.print(
+                f"{i['idx']:2d} {i['item'].ljust(16)} {i['price']:6d} ({i['seller'].ljust(10)})", start=' ')
+        while True:
+            num = mw.input("Which item to buy? (# or l)eave)")
+            try:
+                num = int(num)
+                idct = next(idct for idct in items if idct['idx'] == num)
+                break
+            except:
+                if num == 'l':
+                    game.vscr.meswins.pop()
+                    return
+        if idct['price'] > sum(mem.gold for mem in game.party.members):
+            mw.print("You can't afford it.")
+            game.vscr.disp_scrwin()
+            getch()
+        else:
+            sio.emit('buy', idct)
+            mw.print("Processing.")
+            game.vscr.disp_scrwin()
+            getch()
+            game.vscr.meswins.pop()
+            game.vscr.disp_scrwin()
+        return
 
     def view_spells(self, game):
         """
@@ -1869,7 +1926,7 @@ class Member:
         Item menu.  Use, equip, trade, drop an item.
         """
         vscr = game.vscr
-        iw = Meswin(vscr, 14, 2, 50, 8, frame=True)
+        iw = Meswin(vscr, 14, 2, 56, 8, frame=True)
         vscr.meswins.append(iw)
         while True:
             iw.print("which item?  # or l)leave")
@@ -1888,8 +1945,15 @@ class Member:
             if self.items[inum][3]:  # unidentified
                 dispname = ''.join(['?', game.itemdef[dispname].unident])
             iw.print(f"{inum+1}) {dispname}", start=' ')
-            c = iw.input_char("u)se e)quip t)rade d)rop l)eave",
-                              values=['u', 'e', 't', 'd', 'l'])
+            if not game.dungeon.expedition or\
+               self.items[inum][1] or self.items[inum][2] or\
+               self.items[inum][3]:
+                c = iw.input_char("u)se e)quip t)rade d)rop l)eave",
+                                  values=['u', 'e', 't', 'd', 'l'])
+            else:
+                c = iw.input_char("u)se e)quip t)rade d)rop o)n sale l)eave",
+                                  values=['u', 'e', 't', 'd', 'o', 'l'])
+
             if c == 'l':
                 continue
             elif c == 'u':
@@ -2032,6 +2096,18 @@ class Member:
                 vscr.meswins.pop()
                 vscr.cls()
                 # vscr.disp_scrwin()
+                return
+            elif c == 'o':
+                self.items[inum][4] = not self.items[inum][4]
+                if game.dungeon.expedition:
+                    if self.items[inum][4]:
+                        sio.emit(
+                            'message', f"Just put <{self.items[inum][0]}> on sale")
+                        data = {'requester': None,
+                                'party_s': game.party.todic()}
+                        sio.emit('update_party', data)
+                vscr.meswins.pop()
+                vscr.cls()
                 return
 
     def calc_ac(self, game):
@@ -3904,12 +3980,7 @@ class Battle:
                         self.game.vscr.disp_scrwin()
                         break
                     elif c == 'm' and game.dungeon.expedition:
-                        mw = Meswin(game.vscr, 10, 8, 60, 2, frame=True)
-                        game.vscr.meswins.append(mw)
-                        mes = mw.input('Message to send?')
-                        sio.emit('message', mes)
-                        game.vscr.meswins.pop()
-                        game.vscr.disp_scrwin()
+                        send_message()
                 if c == 't':
                     break
             if c != 't':
@@ -4863,7 +4934,7 @@ class Chest:
             return
         mem = random.choice(
             [mem for mem in self.game.party.members if len(mem.items) < 8])
-        mem.items.append([item, False, False, True])
+        mem.items.append([item, False, False, True, False])  # unidentified
         mw.print(
             f"{mem.name} found {self.game.itemdef[item].unident}", start=' ')
         v.disp_scrwin()
@@ -5448,7 +5519,7 @@ def trader_buy(game, mem):
                 c = getch(wait=True)
                 if c == 'y':
                     if game.party.pay(game.itemdef[items[idx]].price):
-                        bought = [items[idx], False, False, False]
+                        bought = [items[idx], False, False, False, False]
                         mem.items.append(bought)
                         game.shopitems[items[idx]] -= 1
                         iw.mes_lines[0] = "Anything else, noble sir?"
@@ -5461,7 +5532,7 @@ def trader_buy(game, mem):
             else:
                 iw.mes_lines[0] = "Anything else, noble sir?"
                 mem.gold -= game.itemdef[items[idx]].price
-                bought = [items[idx], False, False, False]
+                bought = [items[idx], False, False, False, False]
                 mem.items.append(bought)
                 game.shopitems[items[idx]] -= 1
                 vscr.disp_scrwin()
@@ -6120,6 +6191,8 @@ def camp(game, floor_obj):
             mw.print("Thank you for playing.")
             mw.print("See you again soon.")
             v.disp_scrwin()
+            if game.dungeon.expedition:
+                sio.disconnect()
             sys.exit()
         elif c == 'i':
             idx = 1
@@ -6147,13 +6220,7 @@ def camp(game, floor_obj):
                 uidx = 0
             game.vscr.show_puser = ulist[uidx]
         elif c == 'm':
-            if game.dungeon.expedition:
-                vscr = game.vscr
-                mw = Meswin(vscr, 6, 2, 64, 2, frame=True)
-                vscr.meswins.append(mw)
-                mes = mw.input('Message to send?')
-                sio.emit('message', mes)
-                vscr.meswins.pop()
+            send_message()
             continue
 
     v.disp_scrwin(floor_obj)
@@ -6328,11 +6395,7 @@ def maze(game):
                         floor_obj.put_tile(
                             x, y, floor_obj.get_tile(x, y), orig=False)
             elif c == 'm' and game.dungeon.expedition:
-                mw = Meswin(vscr, 10, 2, 60, 2, frame=True)
-                vscr.meswins.append(mw)
-                mes = mw.input('Message to send?')
-                sio.emit('message', mes)
-                vscr.meswins.pop()
+                send_message()
             else:
                 pass
 
@@ -6387,6 +6450,20 @@ def save(game):
     thread = Thread(target=game.save)
     thread.start()
     game.thread = thread
+
+
+def send_message():
+    """
+    Enter and send message to fellow parties
+    Valid only in a server dungeon
+    """
+    if game.dungeon.expedition:
+        vscr = game.vscr
+        mw = Meswin(vscr, 6, 2, 64, 2, frame=True)
+        vscr.meswins.append(mw)
+        mes = mw.input('Message to send?')
+        sio.emit('message', mes)
+        vscr.meswins.pop()
 
 
 if config['client']:
@@ -6553,6 +6630,42 @@ if config['client']:
         """
         t = (data['user'], data['spell'], data['caster'], data['target'])
         game.dungeon.spells_casted.append(t)
+
+    @sio.event
+    def buy(data):
+        if data['buyer'] not in game.dungeon.parties:
+            return
+        mem = next(mem for mem in game.party.members
+                   if mem.name == data['member'])
+        try:
+            item = mem.items[data['item_idx']]
+        except:
+            return
+        if item[0] == data['item'] and not item[1] and not item[2]\
+           and not item[3] and item[4]:  # still on sale?
+            mem.gold += data['price']
+            del mem.items[data['item_idx']]
+            game.vscr.messages.append(
+                (data['buyer'], f"Bought <{data['item']}> from {data['seller']}."))
+            sio.emit('sold', data)
+
+    @sio.event
+    def sold(data):
+        try:
+            mem = next(mem for mem in game.party.members
+                       if mem.name == data['buyer_member'])
+        except:
+            return
+        if mem.gold >= data['price']:
+            mem.gold -= data['price']
+        else:
+            if not game.party.pay(data['price']):
+                return
+        bought = [data['item'], False, False, False, False]
+        mem.items.append(bought)
+        game.vscr.messages.append(
+            (data['seller'], f"Sold <{data['item']}> to {data['buyer']}."))
+
 
 game = Game()  # singleton
 

@@ -263,6 +263,32 @@ async def cast_spell(sid, sdata):
     print(f"Cast {sdata['spell']} for {sdata['target']}({sdata['user']})")
 
 
+@sio.event
+async def buy(sid, data):
+    """
+    'buyer' wants to buy 'item' from 'seller'
+    """
+    if data['seller'] not in login_users:
+        print(f"Ooops, seller: {data['seller']} is not logged in.")
+        return
+    seller_sid = login_users[data['seller']]
+    await sio.emit('buy', data, room=seller_sid)
+    print(f"{data['buyer']} wants to buy {data['item']} from {data['seller']}")
+
+
+@sio.event
+async def sold(sid, data):
+    """
+    'seller' sold 'item' to 'buyer'
+    """
+    if data['buyer'] not in login_users:
+        print(f"Ooops, buyer: {data['buyer']} is not logged in.")
+        return
+    buyer_sid = login_users[data['buyer']]
+    await sio.emit('sold', data, room=buyer_sid)
+    print(f"{data['seller']} sold {data['item']} to {data['buyer']}")
+
+
 class Team:
     """
     Represents a team
