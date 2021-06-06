@@ -3,9 +3,7 @@ import itertools
 from operator import itemgetter, attrgetter
 import csv
 import json
-import fcntl
 from enum import Enum
-import tty
 import select
 import struct
 import sys
@@ -30,8 +28,11 @@ Base = declarative_base()
 if os.name == 'nt':
     import msvcrt  # Windows
     os_windows = True
+    os.system("")
 else:
     import termios  # Mac & Linux
+    import fcntl
+    import tty
     os_windows = False
 
 config = {
@@ -5074,14 +5075,57 @@ def terminal_size():
     Get terminal size
     Will return width and height
     """
-    h, w, hp, wp = struct.unpack('HHHH',
-                                 fcntl.ioctl(0, termios.TIOCGWINSZ,
-                                             struct.pack('HHHH', 0, 0, 0, 0)))
+    if os_windows:
+        w = 80
+        h = 25
+    else:
+        h, w, hp, wp = struct.unpack(
+            'HHHH', fcntl.ioctl(0, termios.TIOCGWINSZ,
+                                struct.pack('HHHH', 0, 0, 0, 0)))
     return w, h
 
 
 def isData():
     return select.select([sys.stdin], [], [], 0) == ([sys.stdin], [], [])
+
+
+def getch_sub():
+    if game.vscr.refresh:
+        game.vscr.refresh = False
+        game.vscr.disp_scrwin()
+    if game.dungeon.expedition:
+        if game.vscr.messages:  # one message at a time
+            user, mes = game.vscr.messages.pop(0)
+            game.vscr.meswins[0].print(f"Message from {user}:")
+            game.vscr.meswins[0].print(mes, start=' ')
+            game.vscr.disp_scrwin()
+        if game.vscr.battle_messages:
+            mes, st = game.vscr.battle_messages.pop(0)
+            if st == '*':
+                st = '-'
+            game.vscr.meswins[-1].print(mes, start=st)
+            game.vscr.disp_scrwin()
+        if game.party.place == Place.CAMP and \
+           game.dungeon.spells_casted and \
+           game.dungeon.parties:
+            user, spell, caster, target = \
+                game.dungeon.spells_casted.pop(0)
+            p = game.dungeon.parties[user]
+            cas = next(mem for mem in p.members
+                       if mem.name == caster)
+            mw = game.vscr.meswins[-1]
+            if target in ['party', 'all', '']:
+                tgt = target
+                mw.print(f"{caster}({user}) casted {spell}.",
+                         start='-')
+            else:
+                tgt = next(mem for mem in game.party.members
+                           if mem.name == target)
+                mw.print(
+                    f"{caster}({user}) casted {spell} for {target}.",
+                    start='-')
+                game.spell.cast_spell_dispatch(cas, spell, tgt)
+                game.vscr.disp_scrwin()
 
 
 def getch(wait=True):
@@ -5093,9 +5137,14 @@ def getch(wait=True):
         while True:
             if msvcrt.kbhit() or wait:  # msvcrt.kbhit() is non-blocking
                 c = msvcrt.getch()  # msvcrt.getch() is blocking
+                c = c.decode("utf-8")
                 if c == 'Q':
+                    if game.dungeon.expedition:
+                        sio.disconnect()
                     sys.exit()
                 return c
+            getch_sub()
+            time.sleep(0.05)
 
     c = ''
     old_settings = termios.tcgetattr(sys.stdin)
@@ -5108,42 +5157,7 @@ def getch(wait=True):
                 c = sys.stdin.read(1)
             if c != '' or not wait:
                 break
-            if game.vscr.refresh:
-                game.vscr.refresh = False
-                game.vscr.disp_scrwin()
-            if game.dungeon.expedition:
-                if game.vscr.messages:  # one message at a time
-                    user, mes = game.vscr.messages.pop(0)
-                    game.vscr.meswins[0].print(f"Message from {user}:")
-                    game.vscr.meswins[0].print(mes, start=' ')
-                    game.vscr.disp_scrwin()
-                if game.vscr.battle_messages:
-                    mes, st = game.vscr.battle_messages.pop(0)
-                    if st == '*':
-                        st = '-'
-                    game.vscr.meswins[-1].print(mes, start=st)
-                    game.vscr.disp_scrwin()
-                if game.party.place == Place.CAMP and \
-                   game.dungeon.spells_casted and \
-                   game.dungeon.parties:
-                    user, spell, caster, target = \
-                        game.dungeon.spells_casted.pop(0)
-                    p = game.dungeon.parties[user]
-                    cas = next(mem for mem in p.members
-                               if mem.name == caster)
-                    mw = game.vscr.meswins[-1]
-                    if target in ['party', 'all', '']:
-                        tgt = target
-                        mw.print(f"{caster}({user}) casted {spell}.",
-                                 start='-')
-                    else:
-                        tgt = next(mem for mem in game.party.members
-                                   if mem.name == target)
-                        mw.print(
-                            f"{caster}({user}) casted {spell} for {target}.",
-                            start='-')
-                    game.spell.cast_spell_dispatch(cas, spell, tgt)
-                    game.vscr.disp_scrwin()
+            getch_sub()
             time.sleep(0.05)
 
     finally:
