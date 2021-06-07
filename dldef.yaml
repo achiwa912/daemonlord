@@ -1,0 +1,7424 @@
+spell:
+  onibi:
+    categ: mage
+    level: 1
+    battle: true
+    camp: false
+    type: attack
+    target: enemy
+    value: 1D8
+    attr: !!python/tuple
+    - fire
+    desc: Fireball to hit a monster for 1-8 damage
+  tate:
+    categ: mage
+    level: 1
+    battle: true
+    camp: false
+    type: ac
+    target: self
+    value: '-2'
+    attr: !!python/tuple []
+    desc: Reduce the caster's AC by 2
+  shunmin:
+    categ: mage
+    level: 1
+    battle: true
+    camp: false
+    type: status
+    target: group
+    value: ''
+    attr: !!python/tuple
+    - sleep
+    desc: Put one enemy group to asleep
+  gps:
+    categ: mage
+    level: 2
+    battle: false
+    camp: true
+    type: etc
+    target: ''
+    value: ''
+    attr: !!python/tuple []
+    desc: Locate the precise position in the dungeon
+  kurayami:
+    categ: mage
+    level: 2
+    battle: true
+    camp: false
+    type: ac
+    target: group
+    value: '2'
+    attr: !!python/tuple []
+    desc: Increase AC by 2 for an enemy group
+  tomei:
+    categ: mage
+    level: 2
+    battle: true
+    camp: false
+    type: ac
+    target: self
+    value: '-4'
+    attr: !!python/tuple
+    - '2'
+    desc: Reduce the caster's AC by 4
+  tsubasa:
+    categ: mage
+    level: 2
+    battle: false
+    camp: true
+    type: etc
+    target: ''
+    value: ''
+    attr: !!python/tuple []
+    desc: Teleport to a known depth
+  taika:
+    categ: mage
+    level: 3
+    battle: true
+    camp: false
+    type: attack
+    target: group
+    value: 4D6
+    attr: !!python/tuple
+    - fire
+    desc: Wall of fire to hit a group of enemies for 4-24 damage
+  kamaitachi:
+    categ: mage
+    level: 3
+    battle: true
+    camp: false
+    type: attack
+    target: group
+    value: 3D6
+    attr: !!python/tuple
+    - friendly
+    desc: Sharp wind to inflict 3-18 damage to an enemy group
+  kanashibari:
+    categ: mage
+    level: 4
+    battle: true
+    camp: false
+    type: ac
+    target: group
+    value: '4'
+    attr: !!python/tuple []
+    desc: Increase AC by 4 for an enemy group
+  toketsu:
+    categ: mage
+    level: 4
+    battle: true
+    camp: false
+    type: attack
+    target: group
+    value: 6D6
+    attr: !!python/tuple
+    - cold
+    desc: Blizzard to inflict 6-36 damage to an enemy group
+  gouka:
+    categ: mage
+    level: 4
+    battle: true
+    camp: false
+    type: attack
+    target: group
+    value: 6D6
+    attr: !!python/tuple
+    - fire
+    desc: Big fire to inflict 6-36 damage to an enemy group
+  kyofu:
+    categ: mage
+    level: 5
+    battle: true
+    camp: false
+    type: ac
+    target: all
+    value: '4'
+    attr: !!python/tuple []
+    desc: Increase AC by 4 for all enemy groups
+  senmetsu:
+    categ: mage
+    level: 5
+    battle: true
+    camp: false
+    type: etc
+    target: all
+    value: ''
+    attr: !!python/tuple []
+    desc: Eliminate all enemies below Lvl 8
+  zettaireido:
+    categ: mage
+    level: 5
+    battle: true
+    camp: false
+    type: attack
+    target: group
+    value: 8D8
+    attr: !!python/tuple
+    - cold
+    desc: Abs. zero to cause 8-64 damage to an enemy group
+  shinoroi:
+    categ: mage
+    level: 6
+    battle: true
+    camp: false
+    type: death
+    target: group
+    value: ''
+    attr: !!python/tuple []
+    desc: Kill all air-breathing enemies in a group
+  butsumetsu:
+    categ: mage
+    level: 6
+    battle: true
+    camp: false
+    type: attack
+    target: enemy
+    value: 10D200
+    attr: !!python/tuple []
+    desc: Buddha power to inflict 10-2000 damage to an undead
+  zentomei:
+    categ: mage
+    level: 6
+    battle: true
+    camp: false
+    type: ac
+    target: party
+    value: '-4'
+    attr: !!python/tuple []
+    desc: Reduce party's AC by 4
+  jigokunohonou:
+    categ: mage
+    level: 7
+    battle: true
+    camp: false
+    type: attack
+    target: enemy
+    value: 20D20
+    attr: !!python/tuple
+    - fire
+    desc: Inferno to inflict 20-400 damage to a single enemy
+  kakubaku:
+    categ: mage
+    level: 7
+    battle: true
+    camp: false
+    type: attack
+    target: all
+    value: 10D15
+    attr: !!python/tuple []
+    desc: Nuclear fusion to inflict 10-150 damage to all enemies
+  shukufuku:
+    categ: priest
+    level: 1
+    battle: true
+    camp: false
+    type: ac
+    target: party
+    value: '-1'
+    attr: !!python/tuple []
+    desc: Reduce party's AC by 1
+  jiai:
+    categ: priest
+    level: 1
+    battle: true
+    camp: true
+    type: heal
+    target: member
+    value: 1D8
+    attr: !!python/tuple []
+    desc: Restore 1-8 HP to a single target
+  ikari:
+    categ: priest
+    level: 1
+    battle: true
+    camp: false
+    type: attack
+    target: enemy
+    value: 1D8
+    attr: !!python/tuple
+    - friendly
+    desc: Angry power to inflict 1-8 damage to an enemy
+  akari:
+    categ: priest
+    level: 1
+    battle: true
+    camp: true
+    type: etc
+    target: ''
+    value: ''
+    attr: !!python/tuple []
+    desc: A bright light lets you see further for a while
+  mamori:
+    categ: priest
+    level: 1
+    battle: true
+    camp: false
+    type: ac
+    target: self
+    value: '-4'
+    attr: !!python/tuple []
+    desc: Reduce the caster's AC by 4
+  kabe:
+    categ: priest
+    level: 2
+    battle: true
+    camp: true
+    type: ac
+    target: party
+    value: '-2'
+    attr: !!python/tuple []
+    desc: Reduce party's AC by 2
+  kantei:
+    categ: priest
+    level: 2
+    battle: false
+    camp: false
+    type: etc
+    target: ''
+    value: ''
+    attr: !!python/tuple []
+    desc: Identify a trap with 95% accuracy
+  nero:
+    categ: priest
+    level: 2
+    battle: true
+    camp: false
+    type: status
+    target: group
+    value: ''
+    attr: !!python/tuple
+    - sleep
+    desc: Put a group of enemies into asleep
+  damare:
+    categ: priest
+    level: 2
+    battle: true
+    camp: false
+    type: status
+    target: group
+    value: 1D4+1
+    attr: !!python/tuple
+    - silence
+    desc: Silence an enemy group
+  hikarinotama:
+    categ: priest
+    level: 3
+    battle: true
+    camp: true
+    type: etc
+    target: ''
+    value: ''
+    attr: !!python/tuple []
+    desc: A bright light lets you see further for a long time
+  okiro:
+    categ: priest
+    level: 3
+    battle: true
+    camp: true
+    type: cure
+    target: member
+    value: ''
+    attr: !!python/tuple
+    - paraly
+    - sleep
+    desc: Cures a paralyzed or asleep for a single target
+  shikibetsu:
+    categ: priest
+    level: 3
+    battle: true
+    camp: true
+    type: etc
+    target: ''
+    value: ''
+    attr: !!python/tuple []
+    desc: Identify enemies
+  kaminohogo:
+    categ: priest
+    level: 3
+    battle: true
+    camp: false
+    type: ac
+    target: party
+    value: '-4'
+    attr: !!python/tuple []
+    desc: Reduce party's AC by 4
+  iyashi:
+    categ: priest
+    level: 3
+    battle: true
+    camp: true
+    type: heal
+    target: member
+    value: 4D4
+    attr: !!python/tuple []
+    desc: Restore 4-16 HP to a single target
+  gekido:
+    categ: priest
+    level: 4
+    battle: true
+    camp: false
+    type: attack
+    target: enemy
+    value: 2D8
+    attr: !!python/tuple
+    - friendly
+    desc: Infuriate power to inflict 2-16 damage to an enemy
+  gedoku:
+    categ: priest
+    level: 4
+    battle: true
+    camp: true
+    type: cure
+    target: member
+    value: ''
+    attr: !!python/tuple
+    - poison
+    desc: Cure poison to a single target
+  hogo:
+    categ: priest
+    level: 4
+    battle: true
+    camp: true
+    type: etc
+    target: ''
+    value: '-2'
+    attr: !!python/tuple []
+    desc: Reduce party's AC by 2 while you are in the dungeon
+  zenjiai:
+    categ: priest
+    level: 4
+    battle: true
+    camp: true
+    type: heal
+    target: party
+    value: 1D8+2
+    attr: !!python/tuple []
+    desc: Heal entire party by 1-8 HP
+  daikaifuku:
+    categ: priest
+    level: 5
+    battle: true
+    camp: true
+    type: heal
+    target: member
+    value: 8D3
+    attr: !!python/tuple []
+    desc: Restore 8-24 HP to a single target
+  chogekido:
+    categ: priest
+    level: 5
+    battle: true
+    camp: false
+    type: attack
+    target: enemy
+    value: 3D8
+    attr: !!python/tuple
+    - friendly
+    desc: Extreme angry to inflict 3-24 damage to an enemy
+  kaminoikari:
+    categ: priest
+    level: 5
+    battle: true
+    camp: false
+    type: attack
+    target: group
+    value: 3D8
+    attr: !!python/tuple
+    - fire
+    desc: God's fire inflicts 3-24 damage to an enemy group
+  sosei:
+    categ: priest
+    level: 5
+    battle: false
+    camp: true
+    type: etc
+    target: member
+    value: ''
+    attr: !!python/tuple []
+    desc: Attempt to ressurect a dead character
+  shisubeshi:
+    categ: priest
+    level: 5
+    battle: true
+    camp: false
+    type: death
+    target: enemy
+    value: ''
+    attr: !!python/tuple []
+    desc: Attempt to kill an enemy
+  tenchu:
+    categ: priest
+    level: 6
+    battle: true
+    camp: false
+    type: attack
+    target: group
+    value: 6D6
+    attr: !!python/tuple
+    - friendly
+    desc: Gods power to inflict 6-36 damage to an enemy group
+  kanzen:
+    categ: priest
+    level: 6
+    battle: true
+    camp: true
+    type: etc
+    target: member
+    value: ''
+    attr: !!python/tuple []
+    desc: Complete heal & cure
+  hinshi:
+    categ: priest
+    level: 6
+    battle: true
+    camp: false
+    type: etc
+    target: enemy
+    value: ''
+    attr: !!python/tuple []
+    desc: Gods power to almost kill a single enemy
+  tenchihokai:
+    categ: priest
+    level: 7
+    battle: true
+    camp: false
+    type: attack
+    target: all
+    value: 12D6
+    attr: !!python/tuple []
+    desc: A meteor strike inflicts 12-72 damage to all enemies
+  fukkatsu:
+    categ: priest
+    level: 7
+    battle: false
+    camp: true
+    type: etc
+    target: member
+    value: ''
+    attr: !!python/tuple []
+    desc: Attempt to resurrent an even ashed person
+  zenkai:
+    categ: priest
+    level: 7
+    battle: true
+    camp: true
+    type: heal
+    target: party
+    value: 8D3
+    attr: !!python/tuple []
+    desc: 8-24 HP group heal to party
+item:
+  broken item:
+    level: 0
+    unident: broken item
+    type: item
+    range: ''
+    jobs: ''
+    ac: 0
+    st: 0
+    at: 0
+    dice: ''
+    shop: 0
+    price: 0
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  long sword:
+    level: 1
+    unident: long sword
+    type: weapon
+    range: short
+    jobs: FSLN
+    ac: 0
+    st: 4
+    at: 0
+    dice: 1D8
+    shop: 9999
+    price: 25
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  long sword +1:
+    level: 3
+    unident: long sword
+    type: weapon
+    range: short
+    jobs: FSLN
+    ac: 0
+    st: 5
+    at: 2
+    dice: 1D8+1
+    shop: 0
+    price: 10000
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  long sword -1:
+    level: 3
+    unident: long sword
+    type: weapon
+    range: short
+    jobs: FSLN
+    ac: 0
+    st: -1
+    at: 0
+    dice: 1D8
+    shop: 0
+    price: 1000
+    curse: true
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  long sword +2:
+    level: 5
+    unident: long sword
+    type: weapon
+    range: short
+    jobs: FSLN
+    ac: 0
+    st: 5
+    at: 2
+    dice: 1D9+1
+    shop: 0
+    price: 18000
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  long sword +3:
+    level: 7
+    unident: long sword
+    type: weapon
+    range: short
+    jobs: FSLN
+    ac: 0
+    st: 5
+    at: 2
+    dice: 1D10+1
+    shop: 0
+    price: 24000
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  dragon slayer:
+    level: 9
+    unident: long sword
+    type: weapon
+    range: short
+    jobs: FSLN
+    ac: 0
+    st: 1
+    at: 1
+    dice: 1D12+1
+    shop: 0
+    price: 10000
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple
+    - dragon
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  long sword +4:
+    level: 10
+    unident: long sword
+    type: weapon
+    range: short
+    jobs: FSLN
+    ac: 0
+    st: 6
+    at: 3
+    dice: 1D10+2
+    shop: 0
+    price: 4000
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  mage masher:
+    level: 6
+    unident: long sword
+    type: weapon
+    range: short
+    jobs: FSLN
+    ac: 0
+    st: 5
+    at: 2
+    dice: 1D10+1
+    shop: 0
+    price: 10000
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple
+    - mage
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  force saber:
+    level: 8
+    unident: long sword
+    type: weapon
+    range: short
+    jobs: FSLN
+    ac: 0
+    st: 6
+    at: 4
+    dice: 1D3+9
+    shop: 0
+    price: 15000
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  long sword +5(e):
+    level: 11
+    unident: long sword
+    type: weapon
+    range: short
+    jobs: FSLN
+    ac: 0
+    st: 7
+    at: 4
+    dice: 1D10+3
+    shop: 0
+    price: 50000
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple
+    - evil
+    sp: ''
+    target: ''
+  murasama blade:
+    level: 11
+    unident: katana
+    type: weapon
+    range: short
+    jobs: S
+    ac: 0
+    st: 8
+    at: 3
+    dice: 10D5
+    shop: 0
+    price: 1000000
+    curse: false
+    hp: 0
+    use: etc
+    brk: 50
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: str+1
+    target: self
+  kaiser knuckles:
+    level: 11
+    unident: weapon
+    type: weapon
+    range: short
+    jobs: N
+    ac: 0
+    st: 7
+    at: 3
+    dice: 1D5+10
+    shop: 0
+    price: 50000
+    curse: false
+    hp: 0
+    use: etc
+    brk: 50
+    regist: !!python/tuple
+    - stone
+    - critical
+    twice: !!python/tuple []
+    align: !!python/tuple
+    - evil
+    sp: hp+1
+    target: self
+  The Muramasa Blade!:
+    level: 12
+    unident: katana
+    type: weapon
+    range: short
+    jobs: S
+    ac: 0
+    st: 8
+    at: 5
+    dice: 50D6
+    shop: 0
+    price: 9999999
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  excalibur:
+    level: 12
+    unident: long sword
+    type: weapon
+    range: short
+    jobs: L
+    ac: 0
+    st: 7
+    at: 4
+    dice: 20D10
+    shop: 0
+    price: 9999999
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  ? ''
+  : level: 0
+    unident: ''
+    type: ''
+    range: ''
+    jobs: ''
+    ac: 0
+    st: 0
+    at: 0
+    dice: ''
+    shop: 0
+    price: 0
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  sling:
+    level: 2
+    unident: sling
+    type: weapon
+    range: long
+    jobs: FMPTBSLN
+    ac: 0
+    st: 0
+    at: 0
+    dice: 1D2-1
+    shop: 9999
+    price: 150
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  mage's bow:
+    level: 4
+    unident: bow
+    type: weapon
+    range: long
+    jobs: FMPTBSLN
+    ac: 0
+    st: 0
+    at: 0
+    dice: 1D2
+    shop: 1
+    price: 1200
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  bow:
+    level: 3
+    unident: bow
+    type: weapon
+    range: long
+    jobs: FTSLN
+    ac: 0
+    st: 0
+    at: 0
+    dice: 1D3
+    shop: 9999
+    price: 1500
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  bow +1:
+    level: 6
+    unident: bow
+    type: weapon
+    range: long
+    jobs: FTSLN
+    ac: 0
+    st: 0
+    at: 0
+    dice: 1D3+1
+    shop: 0
+    price: 12000
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  bow +2:
+    level: 8
+    unident: bow
+    type: weapon
+    range: long
+    jobs: FTSLN
+    ac: 0
+    st: 2
+    at: 2
+    dice: 1D4+1
+    shop: 0
+    price: 24000
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  holy bow:
+    level: 5
+    unident: bow
+    type: weapon
+    range: long
+    jobs: PBL
+    ac: 0
+    st: 0
+    at: 0
+    dice: 1D4
+    shop: 1
+    price: 8000
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple
+    - undead
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  elven bow:
+    level: 9
+    unident: bow
+    type: weapon
+    range: long
+    jobs: FMPTBSLN
+    ac: 0
+    st: 0
+    at: 2
+    dice: 1D4+3
+    shop: 0
+    price: 38000
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  dragon killer:
+    level: 11
+    unident: bow
+    type: weapon
+    range: long
+    jobs: FPTBSLN
+    ac: 0
+    st: 2
+    at: 2
+    dice: 1D6+2
+    shop: 0
+    price: 150000
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple
+    - dragon
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  artemis bow:
+    level: 12
+    unident: bow
+    type: weapon
+    range: long
+    jobs: FTSLN
+    ac: 0
+    st: 3
+    at: 3
+    dice: 1D6+4
+    shop: 0
+    price: 880000
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  bow -1:
+    level: 4
+    unident: bow
+    type: weapon
+    range: long
+    jobs: FTSLN
+    ac: 0
+    st: 0
+    at: 0
+    dice: 1D1-1
+    shop: 0
+    price: 5000
+    curse: true
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  short sword:
+    level: 1
+    unident: short sword
+    type: weapon
+    range: short
+    jobs: FTSLN
+    ac: 0
+    st: 3
+    at: 0
+    dice: 1D6
+    shop: 9999
+    price: 15
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  short sword +1:
+    level: 5
+    unident: short sword
+    type: weapon
+    range: short
+    jobs: FTSLN
+    ac: 0
+    st: 4
+    at: 2
+    dice: 1D6+1
+    shop: 2
+    price: 15000
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  short sword -2:
+    level: 6
+    unident: short sword
+    type: weapon
+    range: short
+    jobs: FTSLN
+    ac: 0
+    st: -1
+    at: 1
+    dice: 1D6
+    shop: 0
+    price: 1000
+    curse: true
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  short sword +2:
+    level: 9
+    unident: short sword
+    type: weapon
+    range: short
+    jobs: FTSLN
+    ac: 0
+    st: 5
+    at: 3
+    dice: 1D6+2
+    shop: 0
+    price: 4000
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  short sword -1:
+    level: 4
+    unident: short sword
+    type: weapon
+    range: short
+    jobs: FTSLN
+    ac: 0
+    st: 1
+    at: 1
+    dice: 1D6
+    shop: 0
+    price: 8000
+    curse: true
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  soul slayer:
+    level: 7
+    unident: sword
+    type: weapon
+    range: short
+    jobs: FTSLN
+    ac: 0
+    st: 6
+    at: 4
+    dice: 1D6
+    shop: 0
+    price: 50000
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple
+    - evil
+    sp: ''
+    target: ''
+  mace:
+    level: 1
+    unident: stick
+    type: weapon
+    range: short
+    jobs: FPBSLN
+    ac: 0
+    st: 2
+    at: 0
+    dice: 2D3
+    shop: 9999
+    price: 30
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  mace +2:
+    level: 6
+    unident: stick
+    type: weapon
+    range: short
+    jobs: FPBSLN
+    ac: 0
+    st: 3
+    at: 2
+    dice: 2D4+1
+    shop: 0
+    price: 12500
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  mace -1:
+    level: 2
+    unident: stick
+    type: weapon
+    range: short
+    jobs: FPBSLN
+    ac: 0
+    st: -1
+    at: 1
+    dice: 2D3
+    shop: 0
+    price: 1000
+    curse: true
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  mace +3:
+    level: 9
+    unident: stick
+    type: weapon
+    range: short
+    jobs: FPBSLN
+    ac: 0
+    st: 4
+    at: 2
+    dice: 1D8+2
+    shop: 0
+    price: 4000
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  mace +1:
+    level: 4
+    unident: stick
+    type: weapon
+    range: short
+    jobs: FPBSLN
+    ac: 0
+    st: 3
+    at: 2
+    dice: 1D8
+    shop: 0
+    price: 10000
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  mace -2:
+    level: 5
+    unident: stick
+    type: weapon
+    range: short
+    jobs: FPBSLN
+    ac: 0
+    st: 0
+    at: 0
+    dice: 1D8
+    shop: 0
+    price: 8000
+    curse: true
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  anointed flail:
+    level: 1
+    unident: stick
+    type: weapon
+    range: short
+    jobs: FPSLN
+    ac: 0
+    st: 3
+    at: 0
+    dice: 1D7
+    shop: 9999
+    price: 150
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  wand:
+    level: 1
+    unident: wand
+    type: weapon
+    range: short
+    jobs: FMPTBSLN
+    ac: 0
+    st: 0
+    at: 0
+    dice: 1D5
+    shop: 9999
+    price: 10
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  wand +1:
+    level: 6
+    unident: wand
+    type: weapon
+    range: short
+    jobs: FMPTBSLN
+    ac: 0
+    st: 2
+    at: 1
+    dice: 1D4+2
+    shop: 9999
+    price: 2500
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  wand -1:
+    level: 4
+    unident: wand
+    type: weapon
+    range: short
+    jobs: FMPTBSLN
+    ac: 0
+    st: -2
+    at: 1
+    dice: 1D4
+    shop: 0
+    price: 8000
+    curse: true
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  dagger:
+    level: 1
+    unident: dagger
+    type: weapon
+    range: short
+    jobs: FMTSLN
+    ac: 0
+    st: 1
+    at: 0
+    dice: 1D4
+    shop: 9999
+    price: 5
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  dagger +2:
+    level: 6
+    unident: dagger
+    type: weapon
+    range: short
+    jobs: FMTSLN
+    ac: 0
+    st: 3
+    at: 2
+    dice: 1D4+2
+    shop: 0
+    price: 8000
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  butterfly knife:
+    level: 10
+    unident: knife
+    type: weapon
+    range: short
+    jobs: MN
+    ac: 3
+    st: -1
+    at: 7
+    dice: 1D4
+    shop: 0
+    price: 30000
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  ninja dagger:
+    level: 11
+    unident: dagger
+    type: weapon
+    range: short
+    jobs: TN
+    ac: 0
+    st: 5
+    at: 4
+    dice: 1D6
+    shop: 0
+    price: 50000
+    curse: false
+    hp: 0
+    use: etc
+    brk: 100
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ninja
+    target: self
+  iron wand:
+    level: 7
+    unident: wand
+    type: weapon
+    range: short
+    jobs: MB
+    ac: 0
+    st: 1
+    at: 0
+    dice: 1D6
+    shop: 1
+    price: 3000
+    curse: false
+    hp: 0
+    use: tate
+    brk: 25
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  wand of silence:
+    level: 8
+    unident: wand
+    type: weapon
+    range: short
+    jobs: FMPTBSLN
+    ac: 0
+    st: 1
+    at: 1
+    dice: 1D5+1
+    shop: 0
+    price: 15000
+    curse: false
+    hp: 0
+    use: damare
+    brk: 10
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  small shield:
+    level: 1
+    unident: shield
+    type: shield
+    range: ''
+    jobs: FPTBSLN
+    ac: -2
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 9999
+    price: 20
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  large shield:
+    level: 1
+    unident: shield
+    type: shield
+    range: ''
+    jobs: FPSLN
+    ac: -3
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 9999
+    price: 40
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  shield +1:
+    level: 4
+    unident: shield
+    type: shield
+    range: ''
+    jobs: FPTSLN
+    ac: -4
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 9999
+    price: 1500
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  shield -2:
+    level: 5
+    unident: shield
+    type: shield
+    range: ''
+    jobs: FPTSL
+    ac: 1
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 0
+    price: 1500
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  shield +2:
+    level: 8
+    unident: shield
+    type: shield
+    range: ''
+    jobs: FPTSLN
+    ac: -5
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 0
+    price: 7000
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  shield +2(e):
+    level: 8
+    unident: shield
+    type: shield
+    range: ''
+    jobs: FPTSLN
+    ac: -5
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 0
+    price: 25000
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple
+    - evil
+    sp: ''
+    target: ''
+  shield -3:
+    level: 7
+    unident: shield
+    type: shield
+    range: ''
+    jobs: FPTSLN
+    ac: 0
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 0
+    price: 8000
+    curse: true
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  shield +3:
+    level: 11
+    unident: shield
+    type: shield
+    range: ''
+    jobs: FPTSLN
+    ac: -6
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 0
+    price: 250000
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  shield +4:
+    level: 12
+    unident: shield
+    type: shield
+    range: ''
+    jobs: FPSLN
+    ac: -7
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 0
+    price: 500000
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  robe:
+    level: 1
+    unident: robes
+    type: armor
+    range: ''
+    jobs: FMPTBSLN
+    ac: -1
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 9999
+    price: 15
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  robe -3:
+    level: 5
+    unident: robes
+    type: armor
+    range: ''
+    jobs: FMPTBSLN
+    ac: 2
+    st: -2
+    at: 0
+    dice: 0D0
+    shop: 0
+    price: 8000
+    curse: true
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  leather armor:
+    level: 1
+    unident: lether armor
+    type: armor
+    range: ''
+    jobs: FPTBSLN
+    ac: -2
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 9999
+    price: 50
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  leather +1:
+    level: 5
+    unident: lether armor
+    type: armor
+    range: ''
+    jobs: FPTBSLN
+    ac: -3
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 9999
+    price: 1500
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  leather -1:
+    level: 4
+    unident: lether armor
+    type: armor
+    range: ''
+    jobs: FPTBSL
+    ac: -1
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 0
+    price: 1500
+    curse: true
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  leather +2:
+    level: 7
+    unident: lether armor
+    type: armor
+    range: ''
+    jobs: FPTBSLN
+    ac: -4
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 0
+    price: 6000
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  leather -2:
+    level: 6
+    unident: lether armor
+    type: armor
+    range: ''
+    jobs: FPTBSLN
+    ac: 0
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 0
+    price: 8000
+    curse: true
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  chain mail:
+    level: 1
+    unident: chain mail
+    type: armor
+    range: ''
+    jobs: FPSLN
+    ac: -3
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 9999
+    price: 90
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  chain +1:
+    level: 6
+    unident: chain mail
+    type: armor
+    range: ''
+    jobs: FPSLN
+    ac: -4
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 9999
+    price: 1500
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  chain -1:
+    level: 5
+    unident: chain mail
+    type: armor
+    range: ''
+    jobs: FPSLN
+    ac: -2
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 0
+    price: 1500
+    curse: true
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  chain +2:
+    level: 9
+    unident: chain mail
+    type: armor
+    range: ''
+    jobs: FPSLN
+    ac: -5
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 0
+    price: 6000
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  chain +2(e):
+    level: 8
+    unident: chain mail
+    type: armor
+    range: ''
+    jobs: FPSLN
+    ac: -5
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 0
+    price: 8000
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple
+    - evil
+    sp: ''
+    target: ''
+  chain -2:
+    level: 7
+    unident: chain mail
+    type: armor
+    range: ''
+    jobs: FPSLN
+    ac: -1
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 0
+    price: 8000
+    curse: true
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  breast plate:
+    level: 2
+    unident: breast plate
+    type: armor
+    range: ''
+    jobs: FPSLN
+    ac: -4
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 9999
+    price: 200
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  breast +1:
+    level: 5
+    unident: breast plate
+    type: armor
+    range: ''
+    jobs: FPSLN
+    ac: -5
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 9999
+    price: 1500
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  breast -1:
+    level: 4
+    unident: breast plate
+    type: armor
+    range: ''
+    jobs: FPSLN
+    ac: -3
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 0
+    price: 1500
+    curse: true
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  breast +3a:
+    level: 10
+    unident: breast plate
+    type: armor
+    range: ''
+    jobs: FPSLN
+    ac: -7
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 0
+    price: 6000
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  breast +3(n):
+    level: 9
+    unident: breast plate
+    type: armor
+    range: ''
+    jobs: FPSLN
+    ac: -7
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 0
+    price: 8000
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple
+    - neutral
+    sp: ''
+    target: ''
+  breast -2:
+    level: 6
+    unident: breast plate
+    type: armor
+    range: ''
+    jobs: FPSLN
+    ac: -2
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 0
+    price: 8000
+    curse: true
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  breast +2:
+    level: 7
+    unident: breast plate
+    type: armor
+    range: ''
+    jobs: FPSLN
+    ac: -6
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 0
+    price: 10000
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  breast +3:
+    level: 9
+    unident: breast plate
+    type: armor
+    range: ''
+    jobs: FPSLN
+    ac: -7
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 0
+    price: 100000
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  breast +2c:
+    level: 8
+    unident: breast plate
+    type: armor
+    range: ''
+    jobs: FPSLN
+    ac: -6
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 0
+    price: 150000
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple
+    - cold
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  breast +5(e):
+    level: 10
+    unident: breast plate
+    type: armor
+    range: ''
+    jobs: FPSLN
+    ac: -9
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 0
+    price: 150000
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple
+    - evil
+    sp: ''
+    target: ''
+  plate mail:
+    level: 2
+    unident: armor
+    type: armor
+    range: ''
+    jobs: FSLN
+    ac: -5
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 9999
+    price: 750
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  plate +1:
+    level: 5
+    unident: armor
+    type: armor
+    range: ''
+    jobs: FSLN
+    ac: -6
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 1
+    price: 1500
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  plate +2:
+    level: 8
+    unident: armor
+    type: armor
+    range: ''
+    jobs: FSLN
+    ac: -7
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 0
+    price: 50000
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  plate +3:
+    level: 10
+    unident: armor
+    type: armor
+    range: ''
+    jobs: FSLN
+    ac: -8
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 0
+    price: 200000
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  plate +4:
+    level: 12
+    unident: armor
+    type: armor
+    range: ''
+    jobs: FSLN
+    ac: -9
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 0
+    price: 800000
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  armor of lords:
+    level: 11
+    unident: armor
+    type: armor
+    range: ''
+    jobs: L
+    ac: -10
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 0
+    price: 1000000
+    curse: false
+    hp: 5
+    use: etc
+    brk: 50
+    regist: !!python/tuple
+    - fire
+    - cold
+    - poison
+    - drain
+    - stone
+    twice: !!python/tuple
+    - many
+    align: !!python/tuple []
+    sp: HP max
+    target: party
+  helm:
+    level: 2
+    unident: helm
+    type: helm
+    range: ''
+    jobs: FSLN
+    ac: -1
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 9999
+    price: 100
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  helm +1:
+    level: 5
+    unident: helm
+    type: helm
+    range: ''
+    jobs: FSLN
+    ac: -2
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 0
+    price: 3000
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  helm +2(e):
+    level: 9
+    unident: helm
+    type: helm
+    range: ''
+    jobs: FSLN
+    ac: -3
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 0
+    price: 8000
+    curse: false
+    hp: 0
+    use: ikari
+    brk: 0
+    regist: !!python/tuple
+    - evil only
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  helm -3:
+    level: 7
+    unident: helm
+    type: helm
+    range: ''
+    jobs: FSLN
+    ac: 2
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 0
+    price: 50000
+    curse: true
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  helm +3:
+    level: 12
+    unident: helm
+    type: helm
+    range: ''
+    jobs: FSLN
+    ac: -4
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 0
+    price: 250000
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  gauntlets:
+    level: 3
+    unident: gloves
+    type: gloves
+    range: ''
+    jobs: FSLN
+    ac: -1
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 9999
+    price: 6000
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  gauntlets +2:
+    level: 10
+    unident: gloves
+    type: gloves
+    range: ''
+    jobs: FSLN
+    ac: -3
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 0
+    price: 60000
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  gauntlets +3:
+    level: 12
+    unident: gloves
+    type: gloves
+    range: ''
+    jobs: FSLN
+    ac: -4
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 0
+    price: 250000
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  potion of curing:
+    level: 1
+    unident: potion
+    type: item
+    range: ''
+    jobs: FMPTBSLN
+    ac: 0
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 9999
+    price: 500
+    curse: false
+    hp: 0
+    use: jiai
+    brk: 100
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  potion of neutralizing:
+    level: 1
+    unident: potion
+    type: item
+    range: ''
+    jobs: FMPTBSLN
+    ac: 0
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 9999
+    price: 300
+    curse: false
+    hp: 0
+    use: gedoku
+    brk: 100
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  scroll of sleep:
+    level: 1
+    unident: scroll
+    type: item
+    range: ''
+    jobs: FMPTBSLN
+    ac: 0
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 9999
+    price: 500
+    curse: false
+    hp: 0
+    use: shunmin
+    brk: 100
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  scroll of pain:
+    level: 1
+    unident: scroll
+    type: item
+    range: ''
+    jobs: FMPTBSLN
+    ac: 0
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 9999
+    price: 500
+    curse: false
+    hp: 0
+    use: ikari
+    brk: 25
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  scroll of fire:
+    level: 1
+    unident: scroll
+    type: item
+    range: ''
+    jobs: FMPTBSLN
+    ac: 0
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 9999
+    price: 500
+    curse: false
+    hp: 0
+    use: onibi
+    brk: 100
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  ring of jewels:
+    level: 4
+    unident: ring
+    type: ring
+    range: ''
+    jobs: FMPTBSLN
+    ac: 0
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 0
+    price: 5000
+    curse: false
+    hp: 0
+    use: gps
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  scroll of agony:
+    level: 1
+    unident: scroll
+    type: item
+    range: ''
+    jobs: FMPTBSLN
+    ac: 0
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 0
+    price: 500
+    curse: false
+    hp: 0
+    use: ikari
+    brk: 100
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  potion of glass:
+    level: 2
+    unident: potion
+    type: item
+    range: ''
+    jobs: FMPTBSLN
+    ac: 0
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 1
+    price: 1500
+    curse: false
+    hp: 0
+    use: tomei
+    brk: 100
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  scroll of brightness:
+    level: 3
+    unident: scroll
+    type: item
+    range: ''
+    jobs: FMPTBSLN
+    ac: 0
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 0
+    price: 2500
+    curse: false
+    hp: 0
+    use: hikarinotama
+    brk: 100
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  scroll of darkness:
+    level: 3
+    unident: scroll
+    type: item
+    range: ''
+    jobs: FMPTBSLN
+    ac: 0
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 0
+    price: 2500
+    curse: false
+    hp: 0
+    use: kurayami
+    brk: 100
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  potion of healing:
+    level: 4
+    unident: potion
+    type: item
+    range: ''
+    jobs: FMPTBSLN
+    ac: 0
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 0
+    price: 5000
+    curse: false
+    hp: 0
+    use: iyashi
+    brk: 100
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  ring of shielding:
+    level: 7
+    unident: ring
+    type: ring
+    range: ''
+    jobs: FMPTBSLN
+    ac: 0
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 0
+    price: 10000
+    curse: false
+    hp: 0
+    use: mamori
+    brk: 5
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  ring of rigidity:
+    level: 8
+    unident: ring
+    type: ring
+    range: ''
+    jobs: FMPTBSLN
+    ac: 0
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 0
+    price: 15000
+    curse: false
+    hp: 0
+    use: nero
+    brk: 10
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  ring of suffocation:
+    level: 9
+    unident: ring
+    type: ring
+    range: ''
+    jobs: FMPTBSLN
+    ac: 0
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 0
+    price: 20000
+    curse: false
+    hp: 0
+    use: zakoisso
+    brk: 5
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  ring of movement:
+    level: 10
+    unident: ring
+    type: helm
+    range: ''
+    jobs: FMPTBSLN
+    ac: -2
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 0
+    price: 25000
+    curse: false
+    hp: 0
+    use: tenso
+    brk: 100
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  scroll of affliction:
+    level: 4
+    unident: scroll
+    type: item
+    range: ''
+    jobs: FMPTBSLN
+    ac: 0
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 0
+    price: 8000
+    curse: false
+    hp: 0
+    use: gekido
+    brk: 100
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  ring of healing:
+    level: 10
+    unident: ring
+    type: ring
+    range: ''
+    jobs: FMPTBSLN
+    ac: 0
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 0
+    price: 300000
+    curse: false
+    hp: 1
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  ring of dispelling:
+    level: 10
+    unident: ring
+    type: ring
+    range: ''
+    jobs: FMPTBSLN
+    ac: 0
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 0
+    price: 500000
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  ring of death:
+    level: 10
+    unident: ring
+    type: ring
+    range: ''
+    jobs: FMPTBSLN
+    ac: 0
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 0
+    price: 500000
+    curse: true
+    hp: -3
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  werdna's amulet:
+    level: 99
+    unident: amulet
+    type: item
+    range: ''
+    jobs: FMPTBSLN
+    ac: 0
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 0
+    price: 999999
+    curse: true
+    hp: 5
+    use: tenso
+    brk: 0
+    regist: !!python/tuple
+    - fire
+    - cold
+    - poison
+    - drain
+    - stone
+    twice: !!python/tuple []
+    align: !!python/tuple
+    - evil
+    sp: ''
+    target: ''
+  kaiden book:
+    level: 12
+    unident: book
+    type: item
+    range: ''
+    jobs: TN
+    ac: 0
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 0
+    price: 9999999
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: attack 10+ times
+    target: ''
+  ivory key:
+    level: 0
+    unident: key
+    type: item
+    range: ''
+    jobs: ''
+    ac: 0
+    st: 0
+    at: 0
+    dice: ''
+    shop: 0
+    price: 0
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  bronze key:
+    level: 0
+    unident: key
+    type: item
+    range: ''
+    jobs: ''
+    ac: 0
+    st: 0
+    at: 0
+    dice: ''
+    shop: 0
+    price: 0
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  silver key:
+    level: 0
+    unident: key
+    type: item
+    range: ''
+    jobs: ''
+    ac: 0
+    st: 0
+    at: 0
+    dice: ''
+    shop: 0
+    price: 0
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  gold key:
+    level: 0
+    unident: key
+    type: item
+    range: ''
+    jobs: ''
+    ac: 0
+    st: 0
+    at: 0
+    dice: ''
+    shop: 0
+    price: 0
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+  one time password:
+    level: 0
+    unident: key
+    type: item
+    range: ''
+    jobs: ''
+    ac: 0
+    st: 0
+    at: 0
+    dice: 0D0
+    shop: 0
+    price: 0
+    curse: false
+    hp: 0
+    use: ''
+    brk: 0
+    regist: !!python/tuple []
+    twice: !!python/tuple []
+    align: !!python/tuple []
+    sp: ''
+    target: ''
+monster:
+  blue slime:
+    names: blue slimes
+    unident: slime
+    unidents: slimes
+    type: animal
+    level: 1
+    hp: 1D3+1
+    ac: 12
+    attack: 1D1
+    count: 1
+    act: !!python/tuple
+    - atk
+    - atk
+    - atk
+    - atk
+    - atk
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 6
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: true
+    weaksleep: false
+    friendly: false
+    exp: 55
+    number: 2D2
+    floors: !!python/tuple
+    - 1
+    fellow: ''
+    fellowp: 0
+    agi: 3
+    treasure: !!python/tuple []
+  orc:
+    names: orcs
+    unident: small humanoid
+    unidents: small humanoids
+    type: fighter
+    level: 1
+    hp: 1D4
+    ac: 10
+    attack: 1D4
+    count: 1
+    act: !!python/tuple
+    - atk
+    - atk
+    - run
+    - run
+    - atk
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 0
+    regfire: true
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: true
+    weaksleep: true
+    friendly: true
+    exp: 235
+    number: 3D2
+    floors: !!python/tuple
+    - 1
+    fellow: ''
+    fellowp: 0
+    agi: 5
+    treasure: !!python/tuple
+    - 1
+  goblin:
+    names: goblins
+    unident: small humanoid
+    unidents: small humanoids
+    type: fighter
+    level: 1
+    hp: 2D3+1
+    ac: 8
+    attack: 2D3
+    count: 1
+    act: !!python/tuple
+    - atk
+    - atk
+    - atk
+    - run
+    - atk
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 12
+    regfire: false
+    regcold: true
+    regpoison: false
+    regspellp: 0
+    weakmaka: true
+    weaksleep: true
+    friendly: false
+    exp: 415
+    number: 2D2+1
+    floors: !!python/tuple
+    - 1
+    fellow: ''
+    fellowp: 0
+    agi: 6
+    treasure: !!python/tuple
+    - 1
+  orc skeleton:
+    names: orc skeletons
+    unident: skeleton
+    unidents: skeletons
+    type: undead
+    level: 1
+    hp: 2D3+2
+    ac: 10
+    attack: 1D4+1
+    count: 1
+    act: !!python/tuple
+    - atk
+    - atk
+    - atk
+    - atk
+    - atk
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 100
+    regfire: true
+    regcold: true
+    regpoison: false
+    regspellp: 0
+    weakmaka: false
+    weaksleep: false
+    friendly: true
+    exp: 230
+    number: 1D6+1
+    floors: !!python/tuple
+    - 1
+    fellow: ''
+    fellowp: 0
+    agi: 4
+    treasure: !!python/tuple
+    - 1
+  ripper:
+    names: rippers
+    unident: scruffy man
+    unidents: scruffy men
+    type: thief
+    level: 2
+    hp: 2D5+1
+    ac: 10
+    attack: 2D2+1
+    count: 1
+    act: !!python/tuple
+    - atk
+    - atk
+    - atk
+    - run
+    - run
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 12
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: true
+    weaksleep: true
+    friendly: true
+    exp: 380
+    number: 1D4+1
+    floors: !!python/tuple
+    - 1
+    fellow: ''
+    fellowp: 0
+    agi: 8
+    treasure: !!python/tuple
+    - 1
+    - 2
+  cop:
+    names: cops
+    unident: man in uniform
+    unidents: men in uniforms
+    type: fighter
+    level: 2
+    hp: 3D6+1
+    ac: 8
+    attack: 2D4+1
+    count: 1
+    act: !!python/tuple
+    - atk
+    - atk
+    - atk
+    - run
+    - atk
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 18
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: true
+    weaksleep: true
+    friendly: true
+    exp: 620
+    number: 1D4+1
+    floors: !!python/tuple
+    - 1
+    fellow: ''
+    fellowp: 0
+    agi: 9
+    treasure: !!python/tuple
+    - 1
+    - 2
+  yakuza:
+    names: yakuzas
+    unident: scary man
+    unidents: scary men
+    type: fighter
+    level: 3
+    hp: 3D4+2
+    ac: 6
+    attack: 1D2+1
+    count: 4
+    act: !!python/tuple
+    - atk
+    - atk
+    - atk
+    - atk
+    - run
+    poison: false
+    paraly: false
+    stone: false
+    critical: true
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 18
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: true
+    weaksleep: true
+    friendly: false
+    exp: 840
+    number: 2D6
+    floors: !!python/tuple
+    - 2
+    fellow: zombie
+    fellowp: 20
+    agi: 8
+    treasure: !!python/tuple
+    - 1
+    - 2
+    - 3
+  zombie:
+    names: zombies
+    unident: weird humanoid
+    unidents: weird humanoids
+    type: undead
+    level: 2
+    hp: 1D10+1
+    ac: 4
+    attack: 1D6
+    count: 1
+    act: !!python/tuple
+    - atk
+    - atk
+    - atk
+    - atk
+    - atk
+    poison: false
+    paraly: true
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 100
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: false
+    weaksleep: false
+    friendly: false
+    exp: 520
+    number: 1D6+1
+    floors: !!python/tuple
+    - 2
+    fellow: wild turky
+    fellowp: 20
+    agi: 5
+    treasure: !!python/tuple
+    - 1
+    - 2
+  wild turky:
+    names: wild turkies
+    unident: bird
+    unidents: birds
+    type: animal
+    level: 2
+    hp: 3D4+2
+    ac: 6
+    attack: 1D3+1
+    count: 1
+    act: !!python/tuple
+    - atk
+    - atk
+    - atk
+    - atk
+    - atk
+    poison: true
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 18
+    regfire: false
+    regcold: true
+    regpoison: false
+    regspellp: 0
+    weakmaka: true
+    weaksleep: true
+    friendly: false
+    exp: 550
+    number: 1D6+1
+    floors: !!python/tuple
+    - 2
+    fellow: ''
+    fellowp: 0
+    agi: 9
+    treasure: !!python/tuple
+    - 1
+    - 2
+  pink cloud:
+    names: pink clouds
+    unident: pink cloud
+    unidents: pink clouds
+    type: magic
+    level: 2
+    hp: 2D4
+    ac: 10
+    attack: 1D4
+    count: 1
+    act: !!python/tuple
+    - tomei
+    - kurayami
+    - atk
+    - run
+    - atk
+    poison: false
+    paraly: true
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 12
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: true
+    weaksleep: false
+    friendly: true
+    exp: 350
+    number: 2D4
+    floors: !!python/tuple
+    - 2
+    fellow: ''
+    fellowp: 0
+    agi: 6
+    treasure: !!python/tuple
+    - 1
+    - 2
+  lvl1 mage:
+    names: lvl1 mages
+    unident: man in robes
+    unidents: men in robes
+    type: mage
+    level: 2
+    hp: 1D4+1
+    ac: 4
+    attack: 2D2
+    count: 1
+    act: !!python/tuple
+    - onibi
+    - shunmin
+    - atk
+    - run
+    - run
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 6
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: true
+    weaksleep: true
+    friendly: true
+    exp: 475
+    number: 1D1
+    floors: !!python/tuple
+    - 2
+    fellow: yakuza
+    fellowp: 20
+    agi: 8
+    treasure: !!python/tuple
+    - 1
+    - 2
+  lvl1 priest:
+    names: lvl1 priests
+    unident: priest
+    unidents: priests
+    type: priest
+    level: 2
+    hp: 1D8
+    ac: 5
+    attack: 1D8
+    count: 1
+    act: !!python/tuple
+    - jiai
+    - ikari
+    - atk
+    - run
+    - run
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 6
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: true
+    weaksleep: true
+    friendly: true
+    exp: 515
+    number: 1D4+1
+    floors: !!python/tuple
+    - 2
+    fellow: ripper
+    fellowp: 25
+    agi: 9
+    treasure: !!python/tuple
+    - 1
+    - 2
+  coffee bean:
+    names: coffee beans
+    unident: dot
+    unidents: dots
+    type: magic
+    level: 1
+    hp: 1D1
+    ac: 4
+    attack: 1D1
+    count: 1
+    act: !!python/tuple
+    - atk
+    - help
+    - breath
+    - breath
+    - breath
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ???
+    heal: 0
+    regdeathp: 6
+    regfire: true
+    regcold: true
+    regpoison: true
+    regspellp: 0
+    weakmaka: true
+    weaksleep: false
+    friendly: true
+    exp: 920
+    number: 9D1
+    floors: !!python/tuple
+    - 2
+    fellow: coffee bean
+    fellowp: 100
+    agi: 10
+    treasure: !!python/tuple []
+  karate man:
+    names: karate men
+    unident: black belt
+    unidents: black belts
+    type: fighter
+    level: 2
+    hp: 2D4+2
+    ac: 5
+    attack: 1D4
+    count: 3
+    act: !!python/tuple
+    - atk
+    - atk
+    - atk
+    - atk
+    - atk
+    poison: false
+    paraly: false
+    stone: false
+    critical: true
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 12
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: true
+    weaksleep: true
+    friendly: true
+    exp: 600
+    number: 2D4
+    floors: !!python/tuple
+    - 2
+    fellow: karate man
+    fellowp: 20
+    agi: 12
+    treasure: !!python/tuple
+    - 1
+    - 2
+  bobcat:
+    names: bobcats
+    unident: cat
+    unidents: cats
+    type: animal
+    level: 3
+    hp: 3D6+2
+    ac: 6
+    attack: 1D7
+    count: 2
+    act: !!python/tuple
+    - atk
+    - atk
+    - atk
+    - run
+    - run
+    poison: false
+    paraly: false
+    stone: false
+    critical: true
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 18
+    regfire: false
+    regcold: true
+    regpoison: false
+    regspellp: 0
+    weakmaka: true
+    weaksleep: false
+    friendly: true
+    exp: 735
+    number: 2D3+2
+    floors: !!python/tuple
+    - 2
+    - 3
+    fellow: killer mouse
+    fellowp: 20
+    agi: 12
+    treasure: !!python/tuple
+    - 1
+    - 2
+    - 3
+  killer mouse:
+    names: killer mice
+    unident: giant rodent
+    unidents: giant rodents
+    type: animal
+    level: 2
+    hp: 4D4
+    ac: 8
+    attack: 1D10
+    count: 1
+    act: !!python/tuple
+    - atk
+    - atk
+    - atk
+    - run
+    - run
+    poison: true
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 24
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: true
+    weaksleep: false
+    friendly: true
+    exp: 520
+    number: 2D4+1
+    floors: !!python/tuple
+    - 3
+    fellow: hyena
+    fellowp: 20
+    agi: 6
+    treasure: !!python/tuple
+    - 1
+    - 2
+  comodo dragon:
+    names: comodo dragons
+    unident: lizard
+    unidents: lizards
+    type: animal
+    level: 3
+    hp: 4D5
+    ac: 7
+    attack: 2D3+2
+    count: 2
+    act: !!python/tuple
+    - atk
+    - atk
+    - atk
+    - run
+    - atk
+    poison: true
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 24
+    regfire: true
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: true
+    weaksleep: false
+    friendly: true
+    exp: 795
+    number: 2D2+4
+    floors: !!python/tuple
+    - 3
+    fellow: hyena
+    fellowp: 25
+    agi: 7
+    treasure: !!python/tuple
+    - 1
+    - 2
+    - 3
+  hyena:
+    names: hyenas
+    unident: mangy dog
+    unidents: mangy dogs
+    type: animal
+    level: 3
+    hp: 4D6
+    ac: 8
+    attack: 4D4
+    count: 1
+    act: !!python/tuple
+    - atk
+    - atk
+    - atk
+    - run
+    - run
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 24
+    regfire: false
+    regcold: false
+    regpoison: true
+    regspellp: 0
+    weakmaka: true
+    weaksleep: false
+    friendly: true
+    exp: 780
+    number: 4D2
+    floors: !!python/tuple
+    - 3
+    fellow: bobcat
+    fellowp: 25
+    agi: 12
+    treasure: !!python/tuple
+    - 1
+    - 2
+    - 3
+  lvl3 priest:
+    names: lvl3 priests
+    unident: priest
+    unidents: priests
+    type: priest
+    level: 3
+    hp: 3D8+1
+    ac: 4
+    attack: 1D8+2
+    count: 1
+    act: !!python/tuple
+    - kabe
+    - damare
+    - atk
+    - run
+    - ikari
+    poison: true
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 18
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: true
+    weaksleep: true
+    friendly: true
+    exp: 990
+    number: 2D2+3
+    floors: !!python/tuple
+    - 3
+    fellow: lvl1 priest
+    fellowp: 30
+    agi: 9
+    treasure: !!python/tuple
+    - 1
+    - 2
+    - 3
+  lvl3 samurai:
+    names: lvl3 samurai
+    unident: kimonoed man
+    unidents: kimonoed men
+    type: fighter
+    level: 3
+    hp: 3D6+4
+    ac: 5
+    attack: 1D5+1
+    count: 3
+    act: !!python/tuple
+    - shunmin
+    - onibi
+    - onibi
+    - run
+    - atk
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 18
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: true
+    weaksleep: false
+    friendly: true
+    exp: 795
+    number: 4D2
+    floors: !!python/tuple
+    - 3
+    fellow: coffee bean
+    fellowp: 20
+    agi: 11
+    treasure: !!python/tuple
+    - 1
+    - 2
+    - 3
+  lvl3 ninja:
+    names: lvl3 ninjas
+    unident: kimonoed man
+    unidents: kimoned men
+    type: fighter
+    level: 3
+    hp: 3D8
+    ac: 3
+    attack: 5D4
+    count: 1
+    act: !!python/tuple
+    - atk
+    - atk
+    - atk
+    - atk
+    - atk
+    poison: true
+    paraly: false
+    stone: false
+    critical: true
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 18
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: true
+    weaksleep: false
+    friendly: true
+    exp: 1360
+    number: 2D4+2
+    floors: !!python/tuple
+    - 3
+    - 4
+    fellow: karate man
+    fellowp: 20
+    agi: 12
+    treasure: !!python/tuple
+    - 2
+    - 3
+  were bear:
+    names: were bears
+    unident: bear
+    unidents: bears
+    type: animal
+    level: 3
+    hp: 3D8
+    ac: 6
+    attack: 3D6+1
+    count: 1
+    act: !!python/tuple
+    - atk
+    - atk
+    - atk
+    - run
+    - atk
+    poison: true
+    paraly: true
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 1
+    regdeathp: 30
+    regfire: false
+    regcold: true
+    regpoison: true
+    regspellp: 0
+    weakmaka: true
+    weaksleep: false
+    friendly: true
+    exp: 1320
+    number: 2D3+2
+    floors: !!python/tuple
+    - 3
+    - 4
+    fellow: bobcat
+    fellowp: 30
+    agi: 10
+    treasure: !!python/tuple
+    - 2
+    - 3
+  humming dragon:
+    names: humming dragons
+    unident: tiny dragon
+    unidents: tiny dragons
+    type: dragon
+    level: 3
+    hp: 2D8
+    ac: 4
+    attack: 1D5
+    count: 3
+    act: !!python/tuple
+    - atk
+    - atk
+    - breath
+    - breath
+    - breath
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: fire
+    heal: 0
+    regdeathp: 12
+    regfire: true
+    regcold: false
+    regpoison: false
+    regspellp: 20
+    weakmaka: true
+    weaksleep: true
+    friendly: true
+    exp: 1275
+    number: 1D3+1
+    floors: !!python/tuple
+    - 3
+    - 4
+    fellow: ''
+    fellowp: 0
+    agi: 10
+    treasure: !!python/tuple
+    - 2
+    - 3
+  rotting corpose:
+    names: rotting corposes
+    unident: weird humanoid
+    unidents: weird humanoids
+    type: undead
+    level: 3
+    hp: 2D8
+    ac: 6
+    attack: 1D4
+    count: 3
+    act: !!python/tuple
+    - atk
+    - atk
+    - atk
+    - atk
+    - atk
+    poison: false
+    paraly: true
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 100
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: false
+    weaksleep: false
+    friendly: true
+    exp: 680
+    number: 1D5
+    floors: !!python/tuple
+    - 3
+    - 4
+    fellow: ghost
+    fellowp: 10
+    agi: 6
+    treasure: !!python/tuple
+    - 2
+    - 3
+  akaoni:
+    names: akaonis
+    unident: ogre
+    unidents: ogres
+    type: fighter
+    level: 3
+    hp: 4D8+1
+    ac: 5
+    attack: 2D6
+    count: 1
+    act: !!python/tuple
+    - atk
+    - atk
+    - atk
+    - run
+    - run
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 24
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: true
+    weaksleep: true
+    friendly: true
+    exp: 960
+    number: 1D8
+    floors: !!python/tuple
+    - 3
+    - 4
+    fellow: bobcat
+    fellowp: 20
+    agi: 7
+    treasure: !!python/tuple
+    - 2
+    - 3
+  huge spider:
+    names: huge spiders
+    unident: insect
+    unidents: insects
+    type: insect
+    level: 3
+    hp: 2D8+2
+    ac: 6
+    attack: 1D6
+    count: 1
+    act: !!python/tuple
+    - atk
+    - atk
+    - atk
+    - atk
+    - atk
+    poison: true
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 12
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: true
+    weaksleep: true
+    friendly: true
+    exp: 600
+    number: 1D8
+    floors: !!python/tuple
+    - 3
+    - 4
+    fellow: iron beetle
+    fellowp: 10
+    agi: 10
+    treasure: !!python/tuple
+    - 2
+    - 3
+  wererabbit:
+    names: wererabbits
+    unident: animal
+    unidents: animals
+    type: were
+    level: 3
+    hp: 3D8+1
+    ac: 6
+    attack: 1D8
+    count: 1
+    act: !!python/tuple
+    - atk
+    - atk
+    - atk
+    - atk
+    - atk
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 18
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: true
+    weaksleep: true
+    friendly: true
+    exp: 755
+    number: 1D4
+    floors: !!python/tuple
+    - 3
+    - 4
+    fellow: hyena
+    fellowp: 50
+    agi: 9
+    treasure: !!python/tuple
+    - 2
+    - 3
+  iron beetle:
+    names: iron beetles
+    unident: insect
+    unidents: insects
+    type: insect
+    level: 3
+    hp: 3D8
+    ac: 3
+    attack: 5D4
+    count: 1
+    act: !!python/tuple
+    - atk
+    - atk
+    - atk
+    - atk
+    - atk
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 30
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: true
+    weaksleep: false
+    friendly: true
+    exp: 1120
+    number: 1D8
+    floors: !!python/tuple
+    - 3
+    - 4
+    fellow: huge spider
+    fellowp: 20
+    agi: 8
+    treasure: !!python/tuple
+    - 2
+    - 3
+  green dragon:
+    names: green dragons
+    unident: dragon
+    unidents: dragons
+    type: dragon
+    level: 4
+    hp: 5D8
+    ac: 3
+    attack: 3D6+4
+    count: 1
+    act: !!python/tuple
+    - shunmin
+    - breath
+    - breath
+    - breath
+    - atk
+    poison: true
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 30
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: true
+    weaksleep: false
+    friendly: true
+    exp: 2075
+    number: 1D4
+    floors: !!python/tuple
+    - 3
+    - 4
+    fellow: humming dragon
+    fellowp: 40
+    agi: 10
+    treasure: !!python/tuple
+    - 2
+    - 3
+    - 4
+  priestess:
+    names: priestesses
+    unident: priest
+    unidents: priests
+    type: priest
+    level: 4
+    hp: 3D8+1
+    ac: 1
+    attack: 1D6+2
+    count: 1
+    act: !!python/tuple
+    - kabe
+    - jiai
+    - atk
+    - run
+    - run
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 18
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: true
+    weaksleep: true
+    friendly: true
+    exp: 870
+    number: 1D6+1
+    floors: !!python/tuple
+    - 3
+    - 4
+    fellow: green dragon
+    fellowp: 60
+    agi: 8
+    treasure: !!python/tuple
+    - 2
+    - 3
+    - 4
+  swordsman:
+    names: swordsmen
+    unident: man in armor
+    unidents: men in armor
+    type: fighter
+    level: 3
+    hp: 3D10
+    ac: 3
+    attack: 2D7
+    count: 1
+    act: !!python/tuple
+    - atk
+    - atk
+    - atk
+    - atk
+    - atk
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 18
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: true
+    weaksleep: true
+    friendly: true
+    exp: 960
+    number: 1D6+1
+    floors: !!python/tuple
+    - 4
+    - 5
+    fellow: robot dog
+    fellowp: 35
+    agi: 10
+    treasure: !!python/tuple
+    - 2
+    - 3
+  killer hornet:
+    names: killer hornets
+    unident: insect
+    unidents: insects
+    type: insect
+    level: 3
+    hp: 2D8+2
+    ac: 6
+    attack: 1D6
+    count: 1
+    act: !!python/tuple
+    - atk
+    - atk
+    - atk
+    - atk
+    - atk
+    poison: true
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 12
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: true
+    weaksleep: true
+    friendly: true
+    exp: 600
+    number: 1D8
+    floors: !!python/tuple
+    - 4
+    - 5
+    fellow: half prince
+    fellowp: 10
+    agi: 8
+    treasure: !!python/tuple
+    - 2
+    - 3
+  robot dog:
+    names: robot dogs
+    unident: animal
+    unidents: animals
+    type: animal
+    level: 3
+    hp: 4D8
+    ac: 1
+    attack: 1D6
+    count: 1
+    act: !!python/tuple
+    - atk
+    - atk
+    - atk
+    - run
+    - run
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 24
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: true
+    weaksleep: true
+    friendly: true
+    exp: 1120
+    number: 1D6
+    floors: !!python/tuple
+    - 4
+    - 5
+    fellow: humming dragon
+    fellowp: 20
+    agi: 12
+    treasure: !!python/tuple
+    - 2
+    - 3
+  kokopelli:
+    names: kokopellis
+    unident: small humanoid
+    unidents: small humanoids
+    type: magic
+    level: 4
+    hp: 4D8+4
+    ac: 5
+    attack: 1D4
+    count: 4
+    act: !!python/tuple
+    - atk
+    - atk
+    - atk
+    - atk
+    - atk
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 24
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 50
+    weakmaka: true
+    weaksleep: false
+    friendly: true
+    exp: 2435
+    number: 1D6
+    floors: !!python/tuple
+    - 4
+    - 5
+    fellow: ''
+    fellowp: 0
+    agi: 7
+    treasure: !!python/tuple
+    - 2
+    - 3
+    - 4
+  ghost:
+    names: ghosts
+    unident: thin figure
+    unidents: thin figures
+    type: undead
+    level: 3
+    hp: 4D8
+    ac: 4
+    attack: 1D4
+    count: 4
+    act: !!python/tuple
+    - atk
+    - atk
+    - atk
+    - atk
+    - atk
+    poison: false
+    paraly: true
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 100
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: false
+    weaksleep: false
+    friendly: true
+    exp: 1080
+    number: 1D6
+    floors: !!python/tuple
+    - 4
+    - 5
+    fellow: half prince
+    fellowp: 20
+    agi: 6
+    treasure: !!python/tuple
+    - 2
+    - 3
+  ice dragon:
+    names: ice dragons
+    unident: dragon
+    unidents: dragons
+    type: dragon
+    level: 4
+    hp: 5D10
+    ac: 4
+    attack: 1D10
+    count: 1
+    act: !!python/tuple
+    - atk
+    - atk
+    - breath
+    - breath
+    - breath
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: cold
+    heal: 0
+    regdeathp: 30
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: true
+    weaksleep: false
+    friendly: true
+    exp: 2280
+    number: 1D6
+    floors: !!python/tuple
+    - 4
+    - 5
+    fellow: wererabbit
+    fellowp: 10
+    agi: 9
+    treasure: !!python/tuple
+    - 2
+    - 3
+    - 4
+  python:
+    names: pythons
+    unident: snake
+    unidents: snakes
+    type: animal
+    level: 4
+    hp: 4D8+3
+    ac: 5
+    attack: 2D4
+    count: 2
+    act: !!python/tuple
+    - atk
+    - atk
+    - atk
+    - atk
+    - atk
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 24
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: true
+    weaksleep: false
+    friendly: true
+    exp: 975
+    number: 1D6
+    floors: !!python/tuple
+    - 4
+    - 5
+    fellow: wererabbit
+    fellowp: 25
+    agi: 11
+    treasure: !!python/tuple
+    - 2
+    - 3
+    - 4
+  half prince:
+    names: princes
+    unident: unseen entity
+    unidents: unseen entities
+    type: undead
+    level: 3
+    hp: 3D8+3
+    ac: 7
+    attack: 1D4+1
+    count: 1
+    act: !!python/tuple
+    - atk
+    - atk
+    - atk
+    - atk
+    - atk
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 1
+    breathsp: ''
+    heal: 0
+    regdeathp: 100
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: false
+    weaksleep: false
+    friendly: true
+    exp: 875
+    number: 1D6
+    floors: !!python/tuple
+    - 4
+    - 5
+    fellow: rotting corpose
+    fellowp: 20
+    agi: 11
+    treasure: !!python/tuple
+    - 2
+    - 3
+  bishop:
+    names: bishops
+    unident: priest
+    unidents: priests
+    type: priest
+    level: 4
+    hp: 4D8
+    ac: 4
+    attack: 1D10
+    count: 1
+    act: !!python/tuple
+    - onibi
+    - kaminohogo
+    - nero
+    - shunmin
+    - atk
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 24
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: true
+    weaksleep: true
+    friendly: true
+    exp: 1135
+    number: 1D6
+    floors: !!python/tuple
+    - 4
+    - 5
+    fellow: honcho
+    fellowp: 10
+    agi: 11
+    treasure: !!python/tuple
+    - 2
+    - 3
+    - 4
+  honcho:
+    names: honchos
+    unident: man in armor
+    unidents: men in armor
+    type: fighter
+    level: 4
+    hp: 4D10
+    ac: 2
+    attack: 1D12
+    count: 1
+    act: !!python/tuple
+    - atk
+    - atk
+    - atk
+    - atk
+    - atk
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 24
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: true
+    weaksleep: true
+    friendly: true
+    exp: 1200
+    number: 1D6
+    floors: !!python/tuple
+    - 4
+    - 5
+    fellow: bishop
+    fellowp: 20
+    agi: 11
+    treasure: !!python/tuple
+    - 2
+    - 3
+    - 4
+  magician:
+    names: magicians
+    unident: man in robes
+    unidents: men in robes
+    type: mage
+    level: 4
+    hp: 5D4
+    ac: 10
+    attack: 1D4
+    count: 1
+    act: !!python/tuple
+    - taika
+    - taik
+    - kamaitachi
+    - tomei
+    - atk
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 30
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: true
+    weaksleep: true
+    friendly: true
+    exp: 620
+    number: 1D6
+    floors: !!python/tuple
+    - 5
+    - 6
+    fellow: lvl4 thief
+    fellowp: 20
+    agi: 11
+    treasure: !!python/tuple
+    - 3
+    - 4
+  lvl4 thief:
+    names: lvl4 thieves
+    unident: man in leather
+    unidents: men in leather
+    type: thief
+    level: 4
+    hp: 4D8+3
+    ac: 10
+    attack: 1D6
+    count: 3
+    act: !!python/tuple
+    - atk
+    - atk
+    - atk
+    - run
+    - run
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 24
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: true
+    weaksleep: false
+    friendly: true
+    exp: 740
+    number: 1D6
+    floors: !!python/tuple
+    - 5
+    - 6
+    fellow: bishop
+    fellowp: 20
+    agi: 11
+    treasure: !!python/tuple
+    - 3
+    - 4
+  snow leopard:
+    names: snow leopards
+    unident: animal
+    unidents: animals
+    type: animal
+    level: 4
+    hp: 6D8
+    ac: 0
+    attack: 2D4
+    count: 2
+    act: !!python/tuple
+    - atk
+    - atk
+    - atk
+    - atk
+    - run
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 36
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: true
+    weaksleep: false
+    friendly: true
+    exp: 1460
+    number: 1D6
+    floors: !!python/tuple
+    - 5
+    - 6
+    fellow: ice dragon
+    fellowp: 15
+    agi: 11
+    treasure: !!python/tuple
+    - 3
+    - 4
+  mononoke:
+    names: mononokes
+    unident: unseen entity
+    unidents: unseen entities
+    type: myth
+    level: 4
+    hp: 7D3+2
+    ac: 2
+    attack: 1D4
+    count: 1
+    act: !!python/tuple
+    - taika
+    - kamaitachi
+    - atk
+    - atk
+    - atk
+    poison: true
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 1
+    regdeathp: 42
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 25
+    weakmaka: true
+    weaksleep: false
+    friendly: true
+    exp: 1245
+    number: 1D6
+    floors: !!python/tuple
+    - 5
+    - 6
+    fellow: kokopelli
+    fellowp: 20
+    agi: 11
+    treasure: !!python/tuple
+    - 3
+    - 4
+  ancient spider:
+    names: ancient spiders
+    unident: insect
+    unidents: insects
+    type: insect
+    level: 4
+    hp: 4D8+4
+    ac: 4
+    attack: 2D4
+    count: 1
+    act: !!python/tuple
+    - atk
+    - atk
+    - atk
+    - atk
+    - atk
+    poison: true
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 24
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: true
+    weaksleep: false
+    friendly: true
+    exp: 960
+    number: 1D6
+    floors: !!python/tuple
+    - 5
+    - 6
+    fellow: huge spider
+    fellowp: 20
+    agi: 11
+    treasure: !!python/tuple
+    - 3
+    - 4
+  werewolf:
+    names: werewolves
+    unident: animal
+    unidents: animals
+    type: were
+    level: 5
+    hp: 5D8
+    ac: 4
+    attack: 2D6+2
+    count: 2
+    act: !!python/tuple
+    - atk
+    - atk
+    - atk
+    - atk
+    - atk
+    poison: true
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 1
+    regdeathp: 30
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: true
+    weaksleep: true
+    friendly: true
+    exp: 1405
+    number: 1D8
+    floors: !!python/tuple
+    - 5
+    - 6
+    - 7
+    fellow: python
+    fellowp: 20
+    agi: 11
+    treasure: !!python/tuple
+    - 3
+    - 4
+    - 5
+  medusa hair:
+    names: medusa hairs
+    unident: snake
+    unidents: snakes
+    type: myth
+    level: 4
+    hp: 5D8
+    ac: 6
+    attack: 1D3
+    count: 1
+    act: !!python/tuple
+    - atk
+    - atk
+    - atk
+    - atk
+    - atk
+    poison: false
+    paraly: false
+    stone: true
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 30
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: true
+    weaksleep: false
+    friendly: true
+    exp: 1040
+    number: 1D6
+    floors: !!python/tuple
+    - 5
+    - 6
+    - 7
+    fellow: mononoke
+    fellowp: 20
+    agi: 11
+    treasure: !!python/tuple
+    - 3
+    - 4
+  lvl5 priest:
+    names: lvl5 priests
+    unident: priest
+    unidents: priests
+    type: priest
+    level: 5
+    hp: 5D8
+    ac: 4
+    attack: 1D6+2
+    count: 1
+    act: !!python/tuple
+    - kaminohogo
+    - iyashi
+    - damare
+    - nero
+    - atk
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 30
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: true
+    weaksleep: false
+    friendly: true
+    exp: 1220
+    number: 1D5
+    floors: !!python/tuple
+    - 5
+    - 6
+    - 7
+    fellow: lvl6 ninja
+    fellowp: 20
+    agi: 11
+    treasure: !!python/tuple
+    - 3
+    - 4
+    - 5
+  lvl6 ninja:
+    names: lvl6 ninjas
+    unident: man in black
+    unidents: men in black
+    type: fighter
+    level: 5
+    hp: 6D10
+    ac: 6
+    attack: 1D6
+    count: 3
+    act: !!python/tuple
+    - atk
+    - atk
+    - atk
+    - atk
+    - atk
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 36
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: true
+    weaksleep: false
+    friendly: true
+    exp: 1520
+    number: 1D5
+    floors: !!python/tuple
+    - 5
+    - 6
+    - 7
+    fellow: kasipian wind
+    fellowp: 20
+    agi: 11
+    treasure: !!python/tuple
+    - 3
+    - 4
+    - 5
+  lvl7 mage:
+    names: lvl7 mages
+    unident: man in robes
+    unidents: men in robes
+    type: mage
+    level: 5
+    hp: 7D4
+    ac: 8
+    attack: 1D4
+    count: 1
+    act: !!python/tuple
+    - gouka
+    - toketsu
+    - gouka
+    - kanashibari
+    - atk
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 42
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: true
+    weaksleep: true
+    friendly: true
+    exp: 1000
+    number: 1D6
+    floors: !!python/tuple
+    - 5
+    - 6
+    - 7
+    fellow: lvl6 ninja
+    fellowp: 20
+    agi: 11
+    treasure: !!python/tuple
+    - 3
+    - 4
+    - 5
+  kasipian wind:
+    names: kaspian winds
+    unident: sailer
+    unidents: sailors
+    type: thief
+    level: 5
+    hp: 4D6
+    ac: 4
+    attack: 1D6
+    count: 4
+    act: !!python/tuple
+    - atk
+    - atk
+    - atk
+    - run
+    - run
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 24
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: true
+    weaksleep: true
+    friendly: true
+    exp: 960
+    number: 1D6
+    floors: !!python/tuple
+    - 8
+    - 6
+    - 7
+    fellow: lvl5 priest
+    fellowp: 10
+    agi: 11
+    treasure: !!python/tuple
+    - 4
+    - 5
+  tycoon:
+    names: tycoons
+    unident: man in armor
+    unidents: men in armor
+    type: fighter
+    level: 6
+    hp: 7D12
+    ac: 0
+    attack: 1D7
+    count: 2
+    act: !!python/tuple
+    - atk
+    - atk
+    - atk
+    - atk
+    - atk
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 42
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 20
+    weakmaka: true
+    weaksleep: false
+    friendly: true
+    exp: 2340
+    number: 1D5
+    floors: !!python/tuple
+    - 8
+    - 6
+    - 7
+    fellow: lvl5 priest
+    fellowp: 50
+    agi: 11
+    treasure: !!python/tuple
+    - 4
+    - 5
+    - 6
+  high priest:
+    names: high priests
+    unident: priest
+    unidents: priests
+    type: priest
+    level: 6
+    hp: 8D8
+    ac: 3
+    attack: 1D8+2
+    count: 1
+    act: !!python/tuple
+    - shisubeshi
+    - shisubeshi
+    - kaminoikari
+    - zenjiai
+    - atk
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 48
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: false
+    weaksleep: false
+    friendly: true
+    exp: 2160
+    number: 1D6
+    floors: !!python/tuple
+    - 8
+    - 6
+    - 7
+    fellow: ronin
+    fellowp: 20
+    agi: 12
+    treasure: !!python/tuple
+    - 4
+    - 5
+    - 6
+  ronin:
+    names: ronins
+    unident: man in kimono
+    unidents: men in kimono
+    type: fighter
+    level: 6
+    hp: 10D10
+    ac: 2
+    attack: 1D12+2
+    count: 1
+    act: !!python/tuple
+    - shunmin
+    - onibi
+    - atk
+    - atk
+    - atk
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 60
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: false
+    weaksleep: false
+    friendly: true
+    exp: 2395
+    number: 1D6
+    floors: !!python/tuple
+    - 8
+    - 6
+    - 7
+    fellow: high priest
+    fellowp: 25
+    agi: 12
+    treasure: !!python/tuple
+    - 4
+    - 5
+    - 6
+  arch wizard:
+    names: arch wizard
+    unident: man in robes
+    unidents: men in robes
+    type: mage
+    level: 10
+    hp: 20D4
+    ac: 0
+    attack: 1D4
+    count: 1
+    act: !!python/tuple
+    - atk
+    - zentomei
+    - chissoku
+    - zettaireido
+    - zentomei
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 100
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: false
+    weaksleep: false
+    friendly: true
+    exp: 3160
+    number: 1D1
+    floors: !!python/tuple
+    - 0
+    - 9
+    - 10
+    fellow: mad wizard
+    fellowp: 100
+    agi: 15
+    treasure: !!python/tuple
+    - 8
+    - 9
+    - 10
+  lupin the 3rd:
+    names: lupin the 3rds
+    unident: man in jacket
+    unidents: men in jackets
+    type: thief
+    level: 6
+    hp: 6D6
+    ac: 3
+    attack: 1D8
+    count: 4
+    act: !!python/tuple
+    - atk
+    - atk
+    - atk
+    - run
+    - run
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 36
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: true
+    weaksleep: false
+    friendly: true
+    exp: 1140
+    number: 1D6
+    floors: !!python/tuple
+    - 8
+    - 9
+    - 7
+    fellow: arch wizard
+    fellowp: 25
+    agi: 12
+    treasure: !!python/tuple
+    - 5
+    - 6
+  hell dog:
+    names: hell dogs
+    unident: animal
+    unidents: animals
+    type: animal
+    level: 6
+    hp: 4D8
+    ac: -1
+    attack: 1D2
+    count: 1
+    act: !!python/tuple
+    - atk
+    - atk
+    - atk
+    - run
+    - run
+    poison: false
+    paraly: true
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 24
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: true
+    weaksleep: false
+    friendly: true
+    exp: 1235
+    number: 1D5
+    floors: !!python/tuple
+    - 8
+    - 9
+    - 7
+    fellow: hell dog
+    fellowp: 20
+    agi: 12
+    treasure: !!python/tuple
+    - 5
+    - 6
+  aooni:
+    names: aoonis
+    unident: ogre
+    unidents: ogres
+    type: mage
+    level: 7
+    hp: 8D8
+    ac: 4
+    attack: 1D12
+    count: 1
+    act: !!python/tuple
+    - taika
+    - kamaitachi
+    - atk
+    - atk
+    - atk
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 1
+    regdeathp: 48
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: false
+    weaksleep: false
+    friendly: true
+    exp: 1790
+    number: 1D5
+    floors: !!python/tuple
+    - 8
+    - 9
+    - 7
+    fellow: troll
+    fellowp: 10
+    agi: 12
+    treasure: !!python/tuple
+    - 5
+    - 6
+    - 7
+  troll:
+    names: trolls
+    unident: strange animal
+    unidents: strange animals
+    type: fighter
+    level: 6
+    hp: 6D8+6
+    ac: 4
+    attack: 1D4+4
+    count: 3
+    act: !!python/tuple
+    - atk
+    - atk
+    - atk
+    - atk
+    - atk
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 3
+    regdeathp: 36
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: true
+    weaksleep: false
+    friendly: true
+    exp: 1720
+    number: 1D3+1
+    floors: !!python/tuple
+    - 8
+    - 9
+    - 7
+    fellow: troll
+    fellowp: 5
+    agi: 12
+    treasure: !!python/tuple
+    - 5
+    - 6
+  prince:
+    names: princes
+    unident: unseen entity
+    unidents: unseen entities
+    type: undead
+    level: 6
+    hp: 5D8+3
+    ac: 3
+    attack: 1D4
+    count: 1
+    act: !!python/tuple
+    - taika
+    - kaminohogo
+    - atk
+    - atk
+    - atk
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 2
+    breathsp: ''
+    heal: 0
+    regdeathp: 100
+    regfire: false
+    regcold: false
+    regpoison: true
+    regspellp: 20
+    weakmaka: false
+    weaksleep: false
+    friendly: true
+    exp: 2240
+    number: 1D1
+    floors: !!python/tuple
+    - 8
+    - 9
+    - 7
+    fellow: prince
+    fellowp: 50
+    agi: 12
+    treasure: !!python/tuple
+    - 5
+    - 6
+  moon walker:
+    names: moon walkers
+    unident: unseen entity
+    unidents: unseen entities
+    type: undead
+    level: 6
+    hp: 5D8+3
+    ac: 4
+    attack: 1D6
+    count: 1
+    act: !!python/tuple
+    - atk
+    - atk
+    - atk
+    - atk
+    - atk
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 1
+    breathsp: ''
+    heal: 0
+    regdeathp: 100
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 25
+    weakmaka: false
+    weaksleep: false
+    friendly: true
+    exp: 1475
+    number: 2D3+2
+    floors: !!python/tuple
+    - 8
+    - 9
+    - 7
+    fellow: aooni
+    fellowp: 23
+    agi: 12
+    treasure: !!python/tuple
+    - 5
+    - 6
+  serpent:
+    names: serpents
+    unident: snake
+    unidents: strange animals
+    type: animal
+    level: 6
+    hp: 7D8+7
+    ac: 3
+    attack: 2D7
+    count: 2
+    act: !!python/tuple
+    - atk
+    - atk
+    - atk
+    - atk
+    - atk
+    poison: true
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 42
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: true
+    weaksleep: false
+    friendly: true
+    exp: 1540
+    number: 1D6
+    floors: !!python/tuple
+    - 8
+    - 9
+    - 7
+    fellow: mononoke
+    fellowp: 20
+    agi: 12
+    treasure: !!python/tuple
+    - 5
+    - 6
+  lvl8 priest:
+    names: lvl8 priests
+    unident: priest
+    unidents: priests
+    type: priest
+    level: 6
+    hp: 7D8
+    ac: 3
+    attack: 1D8
+    count: 1
+    act: !!python/tuple
+    - gekido
+    - zenjiai
+    - gekido
+    - gekido
+    - atk
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 42
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: true
+    weaksleep: false
+    friendly: true
+    exp: 1720
+    number: 1D5
+    floors: !!python/tuple
+    - 8
+    - 9
+    - 7
+    fellow: serpent
+    fellowp: 20
+    agi: 12
+    treasure: !!python/tuple
+    - 5
+    - 6
+  lvl10 fighter:
+    names: lvl10 fighters
+    unident: man in armor
+    unidents: men in armor
+    type: fighter
+    level: 6
+    hp: 7D10
+    ac: 0
+    attack: 1D12
+    count: 2
+    act: !!python/tuple
+    - atk
+    - atk
+    - atk
+    - atk
+    - atk
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 42
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: true
+    weaksleep: false
+    friendly: true
+    exp: 1900
+    number: 1D6
+    floors: !!python/tuple
+    - 8
+    - 9
+    - 7
+    fellow: lvl10 fighter
+    fellowp: 10
+    agi: 12
+    treasure: !!python/tuple
+    - 5
+    - 6
+  wizard:
+    names: wizards
+    unident: man in robes
+    unidents: men in robes
+    type: mage
+    level: 6
+    hp: 7D4
+    ac: 8
+    attack: 1D4
+    count: 1
+    act: !!python/tuple
+    - zettaireido
+    - kyofu
+    - zettaireido
+    - kyofu
+    - atk
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 42
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: true
+    weaksleep: false
+    friendly: true
+    exp: 1240
+    number: 1D6
+    floors: !!python/tuple
+    - 8
+    - 9
+    - 7
+    fellow: serpent
+    fellowp: 30
+    agi: 12
+    treasure: !!python/tuple
+    - 5
+    - 6
+  lvl7 thief:
+    names: lvl7 thieves
+    unident: man in leather
+    unidents: men in leather
+    type: thief
+    level: 7
+    hp: 7D6
+    ac: 4
+    attack: 2D8
+    count: 2
+    act: !!python/tuple
+    - atk
+    - atk
+    - atk
+    - run
+    - run
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 42
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: true
+    weaksleep: false
+    friendly: true
+    exp: 1220
+    number: 1D5
+    floors: !!python/tuple
+    - 8
+    - 9
+    - 7
+    fellow: lvl8 priest
+    fellowp: 20
+    agi: 12
+    treasure: !!python/tuple
+    - 5
+    - 6
+    - 7
+  lvl8 ninja:
+    names: lvl8 ninjas
+    unident: monk
+    unidents: monks
+    type: fighter
+    level: 7
+    hp: 8D4
+    ac: 4
+    attack: 1D6
+    count: 3
+    act: !!python/tuple
+    - atk
+    - atk
+    - atk
+    - atk
+    - atk
+    poison: false
+    paraly: false
+    stone: false
+    critical: true
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 48
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: false
+    weaksleep: false
+    friendly: true
+    exp: 1020
+    number: 1D3+1
+    floors: !!python/tuple
+    - 8
+    - 9
+    - 7
+    fellow: moon walker
+    fellowp: 20
+    agi: 13
+    treasure: !!python/tuple
+    - 5
+    - 6
+    - 7
+  desert golem:
+    names: desert golems
+    unident: giant
+    unidents: giants
+    type: giant
+    level: 7
+    hp: 1D1+40
+    ac: 9
+    attack: 2D8
+    count: 2
+    act: !!python/tuple
+    - atk
+    - atk
+    - atk
+    - atk
+    - atk
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 6
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 85
+    weakmaka: true
+    weaksleep: false
+    friendly: true
+    exp: 20435
+    number: 1D5
+    floors: !!python/tuple
+    - 8
+    - 9
+    - 7
+    fellow: ''
+    fellowp: 0
+    agi: 13
+    treasure: !!python/tuple
+    - 5
+    - 6
+    - 7
+  petit demon:
+    names: petit demons
+    unident: demon
+    unidents: demons
+    type: demon
+    level: 7
+    hp: 10D8
+    ac: 4
+    attack: 2D6
+    count: 4
+    act: !!python/tuple
+    - taika
+    - taika
+    - atk
+    - help
+    - atk
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 60
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 60
+    weakmaka: false
+    weaksleep: false
+    friendly: true
+    exp: 5100
+    number: 1D1
+    floors: !!python/tuple
+    - 8
+    - 9
+    - 7
+    fellow: lvl8 ninja
+    fellowp: 80
+    agi: 13
+    treasure: !!python/tuple
+    - 5
+    - 6
+    - 7
+  kerberos:
+    names: kerberoses
+    unident: strange animal
+    unidents: strange animals
+    type: animal
+    level: 7
+    hp: 9D6
+    ac: 2
+    attack: 1D4
+    count: 9
+    act: !!python/tuple
+    - atk
+    - atk
+    - breath
+    - breath
+    - breath
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: fire
+    heal: 0
+    regdeathp: 54
+    regfire: true
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: false
+    weaksleep: false
+    friendly: true
+    exp: 3515
+    number: 1D4
+    floors: !!python/tuple
+    - 8
+    - 9
+    - 7
+    fellow: arch wizard
+    fellowp: 20
+    agi: 13
+    treasure: !!python/tuple
+    - 5
+    - 6
+    - 7
+  stone giant:
+    names: stone giants
+    unident: giant
+    unidents: giants
+    type: giant
+    level: 7
+    hp: 11D8+4
+    ac: 3
+    attack: 5D6
+    count: 1
+    act: !!python/tuple
+    - atk
+    - atk
+    - atk
+    - atk
+    - atk
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 66
+    regfire: true
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: false
+    weaksleep: false
+    friendly: true
+    exp: 2115
+    number: 1D4
+    floors: !!python/tuple
+    - 8
+    - 9
+    - 10
+    fellow: petit demon
+    fellowp: 10
+    agi: 13
+    treasure: !!python/tuple
+    - 5
+    - 6
+    - 7
+  darkbull:
+    names: darkbulls
+    unident: strange animal
+    unidents: strange animals
+    type: myth
+    level: 7
+    hp: 8D8
+    ac: 2
+    attack: 2D6
+    count: 1
+    act: !!python/tuple
+    - atk
+    - atk
+    - breath
+    - breath
+    - breath
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: stone
+    heal: 0
+    regdeathp: 48
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: false
+    weaksleep: false
+    friendly: true
+    exp: 2920
+    number: 1D1
+    floors: !!python/tuple
+    - 8
+    - 9
+    - 10
+    fellow: kerberos
+    fellowp: 50
+    agi: 13
+    treasure: !!python/tuple
+    - 5
+    - 6
+    - 7
+  lvl8 bishop:
+    names: lvl8 bishops
+    unident: priest
+    unidents: priests
+    type: priest
+    level: 6
+    hp: 8D8
+    ac: 2
+    attack: 1D8+4
+    count: 1
+    act: !!python/tuple
+    - taika
+    - zenjiai
+    - kamaitachi
+    - gekido
+    - atk
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 48
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: false
+    weaksleep: false
+    friendly: true
+    exp: 2060
+    number: 1D6
+    floors: !!python/tuple
+    - 8
+    - 9
+    - 10
+    fellow: darkbull
+    fellowp: 20
+    agi: 13
+    treasure: !!python/tuple
+    - 5
+    - 6
+  lvl8 fighter:
+    names: lvl8 fighters
+    unident: man in armor
+    unidents: men in armor
+    type: fighter
+    level: 6
+    hp: 8D10
+    ac: -1
+    attack: 1D12+2
+    count: 2
+    act: !!python/tuple
+    - atk
+    - atk
+    - atk
+    - atk
+    - atk
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 48
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: false
+    weaksleep: false
+    friendly: true
+    exp: 2140
+    number: 1D6
+    floors: !!python/tuple
+    - 8
+    - 9
+    - 10
+    fellow: lvl8 fighter
+    fellowp: 20
+    agi: 13
+    treasure: !!python/tuple
+    - 5
+    - 6
+  lvl10 mage:
+    names: lvl10 mages
+    unident: man in robes
+    unidents: men in robes
+    type: mage
+    level: 7
+    hp: 10D4
+    ac: 10
+    attack: 1D4
+    count: 1
+    act: !!python/tuple
+    - zettaireido
+    - zettaireido
+    - kyofu
+    - gouka
+    - atk
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 60
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: false
+    weaksleep: false
+    friendly: true
+    exp: 1400
+    number: 1D6
+    floors: !!python/tuple
+    - 8
+    - 9
+    - 10
+    fellow: darkbull
+    fellowp: 30
+    agi: 13
+    treasure: !!python/tuple
+    - 5
+    - 6
+    - 7
+  pirate:
+    names: pirates
+    unident: man in leather
+    unidents: men in leather
+    type: thief
+    level: 7
+    hp: 9D6
+    ac: 4
+    attack: 1D8
+    count: 7
+    act: !!python/tuple
+    - atk
+    - atk
+    - atk
+    - run
+    - run
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 54
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: false
+    weaksleep: false
+    friendly: true
+    exp: 1640
+    number: 1D5
+    floors: !!python/tuple
+    - 8
+    - 9
+    - 10
+    fellow: darkbull
+    fellowp: 20
+    agi: 13
+    treasure: !!python/tuple
+    - 5
+    - 6
+    - 7
+  master ninja:
+    names: master ninjas
+    unident: man in robes
+    unidents: men in robes
+    type: fighter
+    level: 7
+    hp: 10D4
+    ac: 3
+    attack: 1D10+3
+    count: 3
+    act: !!python/tuple
+    - atk
+    - atk
+    - atk
+    - atk
+    - atk
+    poison: false
+    paraly: false
+    stone: false
+    critical: true
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 60
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: false
+    weaksleep: false
+    friendly: true
+    exp: 1280
+    number: 1D5
+    floors: !!python/tuple
+    - 8
+    - 9
+    - 10
+    fellow: wizard
+    fellowp: 30
+    agi: 13
+    treasure: !!python/tuple
+    - 5
+    - 6
+    - 7
+  shy ghost:
+    names: shy ghosts
+    unident: unseen entity
+    unidents: unseen entities
+    type: undead
+    level: 7
+    hp: 10D10+10
+    ac: -3
+    attack: 1D1+1
+    count: 1
+    act: !!python/tuple
+    - atk
+    - atk
+    - atk
+    - atk
+    - help
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 1
+    regdeathp: 100
+    regfire: true
+    regcold: true
+    regpoison: true
+    regspellp: 95
+    weakmaka: false
+    weaksleep: true
+    friendly: true
+    exp: 4450
+    number: 1D1
+    floors: !!python/tuple
+    - 8
+    - 9
+    - 10
+    fellow: shy ghost
+    fellowp: 80
+    agi: 13
+    treasure: !!python/tuple
+    - 5
+    - 6
+    - 7
+  moon phantom:
+    names: moon phantoms
+    unident: unseen entity
+    unidents: unseen entities
+    type: magic
+    level: 7
+    hp: 10D8
+    ac: -8
+    attack: 2D8
+    count: 1
+    act: !!python/tuple
+    - atk
+    - atk
+    - atk
+    - atk
+    - atk
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 60
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 95
+    weakmaka: false
+    weaksleep: false
+    friendly: true
+    exp: 42840
+    number: 1D2
+    floors: !!python/tuple
+    - 8
+    - 9
+    - 10
+    fellow: ''
+    fellowp: 0
+    agi: 14
+    treasure: !!python/tuple
+    - 5
+    - 6
+    - 7
+  demon cat:
+    names: demon cats
+    unident: strange animal
+    unidents: strange animals
+    type: animal
+    level: 7
+    hp: 10D8
+    ac: 0
+    attack: 1D8+1
+    count: 2
+    act: !!python/tuple
+    - atk
+    - atk
+    - run
+    - help
+    - atk
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 60
+    regfire: true
+    regcold: true
+    regpoison: true
+    regspellp: 0
+    weakmaka: false
+    weaksleep: false
+    friendly: false
+    exp: 3300
+    number: 1D8
+    floors: !!python/tuple
+    - 8
+    - 9
+    - 10
+    fellow: master ninja
+    fellowp: 20
+    agi: 14
+    treasure: !!python/tuple
+    - 5
+    - 6
+    - 7
+  golem:
+    names: golems
+    unident: giant
+    unidents: giants
+    type: giant
+    level: 7
+    hp: 1D8+50
+    ac: 6
+    attack: 3D10
+    count: 1
+    act: !!python/tuple
+    - atk
+    - atk
+    - atk
+    - atk
+    - atk
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 6
+    regfire: false
+    regcold: true
+    regpoison: false
+    regspellp: 95
+    weakmaka: true
+    weaksleep: false
+    friendly: false
+    exp: 41355
+    number: 1D4
+    floors: !!python/tuple
+    - 0
+    - 9
+    - 10
+    fellow: pirate
+    fellowp: 30
+    agi: 14
+    treasure: !!python/tuple
+    - 6
+    - 7
+  flame dragon:
+    names: flame dragons
+    unident: dragon
+    unidents: dragon
+    type: dragon
+    level: 7
+    hp: 12D8
+    ac: -1
+    attack: 6D4
+    count: 1
+    act: !!python/tuple
+    - atk
+    - zettaireido
+    - breath
+    - breath
+    - zettaireido
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 72
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: false
+    weaksleep: false
+    friendly: true
+    exp: 5000
+    number: 1D4
+    floors: !!python/tuple
+    - 0
+    - 9
+    - 10
+    fellow: ''
+    fellowp: 0
+    agi: 14
+    treasure: !!python/tuple
+    - 6
+    - 7
+  ascetic priest:
+    names: ascetic priests
+    unident: priest
+    unidents: priests
+    type: priest
+    level: 7
+    hp: 11D8
+    ac: 2
+    attack: 1D8
+    count: 2
+    act: !!python/tuple
+    - tenchu
+    - zenkai
+    - shisubeshi
+    - shisubeshi
+    - atk
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 66
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: false
+    weaksleep: false
+    friendly: true
+    exp: 3300
+    number: 1D1
+    floors: !!python/tuple
+    - 0
+    - 9
+    - 10
+    fellow: stone giant
+    fellowp: 100
+    agi: 14
+    treasure: !!python/tuple
+    - 6
+    - 7
+  mad wizard:
+    names: mad wizards
+    unident: man in robes
+    unidents: men in robes
+    type: mage
+    level: 7
+    hp: 12D4
+    ac: 4
+    attack: 1D4
+    count: 1
+    act: !!python/tuple
+    - zentomei
+    - shinoroi
+    - zettaireido
+    - butsumetsu
+    - atk
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 72
+    regfire: true
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: false
+    weaksleep: false
+    friendly: true
+    exp: 2395
+    number: 1D1
+    floors: !!python/tuple
+    - 0
+    - 9
+    - 10
+    fellow: lvl8 bishop
+    fellowp: 100
+    agi: 14
+    treasure: !!python/tuple
+    - 6
+    - 7
+  master:
+    names: masters
+    unident: man in leather
+    unidents: men in leather
+    type: thief
+    level: 8
+    hp: 12D6
+    ac: 2
+    attack: 1D8
+    count: 6
+    act: !!python/tuple
+    - atk
+    - atk
+    - atk
+    - run
+    - run
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 72
+    regfire: false
+    regcold: false
+    regpoison: true
+    regspellp: 0
+    weakmaka: false
+    weaksleep: false
+    friendly: true
+    exp: 1935
+    number: 1D1
+    floors: !!python/tuple
+    - 0
+    - 9
+    - 10
+    fellow: lvl8 fighter
+    fellowp: 100
+    agi: 14
+    treasure: !!python/tuple
+    - 6
+    - 7
+    - 8
+  musashi:
+    names: musashis
+    unident: man in robes
+    unidents: men in robes
+    type: fighter
+    level: 7
+    hp: 12D4
+    ac: -1
+    attack: 3D8
+    count: 3
+    act: !!python/tuple
+    - atk
+    - atk
+    - atk
+    - atk
+    - atk
+    poison: false
+    paraly: false
+    stone: false
+    critical: true
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 72
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: false
+    weaksleep: false
+    friendly: true
+    exp: 1600
+    number: 1D1
+    floors: !!python/tuple
+    - 0
+    - 9
+    - 10
+    fellow: lvl10 mage
+    fellowp: 100
+    agi: 14
+    treasure: !!python/tuple
+    - 6
+    - 7
+  vampire:
+    names: vampires
+    unident: unseen entity
+    unidents: unseen entities
+    type: undead
+    level: 8
+    hp: 11D8
+    ac: -1
+    attack: 1D6
+    count: 4
+    act: !!python/tuple
+    - taika
+    - taika
+    - atk
+    - atk
+    - atk
+    poison: false
+    paraly: true
+    stone: false
+    critical: false
+    drain: 2
+    breathsp: ''
+    heal: 1
+    regdeathp: 100
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: false
+    weaksleep: false
+    friendly: true
+    exp: 3330
+    number: 1D4
+    floors: !!python/tuple
+    - 0
+    - 9
+    - 10
+    fellow: vampire
+    fellowp: 15
+    agi: 14
+    treasure: !!python/tuple
+    - 6
+    - 7
+    - 8
+  earth demon:
+    names: earth demons
+    unident: demon
+    unidents: demons
+    type: demon
+    level: 10
+    hp: 11D8
+    ac: -3
+    attack: 1D6
+    count: 8
+    act: !!python/tuple
+    - zettaireido
+    - gouka
+    - help
+    - run
+    - help
+    poison: true
+    paraly: true
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 1
+    regdeathp: 66
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 95
+    weakmaka: false
+    weaksleep: false
+    friendly: true
+    exp: 44090
+    number: 1D6
+    floors: !!python/tuple
+    - 0
+    - 9
+    - 10
+    fellow: lvl8 ninja
+    fellowp: 70
+    agi: 14
+    treasure: !!python/tuple
+    - 7
+    - 8
+    - 9
+    - 10
+  rotten giant:
+    names: rotten giants
+    unident: giant
+    unidents: giants
+    type: giant
+    level: 10
+    hp: 1D1+80
+    ac: 3
+    attack: 4D10
+    count: 1
+    act: !!python/tuple
+    - atk
+    - atk
+    - breath
+    - breath
+    - breath
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: poison
+    heal: 0
+    regdeathp: 6
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 95
+    weakmaka: true
+    weaksleep: false
+    friendly: true
+    exp: 41230
+    number: 1D4
+    floors: !!python/tuple
+    - 0
+    - 9
+    - 10
+    fellow: moon phantom
+    fellowp: 50
+    agi: 14
+    treasure: !!python/tuple
+    - 7
+    - 8
+    - 9
+    - 10
+  rotten dragon:
+    names: rotten dragons
+    unident: dragon
+    unidents: dragons
+    type: undead
+    level: 10
+    hp: 12D8
+    ac: -2
+    attack: 5D10+2
+    count: 1
+    act: !!python/tuple
+    - zettaireido
+    - gouka
+    - breath
+    - breath
+    - breath
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 100
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 25
+    weakmaka: false
+    weaksleep: false
+    friendly: true
+    exp: 5200
+    number: 1D4
+    floors: !!python/tuple
+    - 0
+    - 9
+    - 10
+    fellow: demon cat
+    fellowp: 10
+    agi: 15
+    treasure: !!python/tuple
+    - 7
+    - 8
+    - 9
+    - 10
+  dark baron:
+    names: dark barons
+    unident: man in armor
+    unidents: men in armor
+    type: animal
+    level: 11
+    hp: 15D10
+    ac: 10
+    attack: 3D12
+    count: 2
+    act: !!python/tuple
+    - zettaireido
+    - zenjiai
+    - atk
+    - atk
+    - atk
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 2
+    regdeathp: 90
+    regfire: true
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: false
+    weaksleep: false
+    friendly: true
+    exp: 4155
+    number: 1D1
+    floors: !!python/tuple
+    - 0
+    - 9
+    - 10
+    fellow: ascetic priest
+    fellowp: 100
+    agi: 15
+    treasure: !!python/tuple
+    - 8
+    - 9
+    - 10
+    - 11
+  hattori:
+    names: hattoris
+    unident: conhead
+    unidents: conheads
+    type: fighter
+    level: 11
+    hp: 15D4
+    ac: -2
+    attack: 3D10
+    count: 3
+    act: !!python/tuple
+    - atk
+    - atk
+    - atk
+    - atk
+    - atk
+    poison: false
+    paraly: false
+    stone: false
+    critical: true
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 90
+    regfire: true
+    regcold: true
+    regpoison: true
+    regspellp: 0
+    weakmaka: false
+    weaksleep: false
+    friendly: true
+    exp: 3000
+    number: 1D1
+    floors: !!python/tuple
+    - 0
+    - 9
+    - 10
+    fellow: musashi
+    fellowp: 100
+    agi: 15
+    treasure: !!python/tuple
+    - 8
+    - 9
+    - 10
+    - 11
+  joker:
+    names: jokers
+    unident: strange animal
+    unidents: strange animals
+    type: animal
+    level: 11
+    hp: 15D12
+    ac: -3
+    attack: 4D8+3
+    count: 1
+    act: !!python/tuple
+    - atk
+    - atk
+    - breath
+    - breath
+    - atk
+    poison: true
+    paraly: true
+    stone: true
+    critical: true
+    drain: 0
+    breathsp: cold
+    heal: 0
+    regdeathp: 90
+    regfire: true
+    regcold: true
+    regpoison: true
+    regspellp: 35
+    weakmaka: false
+    weaksleep: false
+    friendly: false
+    exp: 9200
+    number: 1D1
+    floors: !!python/tuple
+    - 0
+    - 9
+    - 10
+    fellow: shy ghost
+    fellowp: 100
+    agi: 15
+    treasure: !!python/tuple
+    - 8
+    - 9
+    - 10
+    - 11
+  magatsukami:
+    names: magatsukamis
+    unident: unseen being
+    unidents: unseen beings
+    type: undead
+    level: 11
+    hp: 25D4
+    ac: -5
+    attack: 1D4+1
+    count: 1
+    act: !!python/tuple
+    - atk
+    - atk
+    - jigokunohonou
+    - kakubaku
+    - kakubaku
+    poison: true
+    paraly: true
+    stone: false
+    critical: false
+    drain: 3
+    breathsp: ''
+    heal: 3
+    regdeathp: 100
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 50
+    weakmaka: false
+    weaksleep: false
+    friendly: true
+    exp: 7460
+    number: 1D1
+    floors: !!python/tuple
+    - 0
+    - 9
+    - 10
+    fellow: rotten giant
+    fellowp: 100
+    agi: 15
+    treasure: !!python/tuple
+    - 8
+    - 9
+    - 10
+    - 11
+  dracula:
+    names: draculas
+    unident: unseen entity
+    unidents: unseen entities
+    type: undead
+    level: 11
+    hp: 20D8
+    ac: -5
+    attack: 1D4
+    count: 1
+    act: !!python/tuple
+    - atk
+    - atk
+    - zentomei
+    - chissoku
+    - zettaireido
+    poison: false
+    paraly: true
+    stone: false
+    critical: false
+    drain: 4
+    breathsp: ''
+    heal: 4
+    regdeathp: 100
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 0
+    weakmaka: false
+    weaksleep: false
+    friendly: true
+    exp: 7320
+    number: 1D1
+    floors: !!python/tuple
+    - 0
+    - 9
+    - 10
+    fellow: vampire
+    fellowp: 100
+    agi: 15
+    treasure: !!python/tuple
+    - 8
+    - 9
+    - 10
+    - 11
+  gate keeper:
+    names: gate keepers
+    unident: huge scorpion
+    unidents: huge scorpions
+    type: boss
+    level: 3
+    hp: 6D6
+    ac: 7
+    attack: 1D6
+    count: 1
+    act: !!python/tuple
+    - atk
+    - atk
+    - atk
+    - shunmin
+    - iyashi
+    poison: true
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 1
+    regdeathp: 60
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 30
+    weakmaka: false
+    weaksleep: false
+    friendly: false
+    exp: 4200
+    number: 1D1
+    floors: !!python/tuple
+    - 0
+    fellow: ''
+    fellowp: 0
+    agi: 5
+    treasure: !!python/tuple
+    - 1
+    - 2
+    - 3
+  daemon kid:
+    names: daemon kids
+    unident: child
+    unidents: children
+    type: boss
+    level: 4
+    hp: 6D8+4
+    ac: 8
+    attack: 1D4
+    count: 1
+    act: !!python/tuple
+    - atk
+    - run
+    - taika
+    - shunmin
+    - taika
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 1
+    regdeathp: 70
+    regfire: true
+    regcold: false
+    regpoison: false
+    regspellp: 50
+    weakmaka: false
+    weaksleep: false
+    friendly: false
+    exp: 8400
+    number: 1D1
+    floors: !!python/tuple
+    - 0
+    fellow: coffee bean
+    fellowp: 100
+    agi: 8
+    treasure: !!python/tuple
+    - 2
+    - 3
+    - 4
+  the lady:
+    names: the ladies
+    unident: woman
+    unidents: women
+    type: boss
+    level: 7
+    hp: 8D10+20
+    ac: 3
+    attack: 1D6
+    count: 1
+    act: !!python/tuple
+    - atk
+    - gouka
+    - zettaireido
+    - mamori
+    - damare
+    poison: false
+    paraly: false
+    stone: false
+    critical: true
+    drain: 0
+    breathsp: ''
+    heal: 2
+    regdeathp: 80
+    regfire: true
+    regcold: true
+    regpoison: false
+    regspellp: 60
+    weakmaka: false
+    weaksleep: false
+    friendly: false
+    exp: 12400
+    number: 1D1
+    floors: !!python/tuple
+    - 0
+    fellow: lvl8 fighter
+    fellowp: 100
+    agi: 14
+    treasure: !!python/tuple
+    - 5
+    - 6
+    - 7
+  atlas:
+    names: atlas
+    unident: giant
+    unidents: giants
+    type: boss
+    level: 11
+    hp: 10D10+200
+    ac: 5
+    attack: 5D12
+    count: 1
+    act: !!python/tuple
+    - atk
+    - atk
+    - atk
+    - atk
+    - atk
+    poison: false
+    paraly: false
+    stone: true
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 4
+    regdeathp: 90
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 30
+    weakmaka: false
+    weaksleep: false
+    friendly: false
+    exp: 40000
+    number: 1D1
+    floors: !!python/tuple
+    - 0
+    fellow: desert golem
+    fellowp: 100
+    agi: 4
+    treasure: !!python/tuple
+    - 8
+    - 9
+    - 10
+    - 11
+  daemon lord:
+    names: daemon lords
+    unident: demon
+    unidents: demons
+    type: boss
+    level: 12
+    hp: 10D10+300
+    ac: -4
+    attack: 3D10+1
+    count: 2
+    act: !!python/tuple
+    - atk
+    - kakubaku
+    - daikaifuku
+    - atk
+    - hinshi
+    poison: true
+    paraly: true
+    stone: true
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 8
+    regdeathp: 95
+    regfire: true
+    regcold: true
+    regpoison: true
+    regspellp: 75
+    weakmaka: false
+    weaksleep: false
+    friendly: false
+    exp: 84000
+    number: 1D1
+    floors: !!python/tuple
+    - 0
+    fellow: earth demon
+    fellowp: 100
+    agi: 18
+    treasure: !!python/tuple
+    - 9
+    - 10
+    - 11
+    - 12
+  Shenlong:
+    names: Shenlongs
+    unident: dragon
+    unidents: dragons
+    type: dragon
+    level: 12
+    hp: 10D10+1200
+    ac: -1
+    attack: 10D20
+    count: 1
+    act: !!python/tuple
+    - breath
+    - breath
+    - atk
+    - parry
+    - tenchihokai
+    poison: false
+    paraly: false
+    stone: false
+    critical: false
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 100
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 96
+    weakmaka: false
+    weaksleep: false
+    friendly: false
+    exp: 240000
+    number: 1D1
+    floors: !!python/tuple
+    - 0
+    fellow: ''
+    fellowp: 0
+    agi: 10
+    treasure: !!python/tuple
+    - 9
+    - 10
+    - 11
+    - 12
+  Nobunaga:
+    names: Nobunaga
+    unident: man in armor
+    unidents: men in armor
+    type: fighter
+    level: 12
+    hp: 100D10+200
+    ac: -5
+    attack: 2D50
+    count: 10
+    act: !!python/tuple
+    - atk
+    - atk
+    - atk
+    - atk
+    - parry
+    poison: false
+    paraly: false
+    stone: false
+    critical: true
+    drain: 0
+    breathsp: ''
+    heal: 0
+    regdeathp: 96
+    regfire: false
+    regcold: false
+    regpoison: false
+    regspellp: 100
+    weakmaka: false
+    weaksleep: false
+    friendly: false
+    exp: 200000
+    number: 1D1
+    floors: !!python/tuple
+    - 0
+    fellow: ''
+    fellowp: 0
+    agi: 20
+    treasure: !!python/tuple
+    - 9
+    - 10
+    - 11
+    - 12

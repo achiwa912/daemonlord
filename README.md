@@ -1,82 +1,83 @@
 
 # Table of Contents
 
-1.  [dl.py - Daemon Lord](#org2f436e4)
-    1.  [Overview](#org8bc7de1)
-        1.  [Wizardry clone](#org53a858c)
-        2.  [Rogue-lite dungeon maps](#org1e198a6)
-        3.  [Auto-generated maps w/o resetting levels and items of characters](#orgd4a619c)
-        4.  [Multiplayer mode (new; optional)](#orgb3caafe)
-        5.  [A little more user friendly than Wizardry](#orgb235997)
-    2.  [Important notice: alpha quality](#orgfa0fba7)
-    3.  [Getting started](#orgfd6b5af)
-        1.  [Prerequisites](#orgadb0d26)
-        2.  [Installation](#org496dd93)
-        3.  [DL server installation (optional)](#org410ff5d)
-    4.  [How to Play](#orgb205db0)
-        1.  [Tips](#org8d72685)
-    5.  [What's new](#org8dc6088)
-        1.  [Tested on Windows 10 (6/5/2021 tentative) &#x2026; finally &#x2026;](#org240c461)
-        2.  [Implemented multiplayer mode (6/4/2021 updated)](#org02688e9)
-2.  [Contributing](#org9021bd2)
-3.  [License](#org82d4867)
-4.  [Quick Tour of Daemon Lord](#org23b17c8)
-    1.  [Game start](#orgad9a9b6)
-    2.  [Edge of Town](#orgd235cdc)
-        1.  [Training Grounds](#org209527a)
-    3.  [Castle](#org13793af)
-        1.  [Hawthorne Tavern](#org0b8bc59)
-        2.  [Trader Jay's](#org3e9c084)
-        3.  [Equip](#org3e9ceb3)
-    4.  [Save and Resume](#orge673af5)
-    5.  [Dungeon](#orgc19d605)
-        1.  [Walk around the Dungeon](#orgd06e308)
-        2.  [Battle](#org8ab99c5)
-        3.  [Surprise attacks](#orgc2dee54)
-        4.  [Chest](#orgad0cd97)
-        5.  [Friendly monsters](#orgd197410)
-        6.  [Get ouf of the Dungeon](#org71d697e)
-        7.  [A new dungeon!](#org7c2c1d6)
-        8.  [A new remote dungeon in the DL server (optional; requires a DL server)](#org420fbc1)
-        9.  [Camp](#org0b09517)
-        10. [Heal all members](#org9af3f43)
-        11. [Prep for adventure](#org2df4e96)
-        12. [Save and Resume from camp](#org420328e)
-    6.  [Castle](#org3604e55)
-        1.  [The Lakehouse Inn](#orgf162fad)
-5.  [Multiplayer mode (optional)](#org20e1fac)
-    1.  [Expedition to external dungeon](#orgdb8a72d)
-    2.  [Send messages](#org99afdc3)
-    3.  [Battles in a server dungeon](#org5ae66aa)
-    4.  [Multiplayer battles](#org43fc30b)
-    5.  [Group camp](#orgc0049ee)
-        1.  [View other parties](#org84dc584)
-        2.  [Heal/cure other party members](#org2facd58)
-        3.  [Group spells and prep for adventure](#orge226f35)
-        4.  [Heal all members](#org21167c2)
-    6.  [Trading items](#org8869403)
-        1.  [Put on sale](#org86fb41a)
-        2.  [Buy item from friend](#org1ee1a23)
-6.  [Spells](#orgfd22da1)
-    1.  [Overview](#org8ec737f)
-    2.  [Usage](#org84fcf00)
-    3.  [Mage Spells](#org7d13417)
-    4.  [Priest Spells](#orgcb492aa)
-7.  [Monsters](#org835fd3f)
-    1.  [Shallow floors](#org7f6d807)
-    2.  [Middle depth floors](#orgc0e114f)
-    3.  [Deep floors](#org0c99cd0)
-    4.  [Boss and special monsters](#orge63d9ba)
-        1.  [gate keeper](#org487bfd9)
-        2.  [d????? ???, t?? ????, a????](#orgdd12f3e)
-        3.  [d????? ????](#orgc7452d8)
-        4.  [S???????, N??????](#org900b0bf)
-8.  [Contact](#org666f2cd)
-9.  [Acknowledgements](#orgc919dc4)
+1.  [dl.py - Daemon Lord](#orgd2fc3b7)
+    1.  [Overview](#orgd1c66a3)
+        1.  [Wizardry clone](#org30ff0f6)
+        2.  [Rogue-lite dungeon maps](#orgd91dff8)
+        3.  [Auto-generated maps w/o resetting levels and items of characters](#org50b1bd9)
+        4.  [Multiplayer mode (new; optional)](#org22403c4)
+        5.  [A little more user friendly than Wizardry](#orgfd4f3c0)
+    2.  [Important notice: alpha quality](#orga26d4ce)
+    3.  [Getting started](#org7fdcf71)
+        1.  [Prerequisites](#org33c1f1f)
+        2.  [Installation](#org830f064)
+        3.  [DL server installation (optional)](#orgbf55a75)
+    4.  [How to Play](#org2f1d390)
+        1.  [Tips](#org8b5e875)
+    5.  [What's new](#org8ae7663)
+        1.  [Merged definition files (6/7/2021)](#orgfb446c5)
+        2.  [Tested on Windows 10 (6/5/2021 tentative)](#orgfe51742)
+        3.  [Implemented multiplayer mode (6/4/2021 updated)](#org88a1570)
+2.  [Contributing](#org49209f4)
+3.  [License](#org3f05b29)
+4.  [Quick Tour of Daemon Lord](#org2781193)
+    1.  [Game start](#orga3bd3b4)
+    2.  [Edge of Town](#org651f18b)
+        1.  [Training Grounds](#org1a6ca64)
+    3.  [Castle](#org76eb854)
+        1.  [Hawthorne Tavern](#orgf557097)
+        2.  [Trader Jay's](#org763552f)
+        3.  [Equip](#org10419b9)
+    4.  [Save and Resume](#orgdac8157)
+    5.  [Dungeon](#org56cddcb)
+        1.  [Walk around the Dungeon](#org17ad1d0)
+        2.  [Battle](#orgc304a61)
+        3.  [Surprise attacks](#org884439a)
+        4.  [Chest](#org11e4e41)
+        5.  [Friendly monsters](#org8b455bb)
+        6.  [Get ouf of the Dungeon](#org7d0ee9d)
+        7.  [A new dungeon!](#orgd19c422)
+        8.  [A new remote dungeon in the DL server (optional; requires a DL server)](#org5e43224)
+        9.  [Camp](#orgd7fae11)
+        10. [Heal all members](#orgd28634b)
+        11. [Prep for adventure](#org135e3e9)
+        12. [Save and Resume from camp](#org9c47747)
+    6.  [Castle](#org351d404)
+        1.  [The Lakehouse Inn](#orgd6517cc)
+5.  [Multiplayer mode (optional)](#org089b77d)
+    1.  [Expedition to external dungeon](#org86ad9b2)
+    2.  [Send messages](#orge39cafe)
+    3.  [Battles in a server dungeon](#org37ebd2d)
+    4.  [Multiplayer battles](#org1f02245)
+    5.  [Group camp](#org67219b7)
+        1.  [View other parties](#org6ce98bb)
+        2.  [Heal/cure other party members](#orga781aa9)
+        3.  [Group spells and prep for adventure](#orgda777d4)
+        4.  [Heal all members](#org6d13220)
+    6.  [Trading items](#org28c0bb8)
+        1.  [Put on sale](#org50e2112)
+        2.  [Buy item from friend](#org21da50e)
+6.  [Spells](#org23e2a55)
+    1.  [Overview](#org9411ed0)
+    2.  [Usage](#orgaceacbc)
+    3.  [Mage Spells](#orgf530c44)
+    4.  [Priest Spells](#org881afbc)
+7.  [Monsters](#org723d33e)
+    1.  [Shallow floors](#org5b8e5df)
+    2.  [Middle depth floors](#org4882058)
+    3.  [Deep floors](#org88e8043)
+    4.  [Boss and special monsters](#org5e434cc)
+        1.  [gate keeper](#org6fc5bd0)
+        2.  [d????? ???, t?? ????, a????](#org235eb49)
+        3.  [d????? ????](#org81247fa)
+        4.  [S???????, N??????](#org24a59d6)
+8.  [Contact](#org92bfd7b)
+9.  [Acknowledgements](#orgd63352b)
 
 
 
-<a id="org2f436e4"></a>
+<a id="orgd2fc3b7"></a>
 
 # dl.py - Daemon Lord
 
@@ -118,12 +119,12 @@ Daemon Lord is a Wizardry-clone RPG with rogue-lite (ie, text-based), randomly-c
      6 fun        G-MAG   8   35 shunmin      ^* *** encounter ***                    ^
 
 
-<a id="org8bc7de1"></a>
+<a id="orgd1c66a3"></a>
 
 ## Overview
 
 
-<a id="org53a858c"></a>
+<a id="org30ff0f6"></a>
 
 ### Wizardry clone
 
@@ -136,7 +137,7 @@ Daemon Lord is a Wizardry-clone RPG with rogue-lite (ie, text-based), randomly-c
 -   Need to type spells and chest traps accurately
 
 
-<a id="org1e198a6"></a>
+<a id="orgd91dff8"></a>
 
 ### Rogue-lite dungeon maps
 
@@ -146,7 +147,7 @@ Daemon Lord is a Wizardry-clone RPG with rogue-lite (ie, text-based), randomly-c
 -   Maps are auto-generated.
 
 
-<a id="orgd4a619c"></a>
+<a id="org50b1bd9"></a>
 
 ### Auto-generated maps w/o resetting levels and items of characters
 
@@ -158,7 +159,7 @@ Daemon Lord is a Wizardry-clone RPG with rogue-lite (ie, text-based), randomly-c
 -   You can restart your adventure from a floor that should match your character levels
 
 
-<a id="orgb3caafe"></a>
+<a id="org22403c4"></a>
 
 ### Multiplayer mode (new; optional)
 
@@ -171,7 +172,7 @@ Daemon Lord is a Wizardry-clone RPG with rogue-lite (ie, text-based), randomly-c
 -   Support save/resume in a server-generated dungeon
 
 
-<a id="orgb235997"></a>
+<a id="orgfd4f3c0"></a>
 
 ### A little more user friendly than Wizardry
 
@@ -183,7 +184,7 @@ Daemon Lord is a Wizardry-clone RPG with rogue-lite (ie, text-based), randomly-c
 -   Group heal spells for the entire party
 
 
-<a id="orgfa0fba7"></a>
+<a id="orga26d4ce"></a>
 
 ## Important notice: alpha quality
 
@@ -192,12 +193,12 @@ Currently, DL (daemon lord) is under development and it's in an alpha code quali
 Please file issues on github, or send bug reports (or comments) to achiwa912+gmail.com (replace '+' with '@').
 
 
-<a id="orgfd6b5af"></a>
+<a id="org7fdcf71"></a>
 
 ## Getting started
 
 
-<a id="orgadb0d26"></a>
+<a id="org33c1f1f"></a>
 
 ### Prerequisites
 
@@ -207,13 +208,11 @@ Please file issues on github, or send bug reports (or comments) to achiwa912+gma
 -   Python 3.8 or later (it uses the "walrus" assignment expression)
 -   Terminal of 78x24 or larger
 -   dl.py - the program
--   monsters.csv - monster data file
--   spells.csv - spell data file
--   items.csv - item data file
+-   dldef.yaml - definition data file
 -   dlconf.yaml - server config file
 
 
-<a id="org496dd93"></a>
+<a id="org830f064"></a>
 
 ### Installation
 
@@ -221,11 +220,11 @@ Please file issues on github, or send bug reports (or comments) to achiwa912+gma
 2.  Install sqlalchemy: `pip install sqlalchemy`
 3.  Install PyYAML: `pip install pyyaml`
 4.  Install Socket.IO client: `pip install "python-socketio[client]"`
-5.  Place dl.py, monsters.csv, spells.csv, items.csv, dlconf.yaml in the same directory
+5.  Place dl.py, dldef.yaml, dlconf.yaml in the same directory
 6.  Run "python dl.py"
 
 
-<a id="org410ff5d"></a>
+<a id="orgbf55a75"></a>
 
 ### DL server installation (optional)
 
@@ -240,7 +239,7 @@ Multiplayer mode requires a DL server.
 7.  Run "python dlsv.py"
 
 
-<a id="orgb205db0"></a>
+<a id="org2f1d390"></a>
 
 ## How to Play
 
@@ -257,7 +256,7 @@ You can save either at Edge of Town or from the Camp menu.
 You can perform resume operation only from Edge of Town.
 
 
-<a id="org8d72685"></a>
+<a id="org8b5e875"></a>
 
 ### Tips
 
@@ -268,20 +267,27 @@ You can perform resume operation only from Edge of Town.
 -   You can Q)uit game on a prompt (press 'Q' (shift-q)) to quit game (you might need additional ctrl+c)
 
 
-<a id="org8dc6088"></a>
+<a id="org8ae7663"></a>
 
 ## What's new
 
 
-<a id="org240c461"></a>
+<a id="orgfb446c5"></a>
 
-### Tested on Windows 10 (6/5/2021 tentative) &#x2026; finally &#x2026;
+### Merged definition files (6/7/2021)
+
+-   Merged items.csv, spells.csv and monsters.csv into one dldef.yaml for easier installation
+
+
+<a id="orgfe51742"></a>
+
+### Tested on Windows 10 (6/5/2021 tentative)
 
 -   Tested (only a little) on Windows 10 on VirtualBox vm on MacBook
 -   Currently, it has a limitation of 80x25 fixed terminal size on Windows
 
 
-<a id="org02688e9"></a>
+<a id="org88a1570"></a>
 
 ### Implemented multiplayer mode (6/4/2021 updated)
 
@@ -303,7 +309,7 @@ Enhancement candidates (TBD):
 -   Server access via the internet
 
 
-<a id="org9021bd2"></a>
+<a id="org49209f4"></a>
 
 # Contributing
 
@@ -315,19 +321,19 @@ Any contributions, comments, advices, etc. are greatly appreciated as the curren
     -   copy and paste stack trace and explain what you did
 
 
-<a id="org82d4867"></a>
+<a id="org3f05b29"></a>
 
 # License
 
 Daemon Lord is under [MIT license](https://en.wikipedia.org/wiki/MIT_License).
 
 
-<a id="org23b17c8"></a>
+<a id="org2781193"></a>
 
 # Quick Tour of Daemon Lord
 
 
-<a id="orgad9a9b6"></a>
+<a id="orga3bd3b4"></a>
 
 ## Game start
 
@@ -361,12 +367,12 @@ DL (Daemon Lord) starts with the screen below at the Castle.
 When you first start the game, you need to go to Edge of Town (press `e`) > Training Grounds (press `t`), and then create characters (press `c`).
 
 
-<a id="orgd235cdc"></a>
+<a id="org651f18b"></a>
 
 ## Edge of Town
 
 
-<a id="org209527a"></a>
+<a id="org1a6ca64"></a>
 
 ### Training Grounds
 
@@ -722,7 +728,7 @@ As you have already noticed, DL gives you a guide of which letter you can type w
 Have you created six characters?  Then, you should go to Castle > Hawthorne Tavern to form a party.  Type `l` to leave the Training Grounds and then type `c` to go to Castle.
 
 
-<a id="org13793af"></a>
+<a id="org76eb854"></a>
 
 ## Castle
 
@@ -737,7 +743,7 @@ Have you created six characters?  Then, you should go to Castle > Hawthorne Tave
 From the Castle menu, you can visit several places, but you want to go to Hawthorne Tavern now so type `h`.
 
 
-<a id="org0b8bc59"></a>
+<a id="orgf557097"></a>
 
 ### Hawthorne Tavern
 
@@ -769,7 +775,7 @@ Now, they are shown in the party window at the bottom left of the screen.
     6 faun       G-MAG  10    7 OK
 
 
-<a id="org3e9c084"></a>
+<a id="org763552f"></a>
 
 ### Trader Jay's
 
@@ -830,7 +836,7 @@ Basically, the front (ie, the first three) members should equip heavily because 
 sling is a long-range weapon that everyone can use.  You can't expect much from sling and its damage is at best 1 or 2, but better than nothing.  Long-ranged weapons tend to be less powerful and more expensive than short-range ones.
 
 
-<a id="org3e9ceb3"></a>
+<a id="org10419b9"></a>
 
 ### Equip
 
@@ -858,7 +864,7 @@ At Hatthorne Tavern, first `i)nspect` a character and then choose `i)tems` > ite
 Equipped items will have `*` mark next to the item name.  You need to equip one item at a time and for each member.  To change members, type `j, k` .
 
 
-<a id="orge673af5"></a>
+<a id="orgdac8157"></a>
 
 ## Save and Resume
 
@@ -878,7 +884,7 @@ To save and quit the game, go to Edge of Town and type `S` (capital-S).
 You need to run `python dl.py` again to restart and resume the game.  After restarting the game, go to Edge of Town and choose `R)esume from saved data` .  That is, capital-R.  Automatic resume is not supported.
 
 
-<a id="orgc19d605"></a>
+<a id="org56cddcb"></a>
 
 ## Dungeon
 
@@ -914,7 +920,7 @@ You (`@`) are now in the dungeon and on the upstairs to the outside world.
 `^` indicates areas that you have not visited yet.  `.` is a floor tile that you can walk on.  
 
 
-<a id="orgd06e308"></a>
+<a id="org17ad1d0"></a>
 
 ### Walk around the Dungeon
 
@@ -1131,7 +1137,7 @@ Oops, another door.  Let's open again.
     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^###+###^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 
-<a id="org8ab99c5"></a>
+<a id="orgc304a61"></a>
 
 ### Battle
 
@@ -1246,7 +1252,7 @@ The party killed all three slimes.
 Yeah!  Each survivor received 27 experience points and 9 gold from this battle.
 
 
-<a id="orgc2dee54"></a>
+<a id="org884439a"></a>
 
 ### Surprise attacks
 
@@ -1264,7 +1270,7 @@ On the other hand, monsters might surprise your party.  If this occurs, monsters
     ^^^^^^^^^^^^^|    - press space bar                                                     |^^^^^^^^^^^^^^^
 
 
-<a id="orgad0cd97"></a>
+<a id="org11e4e41"></a>
 
 ### Chest
 
@@ -1409,7 +1415,7 @@ Here's the trap list.
 </table>
 
 
-<a id="orgd197410"></a>
+<a id="org8b455bb"></a>
 
 ### Friendly monsters
 
@@ -1430,7 +1436,7 @@ Of course, you will get no e.p. or gold if you chose to walk away.
     6 faun       G-MAG  10    7 OK           ^  Each survivor gets 0 gold.      ^
 
 
-<a id="org71d697e"></a>
+<a id="org7d0ee9d"></a>
 
 ### Get ouf of the Dungeon
 
@@ -1489,7 +1495,7 @@ Having walked around a lot on this floor, and now the mage's MP is exhausted and
 The party is back at Edge of Town.  It should take a while to get used to the brightness but they are safe again!
 
 
-<a id="org7c2c1d6"></a>
+<a id="orgd19c422"></a>
 
 ### A new dungeon!
 
@@ -1541,7 +1547,7 @@ What?  We can only see 3x3 tiles around the party.  Where has the map data gone?
 See the map is different this time?
 
 
-<a id="org420fbc1"></a>
+<a id="org5e43224"></a>
 
 ### A new remote dungeon in the DL server (optional; requires a DL server)
 
@@ -1550,7 +1556,7 @@ If all your friends in the same team got out of the remote/server dungeon, the s
 Currently, the DL server doesn't support save/load dungeons.  If a DL server reboots and the next time you resume your adventure in a dungeon on the server, the dungeon data is already lost and you will be navigated to the 1st floor in a new dungeon.
 
 
-<a id="org0b09517"></a>
+<a id="orgd7fae11"></a>
 
 ### Camp
 
@@ -1641,7 +1647,7 @@ Looks like, Ben's HP is fully restored.  Do the same for Cam.
 Great!
 
 
-<a id="org9af3f43"></a>
+<a id="orgd28634b"></a>
 
 ### Heal all members
 
@@ -1670,7 +1676,7 @@ Note that this option doesn't cure status anomallies such as paralyzed or even a
 Also, this command will use from most powerful healing spells regardless of actual damages of members.  Thus, you wouldn't want to use this command in the beginning or the middle of adventures.  Heal all members is casual and convenient, but not very smart.
 
 
-<a id="org2df4e96"></a>
+<a id="org135e3e9"></a>
 
 ### Prep for adventure
 
@@ -1691,7 +1697,7 @@ This is also an automatic-spell-cast option.  When you just go into the dungeon,
     ^^^^^^^^^^| * ed casted hikarinotama                                   |^^^^^^^^^^^^
 
 
-<a id="org420328e"></a>
+<a id="org9c47747"></a>
 
 ### Save and Resume from camp
 
@@ -1751,12 +1757,12 @@ And, you are in the dungeon again.
 Let's exit from the dungeon and head to Edge of Town > Castle > Lakehouse Inn for some rest.
 
 
-<a id="org3604e55"></a>
+<a id="org351d404"></a>
 
 ## Castle
 
 
-<a id="orgf162fad"></a>
+<a id="orgd6517cc"></a>
 
 ### The Lakehouse Inn
 
@@ -1799,14 +1805,14 @@ If their e.p. reach the next level, their level will go up while they are asleep
 In DL, age doesn't matter.  They can stay at the inn as long as they wish without getting old.  All the party members stay at the same room type.
 
 
-<a id="org20e1fac"></a>
+<a id="org089b77d"></a>
 
 # Multiplayer mode (optional)
 
 Multiplayer mode requires an optional DL server.
 
 
-<a id="orgdb8a72d"></a>
+<a id="org86ad9b2"></a>
 
 ## Expedition to external dungeon
 
@@ -1837,7 +1843,7 @@ If you successfully go into a remote dungeon, the header will be like:
 Note `- DL -` is replaced with `<server>` to indicate that you are in a remote dungeon.
 
 
-<a id="org99afdc3"></a>
+<a id="orge39cafe"></a>
 
 ## Send messages
 
@@ -1882,14 +1888,14 @@ You can also send messages in battles when you are prompted for actions or at ca
 Note that `m` action is not shown in the battle or camp menu but `m` just works.
 
 
-<a id="org5ae66aa"></a>
+<a id="org37ebd2d"></a>
 
 ## Battles in a server dungeon
 
 Battles in a server dungeon are more or less the same as in a non-server dungeon with two exceptions.  The 1st exception is that you can have multiplayer battles (see below).  The other exception is that the number of monster groups in a monster party increases up to 6 and it's +20% more likely that monsters come with fellow monsters.
 
 
-<a id="org43fc30b"></a>
+<a id="org1f02245"></a>
 
 ## Multiplayer battles
 
@@ -1985,7 +1991,7 @@ Your friend's ernings:
 This way, if you don't do anything in a joined battle, just looking at your friend's party fighting, you'll get a quarter of the total exp (and gold as well!) without any risks.  If you don't act in a battle, monsters will not attack you.  This feature might be useful when strong monsters surprised you.
 
 
-<a id="orgc0049ee"></a>
+<a id="org67219b7"></a>
 
 ## Group camp
 
@@ -1998,7 +2004,7 @@ If you and your friend(s) camp at the same location on the same floor, it will b
 -   use an item to a member of your friend's party
 
 
-<a id="org84dc584"></a>
+<a id="org6ce98bb"></a>
 
 ### View other parties
 
@@ -2045,7 +2051,7 @@ If you press `i`, you can view your friend's party members.  You can switch memb
     ^^^^^^^^^^|   jk)change member l)leave >                               |^^^^^^^^^^
 
 
-<a id="org2facd58"></a>
+<a id="orga781aa9"></a>
 
 ### Heal/cure other party members
 
@@ -2097,7 +2103,7 @@ Let's look at your friend's screen.  The last two lines show that `fun` in the o
     ^^^^^^^^^^|   beets's HP was fully restored.                           |^^^^^^^^^^
 
 
-<a id="orge226f35"></a>
+<a id="orgda777d4"></a>
 
 ### Group spells and prep for adventure
 
@@ -2166,7 +2172,7 @@ This party members are all Lv 1 and don't know hogo, shikibetsu, gps or hikarino
 Very convenient.
 
 
-<a id="org21167c2"></a>
+<a id="org6d13220"></a>
 
 ### Heal all members
 
@@ -2175,7 +2181,7 @@ Heal all members `p` is a casual, but not very smart auto heal command.  At a gr
 This design is on purpose.  Otherwise, you wouldn't want to use this command in group camps for fear of using up "kanzen" and other powerful healing spells.
 
 
-<a id="org8869403"></a>
+<a id="org28c0bb8"></a>
 
 ## Trading items
 
@@ -2186,7 +2192,7 @@ As you can easily quit and reload from save data, a few restrictions are enforce
 -   You can't sell some very rare items to your friends
 
 
-<a id="org86fb41a"></a>
+<a id="org50e2112"></a>
 
 ### Put on sale
 
@@ -2212,7 +2218,7 @@ If you do this, fellow parties (including yourself) will see a message like this
 Once put on sale, fellow party members can buy these items.
 
 
-<a id="org1ee1a23"></a>
+<a id="org21da50e"></a>
 
 ### Buy item from friend
 
@@ -2280,12 +2286,12 @@ Looking at the seller member, andy, <potion of curing> is now missing from slot 
 Note that `murasama blade` is a rare item so can't be traded with your friends.
 
 
-<a id="orgfd22da1"></a>
+<a id="org23e2a55"></a>
 
 # Spells
 
 
-<a id="org8ec737f"></a>
+<a id="org9411ed0"></a>
 
 ## Overview
 
@@ -2304,7 +2310,7 @@ In this example, she has 2 MPs remaining for level 1 mage spells.  She will acqu
 The maximum MPs for each spell level is 9.  A high level mage/priest will have `9/9/9/9/9/9/9` MPs.
 
 
-<a id="org84fcf00"></a>
+<a id="orgaceacbc"></a>
 
 ## Usage
 
@@ -2333,7 +2339,7 @@ To use spells from the camp menu, first `i)nspect` a character who would like to
     ^^^^^^^^^^|   i)tems s)pells jk)change member l)leave > s              |^^^^^^
 
 
-<a id="org7d13417"></a>
+<a id="orgf530c44"></a>
 
 ## Mage Spells
 
@@ -2523,7 +2529,7 @@ One of the most useful spells will be newly introduced "tsubasa".  This spell ca
 </table>
 
 
-<a id="orgcb492aa"></a>
+<a id="org881afbc"></a>
 
 ## Priest Spells
 
@@ -2775,12 +2781,12 @@ One of the most useful spells will be newly introduced "tsubasa".  This spell ca
 </table>
 
 
-<a id="org835fd3f"></a>
+<a id="org723d33e"></a>
 
 # Monsters
 
 
-<a id="org7f6d807"></a>
+<a id="org5b8e5df"></a>
 
 ## Shallow floors
 
@@ -3120,7 +3126,7 @@ Monsters on the second floor are strong.  You could even get poisoned or beheade
 </table>
 
 
-<a id="orgc0e114f"></a>
+<a id="org4882058"></a>
 
 ## Middle depth floors
 
@@ -3554,7 +3560,7 @@ Monsters on the second floor are strong.  You could even get poisoned or beheade
 </table>
 
 
-<a id="org0c99cd0"></a>
+<a id="org88e8043"></a>
 
 ## Deep floors
 
@@ -3848,12 +3854,12 @@ Monsters on the second floor are strong.  You could even get poisoned or beheade
 </table>
 
 
-<a id="orge63d9ba"></a>
+<a id="org5e434cc"></a>
 
 ## Boss and special monsters
 
 
-<a id="org487bfd9"></a>
+<a id="org6fc5bd0"></a>
 
 ### gate keeper
 
@@ -3861,28 +3867,28 @@ Huge scorpion originated in an SNES game, Tenchi-sozo.
 It was a boss monster on floor 1 but hasn't been implemented.  Rather weak on deepest floors.
 
 
-<a id="orgdd12f3e"></a>
+<a id="org235eb49"></a>
 
 ### d????? ???, t?? ????, a????
 
 Boss monsters.  You'll need special keys to break into the boss rooms.  Special keys should be placed somewhere on the same floor.  Look for `,` floor tile.
 
 
-<a id="orgc7452d8"></a>
+<a id="org81247fa"></a>
 
 ### d????? ????
 
 The last boss.  He is with mighty earth demons, which makes the last battle most difficult to win.  Hint: Use certain spells.  Though extremely risky, you would have no other choice.
 
 
-<a id="org900b0bf"></a>
+<a id="org24a59d6"></a>
 
 ### S???????, N??????
 
 Ancient gods from the past.  You are doomed to be destroyed.  Run away immediately if you see them.
 
 
-<a id="org666f2cd"></a>
+<a id="org92bfd7b"></a>
 
 # Contact
 
@@ -3891,7 +3897,7 @@ Kyosuke Achiwa - @kyos\_achwan - achiwa912+gmail.com (please replace `+` with `@
 Project Link: <https://github.com/achiwa912/daemonlord>
 
 
-<a id="orgc919dc4"></a>
+<a id="orgd63352b"></a>
 
 # Acknowledgements
 

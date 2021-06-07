@@ -82,6 +82,26 @@ class Evloctype(Enum):
     RANDOM, DOWNSTAIRS = range(2)
 
 
+Monsterdef = collections.namedtuple(
+    'Monsterdef', ['names', 'unident', 'unidents', 'type',
+                   'level', 'hp', 'ac', 'attack', 'count', 'act',
+                   'poison', 'paraly',
+                   'stone', 'critical', 'drain', 'breathsp', 'heal',
+                   'regdeathp', 'regfire', 'regcold', 'regpoison',
+                   'regspellp', 'weakmaka', 'weaksleep', 'friendly',
+                   'exp', 'number', 'floors', 'fellow', 'fellowp',
+                   'agi', 'treasure'])
+
+Spelldef = collections.namedtuple(
+    'Spelldef', ['categ', 'level', 'battle', 'camp', 'type',
+                 'target', 'value', 'attr', 'desc'])
+
+Itemdef = collections.namedtuple(
+    'Itemdef', ['level', 'unident', 'type', 'range', 'jobs', 'ac',
+                'st', 'at', 'dice', 'shop', 'price', 'curse',
+                'hp', 'use', 'brk', 'regist', 'twice', 'align',
+                'sp', 'target'])
+
 race_status = {
     Race.HUMAN: (8, 8, 5, 8, 8, 9),
     Race.ELF: (7, 10, 10, 6, 9, 6),
@@ -882,257 +902,6 @@ class Game:
             p.place, p.silenced, p.identify = ptup
         if p.place in [Place.MAZE, Place.CAMP, Place.BATTLE]:
             p.resumed = True  # resume flag
-
-    def load_monsterdef(self):
-        """
-        load monster definition file
-        As fellow monster in csv is wizname, convert to dl name
-        """
-        Monster = collections.namedtuple(
-            'Monster', ['names', 'unident', 'unidents', 'type',
-                        'level', 'hp', 'ac', 'attack', 'count', 'act',
-                        'poison', 'paraly',
-                        'stone', 'critical', 'drain', 'breathsp', 'heal',
-                        'regdeathp', 'regfire', 'regcold', 'regpoison',
-                        'regspellp', 'weakmaka', 'weaksleep', 'friendly',
-                        'exp', 'number', 'floors', 'fellow', 'fellowp',
-                        'agi', 'treasure'])
-        Tmpmonster = collections.namedtuple(
-            'Tmpmonster', ['name', 'names', 'unident', 'unidents', 'type',
-                           'level', 'hp', 'ac', 'attack', 'count', 'act1',
-                           'act2', 'act3', 'act4', 'act5', 'poison', 'paraly',
-                           'stone', 'critical', 'drain', 'breathsp', 'heal',
-                           'regdeathp', 'regfire', 'regcold', 'regpoison',
-                           'regspellp', 'weakmaka', 'weaksleep', 'friendly',
-                           'exp', 'number', 'floors', 'fellowwiz', 'fellowp',
-                           'agi', 'treasure'])
-        with open('monsters.csv') as csvfile:
-            rdr = csv.reader(csvfile)
-            tmp_dic = {}
-            for i, row in enumerate(rdr):
-                if i == 0:
-                    continue
-                try:
-                    level = int(row[7])
-                except:
-                    level = 1
-                try:
-                    ac = int(row[9])
-                except:
-                    ac = 10
-                try:
-                    count = int(row[11])
-                except:
-                    count = 1
-                poison = False
-                if row[17].lower() == 'true':
-                    poison = True
-                paraly = False
-                if row[18].lower() == 'true':
-                    paraly = True
-                stone = False
-                if row[19].lower() == 'true':
-                    stone = True
-                critical = False
-                if row[20].lower() == 'true':
-                    critical = True
-                try:
-                    drain = int(row[21])
-                except:
-                    drain = 0
-                try:
-                    heal = int(row[23])
-                except:
-                    heal = 0
-                try:
-                    regdeathp = int(row[24])
-                except:
-                    regdeathp = 0
-                regfire = False
-                if row[25].lower() == 'true':
-                    regfire = True
-                regcold = False
-                if row[26].lower() == 'true':
-                    regcold = True
-                regpoison = False
-                if row[27].lower() == 'true':
-                    regpoison = True
-                try:
-                    regspellp = int(row[28])
-                except:
-                    regspellp = 0
-                weakmaka = False
-                if row[29].lower() == 'true':
-                    weakmaka = True
-                weaksleep = False
-                if row[30].lower() == 'true':
-                    weaksleep = True
-                friendly = False
-                if row[31].lower() == 'true':
-                    friendly = True
-                try:
-                    exp = int(row[32])
-                except:
-                    exp = 0
-                floors = row[34]  # floors
-                if floors == '':
-                    floors = {999}
-                else:
-                    floors_tmp = re.split(r',\s*', floors)
-                    floors = set()
-                    for floor in floors_tmp:
-                        try:
-                            floor = int(floor)
-                        except:
-                            floor = 999
-                        floors.add(floor)
-                try:
-                    fellowp = int(row[36])
-                except:
-                    fellowp = 0
-                try:
-                    agi = int(row[37])
-                except:
-                    agi = 10
-                treasure = row[38]
-                if treasure == '':
-                    treasure = []
-                else:
-                    treasure_tmp = re.split(r',\s*', treasure)
-                    treasure = []
-                    for level in treasure_tmp:
-                        try:
-                            level = int(level)
-                            treasure.append(level)
-                        except:
-                            pass
-                tmp_monster \
-                    = Tmpmonster(row[2], row[3], row[4], row[5], row[6],
-                                 level, row[8], ac, row[10], count, row[12],
-                                 row[13], row[14], row[15], row[16], poison, paraly,
-                                 stone, critical, drain, row[22], heal,
-                                 regdeathp, regfire, regcold, regpoison,
-                                 regspellp, weakmaka, weaksleep, friendly,
-                                 exp, row[33], floors, row[35], fellowp, agi,
-                                 treasure)
-                tmp_dic[row[1]] = tmp_monster
-
-        monster_def = {}
-        for wizname, m in tmp_dic.items():
-            if m.fellowwiz == '':
-                fellow = ''
-            else:
-                fellow = tmp_dic[m.fellowwiz].name
-            monster = Monster(m[1], m[2], m[3], m[4], m[5], m[6], m[7], m[8],
-                              m[9], (m[10], m[11], m[12], m[13], m[14]), m[15],
-                              m[16], m[17], m[18], m[19], m[20], m[21], m[22],
-                              m[23], m[24], m[25], m[26], m[27], m[28], m[29],
-                              m[30], m[31], m[32], fellow, m[34], m[35], m[36])
-            monster_def[m.name] = monster
-        self.mondef = monster_def
-
-    def load_spelldef(self):
-        """
-        load spell definition file
-        """
-        Spell = collections.namedtuple(
-            'Spell', ['categ', 'level', 'battle', 'camp', 'type', 'target', 'value', 'attr', 'desc'])
-        with open('spells.csv') as csvfile:
-            rdr = csv.reader(csvfile)
-            spell_def = {}
-            for i, row in enumerate(rdr):
-                if i == 0:
-                    continue
-                attr = self.cell2strtup(row[10])
-                # (0categ, 1level, 2battle, 3camp, 4type, 5target, 6value,
-                #  7attr, 8desc)
-                spell = Spell(row[1], int(row[2]), json.loads(row[5].lower()),
-                              json.loads(row[6].lower()), row[7], row[8], row[9], attr, row[12])
-                spell_def[row[3]] = spell
-            self.spelldef = spell_def
-
-    def load_itemdef(self):
-        """
-        load item definition file
-        """
-        Item = collections.namedtuple(
-            'Item', ['level', 'unident', 'type', 'range', 'jobs', 'ac',
-                     'st', 'at', 'dice', 'shop', 'price', 'curse',
-                     'hp', 'use', 'brk', 'regist', 'twice', 'align',
-                     'sp', 'target'])
-
-        with open('items.csv') as csvfile:
-            rdr = csv.reader(csvfile)
-            item_def = {}
-            for i, row in enumerate(rdr):
-                if i == 0 or not row:
-                    continue
-                try:
-                    level = int(row[1])
-                except:
-                    level = 0
-                if not (name := row[2]):
-                    name = row[4]
-                if not (unident := row[3]):
-                    unident = row[5]
-                try:
-                    ac = int(row[9])
-                except:
-                    ac = 0
-                try:
-                    st = int(row[10])
-                except:
-                    st = 0
-                try:
-                    at = int(row[11])
-                except:
-                    at = 0
-                try:
-                    shop = int(row[13])
-                except:
-                    shop = 0
-                try:
-                    price = int(row[14])
-                except:
-                    price = 0
-                if row[15] == 'TRUE':
-                    curse = True
-                else:
-                    curse = False
-                try:
-                    hp = int(row[16])
-                except:
-                    hp = 0
-                try:
-                    brk = int(row[18])
-                except:
-                    brk = 0
-                regist = self.cell2strtup(row[19])
-                twice = self.cell2strtup(row[20])
-                align = self.cell2strtup(row[21])
-                # (0level, 1unident, 2type, 3range, 4jobs, 5ac, 6st, 7at,
-                #  8dice, 9shop, 10price, 11curse, 12hp, 13use, 14brk,
-                #  15regist, 16twice, 17align, 18sp, 19target)
-                item = Item(level, unident, row[6], row[7], row[8], ac,
-                            st, at, row[12], shop, price,
-                            curse, hp, row[17], brk, regist, twice, align,
-                            row[22], row[23])
-                item_def[name] = item
-            self.itemdef = item_def
-            self.shopitems = {}
-            for name in self.itemdef:
-                self.shopitems[name] = self.itemdef[name].shop
-
-    def cell2strtup(self, cell):
-        if cell == '':
-            rtn = ()
-        else:
-            tmp = re.split(r',\s*', cell)
-            rtn = []
-            for t in tmp:
-                rtn.append(t)
-            rtn = tuple(rtn)
-        return rtn
 
 
 class Member_db(Base):
@@ -3728,7 +3497,7 @@ class Battle:
             sio.emit('get_monp', self.join_user)
             while not self.monp_set:
                 pass
-            self.game.chest.items = self.monp[0].mdef.treasure
+            self.game.chest.items = list(self.monp[0].mdef.treasure)
             for mong in self.monp:
                 mdef = self.game.mondef[mong.name]
                 self.gold = sum((mdef.level*(random.randrange(15)+10))
@@ -3782,7 +3551,7 @@ class Battle:
                 break
             mname = mdef.fellow
         # top monster defines treasure levels
-        self.game.chest.items = self.monp[0].mdef.treasure
+        self.game.chest.items = list(self.monp[0].mdef.treasure)
         return
 
     def canrun(self, entity):
@@ -5168,6 +4937,30 @@ def getch(wait=True):
             sio.disconnect()
         sys.exit()
     return c
+
+
+def loaddef_all():
+    """
+    Load spell, item and monster definitions
+    """
+    with open("dldef.yaml", 'r') as stream:
+        try:
+            dldef = yaml.load(stream, Loader=yaml.Loader)
+        except yaml.YAMLError as exc:
+            print(exc)
+            sys.exit()
+    game.spelldef = {}
+    game.itemdef = {}
+    game.mondef = {}
+    for k, v in dldef['spell'].items():
+        game.spelldef[k] = Spelldef(**v)
+    for k, v in dldef['item'].items():
+        game.itemdef[k] = Itemdef(**v)
+    game.shopitems = {}
+    for name in game.itemdef:
+        game.shopitems[name] = game.itemdef[name].shop
+    for k, v in dldef['monster'].items():
+        game.mondef[k] = Monsterdef(**v)
 
 
 def dice(valstr):
@@ -6695,9 +6488,7 @@ def main():
         config.update(yaml.safe_load(f))
     party = Party(0, 0, 1)
     game.party = party
-    game.load_spelldef()
-    game.load_itemdef()
-    game.load_monsterdef()
+    loaddef_all()
     party.place = Place.CASTLE
     w, h = terminal_size()
     vscr = Vscr(w, h-1)  # singleton
