@@ -1,6 +1,7 @@
 import collections
 import itertools
 from operator import itemgetter, attrgetter
+from dataclasses import dataclass
 import csv
 import json
 from enum import Enum
@@ -101,6 +102,19 @@ Itemdef = collections.namedtuple(
                 'st', 'at', 'dice', 'shop', 'price', 'curse',
                 'hp', 'use', 'brk', 'regist', 'twice', 'align',
                 'sp', 'target'])
+
+
+@dataclass
+class Memitem:
+    """
+    mem.items will have list of Memitem()
+    """
+    name: str
+    equipped: bool = False
+    cursed: bool = False
+    unidentified: bool = False
+    onsale: bool = False
+
 
 race_status = {
     Race.HUMAN: (8, 8, 5, 8, 8, 9),
@@ -537,12 +551,12 @@ class Game:
             mem_db.nextexp = mem.nextexp
             mem_db.marks = mem.marks
             mem_db.rip = mem.rip
-            mem_db.stat_strength = mem.stat[0]
-            mem_db.stat_iq = mem.stat[1]
-            mem_db.stat_piety = mem.stat[2]
-            mem_db.stat_vitality = mem.stat[3]
-            mem_db.stat_agility = mem.stat[4]
-            mem_db.stat_luck = mem.stat[5]
+            mem_db.stat_strength = mem.stat_strength
+            mem_db.stat_iq = mem.stat_iq
+            mem_db.stat_piety = mem.stat_piety
+            mem_db.stat_vitality = mem.stat_vitality
+            mem_db.stat_agility = mem.stat_agility
+            mem_db.stat_luck = mem.stat_luck
             mem_db.hp = mem.hp
             mem_db.maxhp = mem.maxhp
             mem_db.hpplus = mem.hpplus
@@ -560,8 +574,9 @@ class Game:
             # Save member items
             for i in mem.items:
                 # We can't save "on sale" status as added later
-                mi_db = Memitems_db(name=i[0], equipped=i[1],
-                                    cursed=i[2], unidentified=i[3],
+                mi_db = Memitems_db(name=i.name, equipped=i.equipped,
+                                    cursed=i.cursed,
+                                    unidentified=i.unidentified,
                                     member_id=mem_db.id)
                 session.add(mi_db)
 
@@ -748,12 +763,12 @@ class Game:
             mem.nextexp = mem_db.nextexp
             mem.marks = mem_db.marks
             mem.rip = mem_db.rip
-            mem.stat[0] = mem_db.stat_strength
-            mem.stat[1] = mem_db.stat_iq
-            mem.stat[2] = mem_db.stat_piety
-            mem.stat[3] = mem_db.stat_vitality
-            mem.stat[4] = mem_db.stat_agility
-            mem.stat[5] = mem_db.stat_luck
+            mem.stat_strength = mem_db.stat_strength
+            mem.stat_iq = mem_db.stat_iq
+            mem.stat_piety = mem_db.stat_piety
+            mem.stat_vitality = mem_db.stat_vitality
+            mem.stat_agility = mem_db.stat_agility
+            mem.stat_luck = mem_db.stat_luck
             mem.hp = mem_db.hp
             mem.maxhp = mem_db.maxhp
             mem.hpplus = mem_db.hpplus
@@ -776,8 +791,9 @@ class Game:
             for mi_db in session.query(
                     Memitems_db).filter_by(member_id=mem_db.id).order_by(
                         Memitems_db.id):
-                mem.items.append([mi_db.name, mi_db.equipped, mi_db.cursed,
-                                  mi_db.unidentified, False])
+                mem.items.append(Memitem(mi_db.name, mi_db.equipped,
+                                         mi_db.cursed,
+                                         mi_db.unidentified, False))
 
         # load party members
         self.party.members = []
@@ -1225,7 +1241,8 @@ class Party:
         Calc poison and healing item effects for the party members
         """
         for mem in self.members:
-            mem.hpplus = sum(game.itemdef[item[0]].hp for item in mem.items)
+            mem.hpplus = sum(game.itemdef[item.name].hp
+                             for item in mem.items)
             if mem.poisoned:
                 mem.hpplus -= 1
 
@@ -1243,7 +1260,7 @@ class Party:
         Return True someone in the party has one in itemlist
         """
         for it in itemlist:
-            if it in [item[0] for mem in self.members
+            if it in [item.name for mem in self.members
                       for item in mem.items]:
                 return True
         return False
@@ -1394,11 +1411,12 @@ class Member:
         self.nextexp = 0
         self.marks = 0
         self.rip = 0
-        self.items = []  # [0name, 1equipped, 2cursed, 3unidentified, 4onsale]
+        # list of Memitem(name, equipped, cursed, unidentified, onsale)
         # on sale status is only used in group camps and not saved/loaded
-        self.stat = [0, 0, 0, 0, 0, 0]
-        self.stat[0], self.stat[1], self.stat[2], self.stat[3], self.stat[4], \
-            self.stat[5] = race_status[race]
+        self.items = []
+        self.stat_strength, self.stat_iq, self.stat_piety, \
+            self.stat_vitality, self.stat_agility, self.stat_luck \
+            = race_status[race]
         self.maxhp = 0
         self.hp = self.maxhp
         self.hpplus = 0  # -1 if poisoned, >0 if healing item
@@ -1410,7 +1428,7 @@ class Member:
         self.pspell_max = [0, 0, 0, 0, 0, 0, 0]
 
     def __repr__(self):
-        return f"<{self.name}, {self.align.name[:1]}-{self.race.name[:3]}-{self.job.name[:3]} {self.stat[0]}/{self.stat[1]}/{self.stat[2]}/{self.stat[3]}/{self.stat[4]}>"
+        return f"<{self.name}, {self.align.name[:1]}-{self.race.name[:3]}-{self.job.name[:3]} {self.stat_strength}/{self.stat_iq}/{self.stat_piety}/{self.stat_vitality}/{self.stat_agility}>"
 
     def __str__(self):
         return f"{self.name[:16].ljust(16)} Lv{self.level:3d} {self.race.name[:3].lower()}-{self.align.name[:1].lower()}-{self.job.name[:3].lower()}"
@@ -1426,7 +1444,14 @@ class Member:
                 'deepest': self.deepest, 'gold': self.gold,
                 'exp': self.exp, 'nextexp': self.nextexp,
                 'marks': self.marks, 'rip': self.rip,
-                'items': self.items[:], 'stat': self.stat[:],
+                # Convert dataclass Memietm to dict
+                'items': [item.__dict__ for item in self.items],
+                'stat_strength': self.stat_strength,
+                'stat_iq': self.stat_iq,
+                'stat_piety': self.stat_piety,
+                'stat_vitality': self.stat_vitality,
+                'stat_agility': self.stat_agility,
+                'stat_luck': self.stat_luck,
                 'maxhp': self.maxhp, 'hp': self.hp,
                 'hpplus': self.hpplus,
                 'mspells': self.mspells[:],
@@ -1456,8 +1481,13 @@ class Member:
         self.nextexp = m_s['nextexp']
         self.marks = m_s['marks']
         self.rip = m_s['rip']
-        self.items = m_s['items'][:]
-        self.stat = m_s['stat'][:]
+        self.items = [Memitem(**idic) for idic in m_s['items']]
+        self.stat_strength = m_s['stat_strength']
+        self.stat_iq = m_s['stat_iq']
+        self.stat_piety = m_s['stat_piety']
+        self.stat_vitality = m_s['stat_vitality']
+        self.stat_agility = m_s['stat_agility']
+        self.stat_luck = m_s['stat_luck']
         self.maxhp = m_s['maxhp']
         self.hp = m_s['hp']
         self.hpplus = m_s['hpplus']
@@ -1481,21 +1511,21 @@ class Member:
             f"{self.name.ljust(16)} L{self.level:3d} {self.align.name[:1].lower()}-{self.job.name[:3].lower()} {self.race.name.lower()}", start=' ')
         mw.print(f"", start=' ')
         mw.print(
-            f"strength {self.stat[0]:2d}  gold {self.gold:16d}   lvl {self.level:5d}", start=' ')
+            f"strength {self.stat_strength:2d}  gold {self.gold:16d}   lvl {self.level:5d}", start=' ')
         mw.print(
-            f"    i.q. {self.stat[1]:2d}  e.p. {self.exp:16d}   rip {self.rip:5d}", start=' ')
+            f"    i.q. {self.stat_iq:2d}  e.p. {self.exp:16d}   rip {self.rip:5d}", start=' ')
         mw.print(
-            f"   piety {self.stat[2]:2d}  next {self.nextexp:16d}   a.c.{self.ac:5d}", start=' ')
+            f"   piety {self.stat_piety:2d}  next {self.nextexp:16d}   a.c.{self.ac:5d}", start=' ')
         mw.print(
-            f"vitality {self.stat[3]:2d}  marks {self.marks:15d}   depth{self.deepest:4d}", start=' ')
+            f"vitality {self.stat_vitality:2d}  marks {self.marks:15d}   depth{self.deepest:4d}", start=' ')
         mw.print(
-            f" agility {self.stat[4]:2d}  h.p.  {self.hp:7d}/{self.maxhp:7d}", start=' ')
+            f" agility {self.stat_agility:2d}  h.p.  {self.hp:7d}/{self.maxhp:7d}", start=' ')
         if self.state == State.OK and self.poisoned:
             mw.print(
-                f"    luck {self.stat[5]:2d}  status   POISONED", start=' ')
+                f"    luck {self.stat_luck:2d}  status   POISONED", start=' ')
         else:
             mw.print(
-                f"    luck {self.stat[5]:2d}  status   {self.state.name}", start=' ')
+                f"    luck {self.stat_luck:2d}  status   {self.state.name}", start=' ')
         mw.print(f"", start=' ')
         mw.print(f"mage  {self.mspell_cnt[0]}/{self.mspell_cnt[1]}/{self.mspell_cnt[2]}/{self.mspell_cnt[3]}/{self.mspell_cnt[4]}/{self.mspell_cnt[5]}/{self.mspell_cnt[6]}   priest  {self.pspell_cnt[0]}/{self.pspell_cnt[1]}/{self.pspell_cnt[2]}/{self.pspell_cnt[3]}/{self.pspell_cnt[4]}/{self.pspell_cnt[5]}/{self.pspell_cnt[6]}/", start=' ')
         for idx in range(8):
@@ -1503,18 +1533,18 @@ class Member:
                 item = self.items[idx]
                 m = ' '
                 if self.job.name[:1].lower() not in \
-                   game.itemdef[item[0]].jobs.lower():
+                   game.itemdef[item.name].jobs.lower():
                     m = '#'  # can't equip
-                if item[4]:
+                if item.onsale:
                     m = '$'  # on sale
-                if item[1]:
+                if item.equipped:
                     m = '*'  # equipped
-                if item[2]:
+                if item.cursed:
                     m = '&'  # cursed
-                if self.items[idx][3]:  # unidentified
-                    l = f"{m}?{game.itemdef[item[0]].unident}"
+                if item.unidentified:  # unidentified
+                    l = f"{m}?{game.itemdef[item.name].unident}"
                 else:
-                    l = f"{m}{item[0]}"
+                    l = f"{m}{item.name}"
             except:
                 l = ''
             if idx % 2:
@@ -1580,14 +1610,14 @@ class Member:
         for user in ulist:
             for mem in game.dungeon.parties[user].members:
                 for item_idx, item in enumerate(mem.items):
-                    if game.itemdef[item[0]].level < 10 and \
-                       not item[1] and not item[2] and not item[3] \
-                       and item[4]:
+                    if game.itemdef[item.name].level < 10 and \
+                       not item.equipped and not item.cursed and \
+                       not item.unidentified and item.onsale:
                         idct = {'idx': idx, 'seller': user,
                                 'buyer': config['server']['auth']['user'],
-                                'member': mem.name, 'item': item[0],
+                                'member': mem.name, 'item': item.name,
                                 'item_idx': item_idx,
-                                'price': game.itemdef[item[0]].price*7//10,
+                                'price': game.itemdef[item.name].price*7//10,
                                 'buyer_member': self.name}
                         items.append(idct)
                         idx += 1
@@ -1711,13 +1741,13 @@ class Member:
                     continue
             except:
                 continue
-            dispname = self.items[inum][0]
-            if self.items[inum][3]:  # unidentified
+            dispname = self.items[inum].name
+            if self.items[inum].unidentified:  # unidentified
                 dispname = ''.join(['?', game.itemdef[dispname].unident])
             iw.print(f"{inum+1}) {dispname}", start=' ')
             if not game.dungeon.expedition or\
-               self.items[inum][1] or self.items[inum][2] or\
-               self.items[inum][3]:
+               self.items[inum].equipped or self.items[inum].cursed or\
+               self.items[inum].unidentified:
                 c = iw.input_char("u)se e)quip t)rade d)rop l)eave",
                                   values=['u', 'e', 't', 'd', 'l'])
             else:
@@ -1727,13 +1757,13 @@ class Member:
             if c == 'l':
                 continue
             elif c == 'u':
-                if self.items[inum][3]:  # unidentified:
+                if self.items[inum].unidentified:  # unidentified:
                     iw.print(f"Tried to use {dispname}.")
                     iw.print(
                         ".. but don't know how to use it.", start=' ')
                     vscr.disp_scrwin()
                     continue
-                itemdef = game.itemdef[self.items[inum][0]]
+                itemdef = game.itemdef[self.items[inum].name]
                 if not itemdef.use:
                     iw.print(f"Tried to use {dispname}.")
                     iw.print(".. but wasn't able to.", start=' ')
@@ -1741,20 +1771,20 @@ class Member:
                 elif itemdef.use == 'etc':
                     iw.print(f"Used {dispname}.")
                     vscr.disp_scrwin()
-                    if self.items[inum][0] == 'murasama blade':
-                        self.stat[0] += 1  # str+1
-                    elif self.items[inum][0] == 'kaiser knuckles':
+                    if self.items[inum].name == 'murasama blade':
+                        self.stat_strength += 1  # str+1
+                    elif self.items[inum].name == 'kaiser knuckles':
                         self.maxhp += 1  # hp+1
-                    elif self.items[inum][0] == 'armor of lords':
+                    elif self.items[inum].name == 'armor of lords':
                         for m in game.party.members:
                             m.hp = m.maxhp
-                    elif self.items[inum][0] == 'ninja dagger':
+                    elif self.items[inum].name == 'ninja dagger':
                         self.job = Job.NINJA
                         for i in self.items:
-                            i[1] = False
+                            i.equipped = False
                     if itemdef.brk > random.randrange(100):
-                        self.items[inum][0] = 'broken item'
-                        self.items[inum][1] = False
+                        self.items[inum].name = 'broken item'
+                        self.items[inum].equipped = False
                     getch(wait=True)
                     vscr.meswins.pop()
                     vscr.cls()
@@ -1787,7 +1817,7 @@ class Member:
                                 iw.print(f"Used {dispname}.")
                                 vscr.disp_scrwin()
                                 if itemdef.brk > random.randrange(100):
-                                    self.items[inum][0] = 'broken item'
+                                    self.items[inum].name = 'broken item'
                                 vscr.meswins.pop()
                                 vscr.cls()
                                 return
@@ -1798,16 +1828,16 @@ class Member:
                     game.spell.cast_spell_dispatch(
                         self, itemdef.use, target)
                     if itemdef.brk > random.randrange(100):
-                        self.items[inum][0] = 'broken item'
+                        self.items[inum].name = 'broken item'
                     vscr.meswins.pop()
                     vscr.cls()
                     return
             elif c == 't':
-                if self.items[inum][2]:
+                if self.items[inum].cursed:
                     iw.print(f"Cursed.")
                     vscr.disp_scrwin()
                     continue
-                elif self.items[inum][1]:
+                elif self.items[inum].equipped:
                     iw.print(f"Equipped.")
                     vscr.disp_scrwin()
                     continue
@@ -1822,11 +1852,11 @@ class Member:
                 vscr.cls()
                 break
             elif c == 'd':
-                if self.items[inum][2]:
+                if self.items[inum].cursed:
                     iw.print(f"Cursed.")
                     vscr.disp_scrwin()
                     continue
-                elif self.items[inum][1]:
+                elif self.items[inum].equipped:
                     iw.print(f"Equipped.")
                     vscr.disp_scrwin()
                     continue
@@ -1840,39 +1870,39 @@ class Member:
                     vscr.cls()
                     break
             elif c == 'e':
-                if self.job.name[:1] not in game.itemdef[self.items[inum][0]].jobs:
+                if self.job.name[:1] not in game.itemdef[self.items[inum].name].jobs:
                     iw.print("Can't equip the item.")
                     continue
                 for item in self.items:
-                    if game.itemdef[self.items[inum][0]].type \
-                       == game.itemdef[item[0]].type:
-                        if item[2]:  # already cursed
+                    if game.itemdef[self.items[inum].name].type \
+                       == game.itemdef[item.name].type:
+                        if item.cursed:  # already cursed
                             iw.print("Already equipped a cursed item.")
                             break
-                        elif item[1]:  # equipped
-                            item[1] = False
+                        elif item.equipped:  # equipped
+                            item.equipped = False
                             if item is self.items[inum]:
                                 self.calc_ac(game)
                                 vscr.meswins.pop()
                                 vscr.cls()
                                 return
-                if game.itemdef[self.items[inum][0]].curse:
-                    self.items[inum][2] = True  # cursed
+                if game.itemdef[self.items[inum].name].curse:
+                    self.items[inum].cursed = True  # cursed
                     iw.print("Cursed!")
                     vscr.disp_scrwin()
                     getch()
-                self.items[inum][1] = True  # equipped
+                self.items[inum].equipped = True  # equipped
                 self.calc_ac(game)
                 vscr.meswins.pop()
                 vscr.cls()
                 # vscr.disp_scrwin()
                 return
             elif c == 'o':
-                self.items[inum][4] = not self.items[inum][4]
+                self.items[inum].onsale = not self.items[inum].onsale
                 if game.dungeon.expedition:
-                    if self.items[inum][4]:
+                    if self.items[inum].onsale:
                         sio.emit(
-                            'message', f"Just put <{self.items[inum][0]}> on sale")
+                            'message', f"Just put <{self.items[inum].name}> on sale")
                         data = {'requester': None,
                                 'party_s': game.party.todic()}
                         sio.emit('update_party', data)
@@ -1886,15 +1916,17 @@ class Member:
         """
         self.ac = 10
         for item in self.items:
-            if item[1] or item[2]:
-                self.ac += game.itemdef[item[0]].ac
+            if item.equipped or item.cursed:
+                self.ac += game.itemdef[item.name].ac
 
     def job_applicable(self, sp, jobnum):
         """
         Utility function to check if the character is applicable for the job
         """
         for i in range(6):
-            if sp[i]+self.stat[i] < job_requirements[Job(jobnum)][i]:
+            if sp[i]+[self.stat_strength, self.stat_iq, self.stat_piety,
+                      self.stat_vitality, self.stat_agility,
+                      self.stat_luck][i] < job_requirements[Job(jobnum)][i]:
                 return False
         if job_requirements[Job(jobnum)][6][self.align.value]:
             return True
@@ -1922,12 +1954,12 @@ class Member:
         mw.print("  h)minus j)down k)up l)plus", start=' ')
         mw.print("  .)change bonus x)done", start=' ')
         mw.print("", start=' ')
-        mw.print(f"  strength  {sp[0]+self.stat[0]:2d}", start=' ')
-        mw.print(f"  iq        {sp[1]+self.stat[1]:2d}", start=' ')
-        mw.print(f"  piety     {sp[2]+self.stat[2]:2d}", start=' ')
-        mw.print(f"  vitality  {sp[3]+self.stat[3]:2d}", start=' ')
-        mw.print(f"  agility   {sp[4]+self.stat[4]:2d}", start=' ')
-        mw.print(f"  luck      {sp[5]+self.stat[5]:2d}", start=' ')
+        mw.print(f"  strength  {sp[0]+self.stat_strength:2d}", start=' ')
+        mw.print(f"  iq        {sp[1]+self.stat_iq:2d}", start=' ')
+        mw.print(f"  piety     {sp[2]+self.stat_piety:2d}", start=' ')
+        mw.print(f"  vitality  {sp[3]+self.stat_vitality:2d}", start=' ')
+        mw.print(f"  agility   {sp[4]+self.stat_agility:2d}", start=' ')
+        mw.print(f"  luck      {sp[5]+self.stat_luck:2d}", start=' ')
         mw.print(f"\n  bonus     {bonus:2d}", start=' ')
         mw.print("", start=' ')
         mw.mes_lines[y+4] = mw.mes_lines[y+4][:13] + \
@@ -1974,10 +2006,14 @@ class Member:
         self.exp = 0
         self.level = 1
         for item in self.items:
-            item[1] = item[2] = False
+            item.equipped = item.cursed = False
         self.calc_ac(game)
-        for i in range(6):
-            self.stat[i] = race_status[self.race][i]
+        self.stat_strength = race_status[self.race][0]
+        self.stat_iq = race_status[self.race][1]
+        self.stat_piety = race_status[self.race][2]
+        self.stat_vitality = race_status[self.race][3]
+        self.stat_agility = race_status[self.race][4]
+        self.stat_luck = race_status[self.race][5]
         if self.job not in [Job.MAGE, Job.SAMURAI, Job.BISHOP]:
             for spell_level in range(7):
                 mastered = sum([
@@ -2035,8 +2071,13 @@ class Member:
             elif c == 'h' and statplus[y] > 0:
                 statplus[y] -= 1
                 bonus += 1
-            elif c == 'l' and statplus[y]+self.stat[y] < \
-                    race_status[self.race][y]+10 and bonus > 0:
+            elif c == 'l' \
+                and (statplus[y] +
+                      [self.stat_strength, self.stat_iq,
+                       self.stat_piety, self.stat_vitality,
+                       self.stat_agility, self.stat_luck][y])\
+                < race_status[self.race][y]+10 \
+                    and bonus > 0:
                 statplus[y] += 1
                 bonus -= 1
             elif c == '.':
@@ -2077,8 +2118,12 @@ class Member:
         else:  # ninja
             self.maxhp = self.jp = random.randint(8, 17)
 
-        for i in range(6):
-            self.stat[i] += statplus[i]
+        self.stat_strength += statplus[0]
+        self.stat_iq += statplus[1]
+        self.stat_piety += statplus[2]
+        self.stat_vitality += statplus[3]
+        self.stat_agility += statplus[4]
+        self.stat_luck += statplus[5]
         game.characters.append(self)
         mw.print("Character created")
         game.vscr.disp_scrwin()
@@ -2330,7 +2375,7 @@ class Spell:
             else:
                 target = random.choice([mem for mem in self.game.party.members
                                         if mem.state in [State.OK, State.ASLEEP]])
-                regspellp = target.stat[5] * 100/20  # luck
+                regspellp = target.stat_luck * 100/20  # luck
                 if random.randrange(100) >= regspellp:
                     damage = max(target.hp - random.randrange(7) - 1, 0)
                     target.hp -= damage
@@ -2344,11 +2389,11 @@ class Spell:
             if target.state != State.DEAD:
                 mw.print(f"{target.name} is not dead.", start=' ')
             else:
-                chance = (target.stat[3]+target.stat[5]) * 100//45
+                chance = (target.stat_vitality+target.stat_luck) * 100//45
                 if random.randrange(100) < chance:
                     mw.print(f"{target.name} is resurrected.",
                              start=' ', bcast=True)
-                    target.stat[3] -= 1
+                    target.stat_vitality -= 1
                     target.state = State.OK
                     target.hp = min(target.maxhp, random.randrange(7)+1)
                 else:
@@ -2360,11 +2405,11 @@ class Spell:
                 mw.print(f"{target.name} is not dead or ashed.",
                          start=' ', bcast=True)
             else:
-                chance = (target.stat[3]+target.stat[5]) * 100//40
+                chance = (target.stat_vitality+target.stat_luck) * 100//40
                 if random.randrange(100) < chance:
                     mw.print(f"{target.name} is resurrected.",
                              start=' ', bcast=True)
-                    target.stat[3] -= 1
+                    target.stat_vitality -= 1
                     target.state = State.OK
                     target.hp = target.maxhp
                 else:
@@ -2501,7 +2546,7 @@ class Spell:
             regdeathp = self.game.mondef[target.name].regdeathp
         else:
             # vitality + luck
-            regdeathp = (target.stat[3] + target.stat[5]) * 100//40
+            regdeathp = (target.stat_vitality + target.stat_luck) * 100//40
         if random.randrange(100) >= regdeathp:
             mw.print(f"{disptarget} is killed.", start=' ', bcast=True)
             target.hp = 0
@@ -3682,7 +3727,7 @@ class Battle:
                     monglst = [mong for mong in self.monp if mong.is_valid()]
                     if not monglst:
                         return False
-                    agi = mem.stat[4] + random.randrange(5)
+                    agi = mem.stat_agility + random.randrange(5)
                     if c == 'r':
                         if self.canrun(mem):
                             return True
@@ -3704,8 +3749,8 @@ class Battle:
                     elif c == 'f':
                         wrange = 'short'
                         for item in mem.items:
-                            idef = self.game.itemdef[item[0]]
-                            if item[1] and idef.type.lower() == 'weapon' \
+                            idef = self.game.itemdef[item.name]
+                            if item.equipped and idef.type.lower() == 'weapon' \
                                and idef.range.lower() == 'long':
                                 wrange = 'long'
                         if idx > 3 and wrange == 'short':
@@ -3832,10 +3877,10 @@ class Battle:
         mw = self.cw
         mw.print("Which item to use?")
         for i, item in enumerate(mem.items, 1):
-            if item[3]:
-                dispitem = ''.join(['?', self.game.itemdef[item[0]].unident])
+            if item.unidentified:
+                dispitem = ''.join(['?', self.game.itemdef[item.name].unident])
             else:
-                dispitem = item[0]
+                dispitem = item.name
             mw.print(f"{i}) {dispitem}")
         idx = mw.input_char("Item # or l)eave",
                             values=['1', '2', '3', '4', '5', '6', '7', '8', 'l'])
@@ -3843,12 +3888,12 @@ class Battle:
             return False, None
         idef = mem.items[int(idx)-1]
         if idef[3]:
-            iname = ''.join(['?', self.game.itemdef[idef[0]].unident])
+            iname = ''.join(['?', self.game.itemdef[idef.name].unident])
         else:
-            iname = idef[0]
-        spell = self.game.itemdef[idef[0]].use
+            iname = idef.name
+        spell = self.game.itemdef[idef.name].use
         if spell != '' and spell in self.game.spelldef and \
-           iname == idef[0]:
+           iname == idef.name:
             target = self.game.spelldef[spell].target
             if target == 'member':
                 m = self.game.party.choose_character(self.game)
@@ -3923,30 +3968,30 @@ class Battle:
 
         regist = set()
         for item in e.target.items:
-            if item[1]:  # equipped
-                regist |= set(self.game.itemdef[item[0]].regist)
+            if item.equipped:  # equipped
+                regist |= set(self.game.itemdef[item.name].regist)
 
         if self.game.mondef[e.name].poison:
-            if (e.target.stat[5]+1)*100//20 < random.randrange(100):
+            if (e.target.stat_luck+1)*100//20 < random.randrange(100):
                 if 'poison' not in regist and not e.target.poisoned:
                     e.target.poisoned = True
                     e.target.hpplus -= 1
                     self.mw.print(f"{e.target.name} is poisoned.", bcast=True)
 
         if self.game.mondef[e.name].paraly:
-            if (e.target.stat[5]+1)*100//20 < random.randrange(100):
+            if (e.target.stat_luck+1)*100//20 < random.randrange(100):
                 if 'paraly' not in regist:
                     e.target.state = State.PARALYZED
                     self.mw.print(f"{e.target.name} is paralyzed.", bcast=True)
 
         if self.game.mondef[e.name].stone:
-            if (e.target.stat[5]+1)*100//20 < random.randrange(100):
+            if (e.target.stat_luck+1)*100//20 < random.randrange(100):
                 if 'stone' not in regist:
                     e.target.state = State.STONED
                     self.mw.print(f"{e.target.name} is petrified.", bcast=True)
 
         if not e.target.drained and self.game.mondef[e.name].drain > 0:
-            if (e.target.stat[5]+1)*100//20 < random.randrange(100):
+            if (e.target.stat_luck+1)*100//20 < random.randrange(100):
                 if 'drain' not in regist:
                     prevlevel = e.target.level
                     e.target.level -= self.game.mondef[e.name].drain
@@ -3976,7 +4021,7 @@ class Battle:
                     e.target.drained = True
 
         if self.game.mondef[e.name].critical:
-            if (e.target.stat[5]+1)*100//20 < random.randrange(100):
+            if (e.target.stat_lucl+1)*100//20 < random.randrange(100):
                 if 'critical' not in regist:
                     if (49 - self.game.mondef[e.name].level) * 100 / 50 \
                        < random.randrange(100):
@@ -4026,16 +4071,16 @@ class Battle:
         else:
             lvbonus = e.entity.level // 3 + 2
         strbonus = 0
-        if e.entity.stat[0] >= 16:
-            strbonus = e.entity.stat[0] - 15
-        elif e.entity.stat[0] < 6:
-            strbonus = e.entity.stat[0] - 6
+        if e.entity.stat_strength >= 16:
+            strbonus = e.entity.stat_strength - 15
+        elif e.entity.stat_strength < 6:
+            strbonus = e.entity.stat_strength - 6
         st_bonus = weapat = 0
         weapon = None
         for item in e.entity.items:
-            if item[1]:  # equpped?
+            if item.equipped:  # equpped?
                 # (check align)
-                itemdef = self.game.itemdef[item[0]]
+                itemdef = self.game.itemdef[item.name]
                 if not itemdef.align or e.entity.align in itemdef.align:
                     st_bonus += itemdef.st
                 else:
@@ -4591,7 +4636,7 @@ class Chest:
                     self.treasure()
                     v.meswins.pop()
                     return
-                if random.randrange(20) < mem.stat[4]:  # agility
+                if random.randrange(20) < mem.stat_agility:  # agility
                     mw.print("Failed to disarm.", start=' ')
                     v.disp_scrwin()
                     continue
@@ -4624,14 +4669,14 @@ class Chest:
                     mw.print("Already inspected.", start=' ')
                     continue
                 if mem.job == Job.THIEF:
-                    chance = mem.stat[4] * 6  # agility
+                    chance = mem.stat_agility * 6  # agility
                 elif mem.job == Job.NINJA:
-                    chance = mem.stat[4] * 4
+                    chance = mem.stat_agility * 4
                 else:
-                    chance = mem.stat[4]
+                    chance = mem.stat_agility
                 chance = min(chance, 95)
                 if random.randrange(100) >= chance:  # failed?
-                    if random.randrange(20) > mem.stat[4]:
+                    if random.randrange(20) > mem.stat_agility:
                         self.trap_activated(mem)
                         self.treasure()
                         v.meswins.pop()
@@ -4782,7 +4827,7 @@ class Chest:
         elif self.trap == Trap.MAGE_BLASTER:
             for m in game.party.members:
                 if m.job == Job.MAGE:
-                    if random.randrange(20) >= m.stat[5]:
+                    if random.randrange(20) >= m.stat_luck:
                         if m.state in [State.OK]:
                             m.state = State.PARALYZED
                             mw.print(f"{m.name} is paralyzed.", start=' ')
@@ -4791,7 +4836,7 @@ class Chest:
                             m.state = State.STONED
                             mw.print(f"{m.name} is petrified.", start=' ')
                 elif m.job == Job.SAMURAI:
-                    if random.randrange(20) >= m.stat[5]:
+                    if random.randrange(20) >= m.stat_luck:
                         if m.state in [State.OK]:
                             m.state = State.PARALYZED
                             mw.print(f"{m.name} is paralyzed.", start=' ')
@@ -4799,7 +4844,7 @@ class Chest:
         elif self.trap == Trap.PRIEST_BLASTER:
             for m in game.party.members:
                 if m.job == Job.PRIEST:
-                    if random.randrange(20) >= m.stat[5]:
+                    if random.randrange(20) >= m.stat_luck:
                         if m.state in [State.OK]:
                             m.state = State.PARALYZED
                             mw.print(f"{m.name} is paralyzed.", start=' ')
@@ -4808,7 +4853,7 @@ class Chest:
                             m.state = State.STONED
                             mw.print(f"{m.name} is petrified.", start=' ')
                 elif m.job == Job.LORD:
-                    if random.randrange(20) >= m.stat[5]:
+                    if random.randrange(20) >= m.stat_luck:
                         if m.state in [State.OK]:
                             m.state = State.PARALYZED
                             mw.print(f"{m.name} is paralyzed.", start=' ')
@@ -5326,7 +5371,7 @@ def trader_buy(game, mem):
                 c = getch(wait=True)
                 if c == 'y':
                     if game.party.pay(game.itemdef[items[idx]].price):
-                        bought = [items[idx], False, False, False, False]
+                        bought = Memitem(items[idx])
                         mem.items.append(bought)
                         game.shopitems[items[idx]] -= 1
                         iw.mes_lines[0] = "Anything else, noble sir?"
@@ -5339,7 +5384,7 @@ def trader_buy(game, mem):
             else:
                 iw.mes_lines[0] = "Anything else, noble sir?"
                 mem.gold -= game.itemdef[items[idx]].price
-                bought = [items[idx], False, False, False, False]
+                bought = Memitem(items[idx])
                 mem.items.append(bought)
                 game.shopitems[items[idx]] -= 1
                 vscr.disp_scrwin()
@@ -5367,28 +5412,28 @@ def trader_sell(game, mem, op):
     mw.print(f"Which item to {opword}? -  # or leave")
     idic = {}
     for i, item in enumerate(mem.items, 1):
-        dispname = item[0]
+        dispname = item.name
         mark = ' '
         if op == 'u':  # uncurse
-            if not item[2]:
+            if not item.cursed:
                 continue
             mark = '&'
-            if item[3]:
-                dispname = ''.join(['?', game.itemdef[item[0]].unident])
+            if item.unidentified:
+                dispname = ''.join(['?', game.itemdef[item.name].unident])
         elif op == 'i':  # identify
-            if (not item[3]) or item[2]:
+            if (not item.unidentified) or item.cursed:
                 continue
-            dispname = ''.join(['?', game.itemdef[item[0]].unident])
+            dispname = ''.join(['?', game.itemdef[item.name].unident])
         else:  # sell
-            if item[1] or item[2] or item[3]:
+            if item.equipped or item.cursed or item.unidentified:
                 continue
-        price = game.itemdef[item[0]].price//div
+        price = game.itemdef[item.name].price//div
         if op == 'i':
             price = min(1000, max(price, 20))
         mw.print(
             f"{i}){mark}{dispname.ljust(24)} {price}",
             start=' ')
-        idic[i] = (item[0], dispname, price)
+        idic[i] = (item.name, dispname, price)
 
     while True:
         c = mw.input_char("# or l)eave")
@@ -5422,8 +5467,8 @@ def trader_sell(game, mem, op):
                 return
         else:
             mem.gold -= price
-        mem.items[int(c)-1][3] = False  # identified
-        mw.print(f"Identified as {mem.items[int(c)-1][0]}.")
+        mem.items[int(c)-1].unidentified = False  # identified
+        mw.print(f"Identified as {mem.items[int(c)-1].name}.")
     else:
         if mem.gold < price:
             mw.print("Um, you can't afford it.")
@@ -5436,7 +5481,7 @@ def trader_sell(game, mem, op):
                 return
         else:
             mem.gold -= price
-        mw.print(f"Uncursed {mem.items[int(c)-1][0]}.")
+        mw.print(f"Uncursed {mem.items[int(c)-1].name}.")
         del mem.items[int(c)-1]
 
     game.vscr.disp_scrwin()
@@ -5497,27 +5542,56 @@ def levelup(game, m):
 
         levelup += 1
 
-        for i in range(6):
-            if random.randrange(100) < 45:  # 45%
-                m.stat[i] += 1
-            elif random.randrange(100) < 25:  # (100-45) * 25% = 13.75%
-                m.stat[i] -= 1
-            m.stat[i] = max(m.stat[i], race_status[m.race][i])
-            m.stat[i] = min(m.stat[i], race_status[m.race][i]+10)
+        if random.randrange(100) < 45:
+            m.stat_strength += 1
+        elif random.randrange(100) < 25:  # (100-45) * 25% = 13.75%
+            m.stat_strength -= 1
+        m.stat_strength = max(m.stat_strength, race_status[m.race][0])
+        m.stat_strength = min(m.stat_strength, race_status[m.race][0]+10)
+        if random.randrange(100) < 45:
+            m.stat_iq += 1
+        elif random.randrange(100) < 25:  # (100-45) * 25% = 13.75%
+            m.stat_iq -= 1
+        m.stat_iq = max(m.stat_iq, race_status[m.race][1])
+        m.stat_iq = min(m.stat_iq, race_status[m.race][1]+10)
+        if random.randrange(100) < 45:
+            m.stat_piety += 1
+        elif random.randrange(100) < 25:  # (100-45) * 25% = 13.75%
+            m.stat_piety -= 1
+        m.stat_piety = max(m.stat_piety, race_status[m.race][2])
+        m.stat_piety = min(m.stat_piety, race_status[m.race][2]+10)
+        if random.randrange(100) < 45:
+            m.stat_vitality += 1
+        elif random.randrange(100) < 25:  # (100-45) * 25% = 13.75%
+            m.stat_vitality -= 1
+        m.stat_vitality = max(m.stat_vitality, race_status[m.race][3])
+        m.stat_vitality = min(m.stat_vitality, race_status[m.race][3]+10)
+        if random.randrange(100) < 45:
+            m.stat_agility += 1
+        elif random.randrange(100) < 25:  # (100-45) * 25% = 13.75%
+            m.stat_agility -= 1
+        m.stat_agiilty = max(m.stat_agility, race_status[m.race][4])
+        m.stat_agility = min(m.stat_agility, race_status[m.race][4]+10)
+        if random.randrange(100) < 45:
+            m.stat_luck += 1
+        elif random.randrange(100) < 25:  # (100-45) * 25% = 13.75%
+            m.stat_luck -= 1
+        m.stat_luck = max(m.stat_luck, race_status[m.race][5])
+        m.stat_luck = min(m.stat_luck, race_status[m.race][5]+10)
 
         m.level += 1
         newhp = 0
-        if m.stat[3] <= 3:
+        if m.stat_vitality <= 3:
             plus = -2
-        elif m.stat[3] <= 5:
+        elif m.stat_vitality <= 5:
             plus = -1
-        elif m.stat[3] >= 20:
+        elif m.stat_vitality >= 20:
             plus = 4
-        elif m.stat[3] >= 18:
+        elif m.stat_vitality >= 18:
             plus = 3
-        elif m.stat[3] >= 16:
+        elif m.stat_vitality >= 16:
             plus = 2
-        elif m.stat[3] >= 15:
+        elif m.stat_vitality >= 15:
             plus = 1
         else:
             plus = 0
@@ -5577,7 +5651,7 @@ def levelup(game, m):
             if game.spelldef[sname].categ == 'mage':
                 # memorize the spell if iq > randrange(30), he/she
                 # has not learned it yet and the spell count of the level > 0
-                if m.stat[1] > random.randrange(30):  # iq
+                if m.stat_iq > random.randrange(30):  # iq
                     if sname not in m.mspells and \
                        m.mspell_max[game.spelldef[sname].level-1] > 0:
                         m.mspells.append(sname)
@@ -5591,7 +5665,7 @@ def levelup(game, m):
                     m.mspells.append(sname)
                     learned = True
             else:
-                if m.stat[2] > random.randrange(30):  # piety
+                if m.stat_piety > random.randrange(30):  # piety
                     if sname not in m.pspells and \
                        m.pspell_max[game.spelldef[sname].level-1] > 0:
                         m.pspells.append(sname)
@@ -5632,7 +5706,8 @@ def sleep(game, m, healhp):
     v.disp_scrwin()
     getch(wait=True)
 
-    oldstate = m.stat[:]
+    oldstate = [m.stat_strength, m.stat_iq, m.stat_piety,
+                m.stat_vitality, m.stat_agility, m.stat_luck]
     oldhp = m.maxhp
     levels, learned = levelup(game, m)
 
@@ -5645,40 +5720,41 @@ def sleep(game, m, healhp):
 
     if levels > 0:
         mw.print(f"Level up!")
-        if m.stat[0] > oldstate[0]:
-            mw.print(f"Gained strength by {m.stat[0]-oldstate[0]} points.")
-        elif m.stat[0] < oldstate[0]:
-            mw.print(f"Lost strength by {oldstate[0]-m.stat[0]} points.")
-        if m.stat[1] > oldstate[1]:
+        if m.stat_strength > oldstate[0]:
             mw.print(
-                f"Gained i.q. by {m.stat[1]-oldstate[1]} points.", start=' ')
-        elif m.stat[1] < oldstate[1]:
+                f"Gained strength by {m.stat_strength-oldstate[0]} points.")
+        elif m.stat_strength < oldstate[0]:
+            mw.print(f"Lost strength by {oldstate[0]-m.stat_strength} points.")
+        if m.stat_iq > oldstate[1]:
             mw.print(
-                f"Lost i.q. by {oldstate[1]-m.stat[1]} points.", start=' ')
-        if m.stat[2] > oldstate[2]:
+                f"Gained i.q. by {m.stat_iq-oldstate[1]} points.", start=' ')
+        elif m.stat_iq < oldstate[1]:
             mw.print(
-                f"Gained piety by {m.stat[2]-oldstate[2]} points.", start=' ')
-        elif m.stat[2] < oldstate[2]:
+                f"Lost i.q. by {oldstate[1]-m.stat_iq} points.", start=' ')
+        if m.stat_piety > oldstate[2]:
             mw.print(
-                f"Lost piety by {oldstate[2]-m.stat[2]} points.", start=' ')
-        if m.stat[3] > oldstate[3]:
+                f"Gained piety by {m.stat_piety-oldstate[2]} points.", start=' ')
+        elif m.stat_piety < oldstate[2]:
             mw.print(
-                f"Gained vitality by {m.stat[3]-oldstate[3]} points.", start=' ')
-        elif m.stat[3] < oldstate[3]:
+                f"Lost piety by {oldstate[2]-m.stat_piety} points.", start=' ')
+        if m.stat_vitality > oldstate[3]:
             mw.print(
-                f"Lost vitality by {oldstate[3]-m.stat[3]} points.", start=' ')
-        if m.stat[4] > oldstate[4]:
+                f"Gained vitality by {m.stat_vitality-oldstate[3]} points.", start=' ')
+        elif m.stat_vitality < oldstate[3]:
             mw.print(
-                f"Gained agility by {m.stat[4]-oldstate[4]} points.", start=' ')
-        elif m.stat[4] < oldstate[4]:
+                f"Lost vitality by {oldstate[3]-m.stat_vitality} points.", start=' ')
+        if m.stat_agility > oldstate[4]:
             mw.print(
-                f"Lost agility by {oldstate[4]-m.stat[4]} points.", start=' ')
-        if m.stat[5] > oldstate[5]:
+                f"Gained agility by {m.stat_agility-oldstate[4]} points.", start=' ')
+        elif m.stat_agility < oldstate[4]:
             mw.print(
-                f"Gained luck by {m.stat[5]-oldstate[5]} points.", start=' ')
-        elif m.stat[5] < oldstate[5]:
+                f"Lost agility by {oldstate[4]-m.stat_agility} points.", start=' ')
+        if m.stat_luck > oldstate[5]:
             mw.print(
-                f"Lost luck by {oldstate[5]-m.stat[5]} points.", start=' ')
+                f"Gained luck by {m.stat_luck-oldstate[5]} points.", start=' ')
+        elif m.stat_luck < oldstate[5]:
+            mw.print(
+                f"Lost luck by {oldstate[5]-m.stat_luck} points.", start=' ')
         if m.maxhp > oldhp:
             mw.print(
                 f"Your hp increased by {m.maxhp-oldhp} points.", start=' ')
@@ -5775,12 +5851,12 @@ def hospital(game):
                 v.disp_scrwin()
                 continue
             if p.state == State.DEAD and \
-               random.randrange(100) > 50 + (3*p.stat[3]):
+               random.randrange(100) > 50 + (3*p.stat_vitality):
                 mw.print("Oops..")
                 v.disp_scrwin()
                 p.state = State.ASHED
             elif p.state == State.ASHED and \
-                    random.randrange(100) > 40 + (3*p.stat[3]):
+                    random.randrange(100) > 40 + (3*p.stat_vitality):
                 mw.print("...(oh my god)...")
                 v.disp_scrwin()
                 p.state = State.LOST
@@ -6448,8 +6524,9 @@ if config['client']:
             item = mem.items[data['item_idx']]
         except:
             return
-        if item[0] == data['item'] and not item[1] and not item[2]\
-           and not item[3] and item[4]:  # still on sale?
+        if item.name == data['item'] and not item.equipped and \
+           not item.cursed and not item.unidentified and \
+           item.onsale:  # still on sale?
             mem.gold += data['price']
             del mem.items[data['item_idx']]
             game.vscr.messages.append(
@@ -6468,7 +6545,7 @@ if config['client']:
         else:
             if not game.party.pay(data['price']):
                 return
-        bought = [data['item'], False, False, False, False]
+        bought = Memitem(data['item'])
         mem.items.append(bought)
         game.vscr.messages.append(
             (data['seller'], f"Sold <{data['item']}> to {data['buyer']}."))
