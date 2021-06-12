@@ -107,7 +107,7 @@ Itemdef = collections.namedtuple(
 @dataclass
 class Memitem:
     """
-    mem.items will have list of Memitem()
+    Member.items will have list of Memitem()
     """
     name: str
     equipped: bool = False
@@ -343,7 +343,6 @@ class Vscr:
         """
         Display scroll window main
         """
-        game = self.game
         party = game.party
         if not floor_obj:
             floor_obj = party.floor_obj
@@ -1139,7 +1138,7 @@ class Party:
                     return True
         return False
 
-    def cast_spell(self, game, spell, target='party'):
+    def cast_spell(self, spell, target='party'):
         """
         If someone can cast the spell, cast it and return True
         If not, return False
@@ -1169,36 +1168,36 @@ class Party:
                 return True
         return False
 
-    def prep(self, game):
+    def prep(self):
         """
         Cast hogo, shikibetsu, gps and lomilwa
         """
         if self.ac == 0:
-            self.cast_spell(game, 'hogo')
+            self.cast_spell('hogo')
         if not self.identify:
-            self.cast_spell(game, 'shikibetsu')
+            self.cast_spell('shikibetsu')
         if not self.gps:
-            self.cast_spell(game, 'gps')
+            self.cast_spell('gps')
         if self.light_cnt < 1000:
-            self.cast_spell(game, 'hikarinotama')
+            self.cast_spell('hikarinotama')
 
-    def heal(self, game):
+    def heal(self):
         """
         Heal all members in the party
         """
         while self.injured():
-            if not self.cast_spell(game, 'zenkai'):
-                if not self.cast_spell(game, 'zenjiai'):
+            if not self.cast_spell('zenkai'):
+                if not self.cast_spell('zenjiai'):
                     break
         for mem in self.members:
             if mem.state in [State.DEAD, State.ASHED, State.LOST]:
                 continue
             if mem.hp == mem.maxhp:
                 continue
-            if not self.cast_spell(game, 'kanzen', mem):
-                if not self.cast_spell(game, 'daikaifuku', mem):
-                    if not self.cast_spell(game, 'iyashi', mem):
-                        if not self.cast_spell(game, 'jiai', mem):
+            if not self.cast_spell('kanzen', mem):
+                if not self.cast_spell('daikaifuku', mem):
+                    if not self.cast_spell('iyashi', mem):
+                        if not self.cast_spell('jiai', mem):
                             return
 
     def defeated(self):
@@ -1236,7 +1235,7 @@ class Party:
             locdict['place'] = self.place.name
             sio.emit('party_move', locdict)
 
-    def calc_hpplus(self, game):
+    def calc_hpplus(self):
         """
         Calc poison and healing item effects for the party members
         """
@@ -1265,7 +1264,7 @@ class Party:
                 return True
         return False
 
-    def reorder(self, game):
+    def reorder(self):
         """
         Reorder party members
         """
@@ -1321,7 +1320,7 @@ class Party:
                 remain -= mem.gold
                 mem.gold = 0
 
-    def can_open(self, game, ch=b'*'):
+    def can_open(self, ch=b'*'):
         """
         Check if they can unlock the door
         Returns True if they can, False otherwise
@@ -1353,7 +1352,7 @@ class Party:
         else:
             return False
 
-    def choose_character(self, game):
+    def choose_character(self):
         """
         Choose and return a party member
         Return False if not chosen
@@ -1372,7 +1371,7 @@ class Party:
             return False
         return self.members[chid]
 
-    def remove_character(self, game):
+    def remove_character(self):
         """
         Choose and remove a party member
         """
@@ -1500,7 +1499,7 @@ class Member:
         self.mspell_max = m_s['mspell_max'][:]
         self.pspell_max = m_s['pspell_max'][:]
 
-    def disp_character(self, game):
+    def disp_character(self):
         """
         Display a character information in the message window
         """
@@ -1552,7 +1551,7 @@ class Member:
                          start=' ')
             ol = l
 
-    def inspect_character(self, game):
+    def inspect_character(self):
         """
         Inspect a character
         Show the character info and dispatch item or spell menus
@@ -1561,7 +1560,7 @@ class Member:
         while game.party.members:
             if game.party.floor_move and game.party.place == Place.CAMP:
                 break
-            self.disp_character(game)
+            self.disp_character()
             mw.print(f"", start=' ')
             if game.party.place == Place.CAMP and game.dungeon.expedition\
                and game.vscr.show_puser != config['server']['auth']['user']:
@@ -1580,11 +1579,11 @@ class Member:
                 mw.cls()
                 return 0  # leave
             elif c1 == 'i':
-                self.item_menu(game)
+                self.item_menu()
             elif c1 == 's':
-                self.spell_menu(game)
+                self.spell_menu()
             elif c1 == 'c' and game.party.place == Place.TRAINING_GROUNDS:
-                self.change_classes(game)
+                self.change_classes()
             elif c1 == 'j':
                 return 1  # next member
             elif c1 == 'k':
@@ -1647,7 +1646,7 @@ class Member:
             game.vscr.disp_scrwin()
         return
 
-    def view_spells(self, game):
+    def view_spells(self):
         """
         View mage and priest spell list that he/she has mastered
         """
@@ -1693,7 +1692,7 @@ class Member:
         v.meswins.pop()
         v.cls()
 
-    def spell_menu(self, game):
+    def spell_menu(self):
         """
         Spell menu.  Cast, read spells.
         """
@@ -1715,13 +1714,13 @@ class Member:
                     mw.print("Can't cast spell now.")
                     v.disp_scrwin()
             elif c == 'v':
-                self.view_spells(game)
+                self.view_spells()
         # mw.cls()
         v.disp_scrwin()
         v.meswins.pop()
         v.cls()
 
-    def item_menu(self, game):
+    def item_menu(self):
         """
         Item menu.  Use, equip, trade, drop an item.
         """
@@ -1795,7 +1794,7 @@ class Member:
                         iw.print("Can't use it now.")
                     if sdef.target == 'member':
                         if not game.dungeon.get_gcamp_users():
-                            target = game.party.choose_character(game)
+                            target = game.party.choose_character()
                             if not target:
                                 iw.print("Aborted.", start=' ')
                                 continue
@@ -1841,7 +1840,7 @@ class Member:
                     iw.print(f"Equipped.")
                     vscr.disp_scrwin()
                     continue
-                target = game.party.choose_character(game)
+                target = game.party.choose_character()
                 if target and len(target.items) < 8:
                     target.items.append(self.items[inum])
                     self.items.pop(inum)
@@ -1882,7 +1881,7 @@ class Member:
                         elif item.equipped:  # equipped
                             item.equipped = False
                             if item is self.items[inum]:
-                                self.calc_ac(game)
+                                self.calc_ac()
                                 vscr.meswins.pop()
                                 vscr.cls()
                                 return
@@ -1892,7 +1891,7 @@ class Member:
                     vscr.disp_scrwin()
                     getch()
                 self.items[inum].equipped = True  # equipped
-                self.calc_ac(game)
+                self.calc_ac()
                 vscr.meswins.pop()
                 vscr.cls()
                 # vscr.disp_scrwin()
@@ -1910,7 +1909,7 @@ class Member:
                 vscr.cls()
                 return
 
-    def calc_ac(self, game):
+    def calc_ac(self):
         """
         Utility method to calculate AC
         """
@@ -1943,7 +1942,7 @@ class Member:
                 bonus += 10
         return bonus
 
-    def bonus_disp(self, game, bonus, y, sp):
+    def bonus_disp(self, bonus, y, sp):
         """
         Display bonus assignment screen
         """
@@ -1974,7 +1973,7 @@ class Member:
         vscr.disp_scrwin()
         return job
 
-    def change_classes(self, game):
+    def change_classes(self):
         """
         Change classes
         """
@@ -2007,7 +2006,7 @@ class Member:
         self.level = 1
         for item in self.items:
             item.equipped = item.cursed = False
-        self.calc_ac(game)
+        self.calc_ac()
         self.stat_strength = race_status[self.race][0]
         self.stat_iq = race_status[self.race][1]
         self.stat_piety = race_status[self.race][2]
@@ -2045,7 +2044,7 @@ class Member:
         mw.print(f"{self.name} has become a novice {self.job.name.lower()}.")
         v.disp_scrwin()
 
-    def distribute_bonus(self, game):
+    def distribute_bonus(self):
         """
         Bonus assignment and deciding class main routine
         """
@@ -2060,7 +2059,7 @@ class Member:
         y = 0
         statplus = [0, 0, 0, 0, 0, 0]
         while True:
-            job = self.bonus_disp(game, bonus, y, statplus)
+            job = self.bonus_disp(bonus, y, statplus)
             c = getch()
             if c == 'x' and bonus == 0 and job:
                 break
@@ -2138,8 +2137,8 @@ class Spell:
     Has actual spell implementation here
     """
 
-    def __init__(self, game):
-        self.game = game
+    def __init__(self):
+        pass
 
     def cancast(self, mem, spell, consume=False):
         """
@@ -2149,7 +2148,7 @@ class Spell:
         """
         if mem.state not in [State.OK]:
             return False
-        spelldef = self.game.spelldef[spell]
+        spelldef = game.spelldef[spell]
         if spell in mem.mspells:
             if mem.mspell_cnt[spelldef.level-1] > 0:
                 if consume:
@@ -2175,7 +2174,6 @@ class Spell:
         return clist
 
     def cast_spell(self, mem):
-        game = self.game
         v = game.vscr
         mw = v.meswins[-1]
         s = mw.input("What spell to cast?")
@@ -2205,15 +2203,15 @@ class Spell:
 
         if sdef.target == 'member':
             if not game.dungeon.expedition or not game.dungeon.parties:
-                target = self.game.party.choose_character(self.game)
+                target = game.party.choose_character()
                 if not target:
-                    mw = self.game.vscr.meswins[-1]
+                    mw = game.vscr.meswins[-1]
                     mw.print("Aborted.", start=' ')
                     return
             else:
                 owner, uidx = choose_party_character()
                 if not owner:
-                    mw = self.game.vscr.meswins[-1]
+                    mw = game.vscr.meswins[-1]
                     mw.print("Aborted.", start=' ')
                     return
                 if owner == config['server']['auth']['user']:
@@ -2234,9 +2232,9 @@ class Spell:
                     v.disp_scrwin()
                     return
         elif sdef.target in ['enemy', 'group']:
-            target = self.game.battle.choose_group()
+            target = game.battle.choose_group()
             if not target:
-                mw = self.game.vscr.meswins[-1]
+                mw = game.vscr.meswins[-1]
                 mw.print("Aborted.", start=' ')
                 return
         else:
@@ -2259,7 +2257,7 @@ class Spell:
         self.cast_spell_dispatch(mem, s, target)
 
     def cast_spell_dispatch(self, invoker, spell, target):
-        sdef = self.game.spelldef[spell]
+        sdef = game.spelldef[spell]
         if sdef.type == 'heal':
             self.heal(invoker, spell, target)
         elif sdef.type in ['attack', 'death']:
@@ -2281,9 +2279,9 @@ class Spell:
         """
         Spell to cure bad status
         """
-        v = self.game.vscr
+        v = game.vscr
         mw = v.meswins[-1]
-        spelldef = self.game.spelldef[spell]
+        spelldef = game.spelldef[spell]
         if spell == 'okiro':
             if target.state in [State.ASLEEP, State.PARALYZED]:
                 target.state = State.OK
@@ -2300,14 +2298,14 @@ class Spell:
         """
         Misc spell
         """
-        v = self.game.vscr
+        v = game.vscr
         mw = v.meswins[-1]
-        spelldef = self.game.spelldef[spell]
+        spelldef = game.spelldef[spell]
         update = False  # update monp flag (joined battle in a server dungeon)
         if spell == 'gps':
-            self.game.party.gps = True
+            game.party.gps = True
         elif spell == 'tsubasa':
-            party = self.game.party
+            party = game.party
             fl = mw.input(f"To which floor? (1-{invoker.deepest})")
             try:
                 fl = int(fl)
@@ -2320,32 +2318,32 @@ class Spell:
             mw.print("What?")
             v.disp_scrwin()
         elif spell == 'shikibetsu':
-            self.game.party.identify = True
+            game.party.identify = True
         elif spell == 'hogo':
-            self.game.party.ac = int(spelldef.value)
+            game.party.ac = int(spelldef.value)
         elif spell == 'akari':
-            self.game.party.light_cnt += random.randrange(15) + 30
+            game.party.light_cnt += random.randrange(15) + 30
         elif spell == 'hikarinotama':
-            self.game.party.light_cnt += 9999
+            game.party.light_cnt += 9999
         elif spell == 'kanzen':
             if target.state not in [State.DEAD, State.ASHED, State.LOST]:
                 target.hp = target.maxhp
                 target.state = State.OK
                 if target.poisoned:
                     target.poisoned = False
-                self.game.party.calc_hpplus(self.game)
+                game.party.calc_hpplus()
                 mw.print(f"{target.name} is completely healed.",
                          start=' ', bcast=True)
         elif spell == 'senmetsu':
-            monptmp = self.game.battle.monp[:]
+            monptmp = game.battle.monp[:]
             for mong in monptmp:
-                mondef = self.game.mondef[mong.name]
+                mondef = game.mondef[mong.name]
                 if mong.identified:
                     dispname = mondef.names
                 else:
                     dispname = mondef.unidents
                 if mondef.weakmaka:
-                    self.game.battle.exp += mong.num_valid() * \
+                    game.battle.exp += mong.num_valid() * \
                         mondef.exp
                     monsterg = mong.monsters
                     for mon in monsterg:
@@ -2356,7 +2354,7 @@ class Spell:
                     update = True
         elif spell == 'hinshi':
             if isinstance(invoker, Member):
-                mondef = self.game.mondef[target.name]
+                mondef = game.mondef[target.name]
                 if target.identified:
                     disptarget = target.name
                 else:
@@ -2373,7 +2371,7 @@ class Spell:
                     mw.print(f"{disptarget} registed the spell.",
                              start=' ', bcast=True)
             else:
-                target = random.choice([mem for mem in self.game.party.members
+                target = random.choice([mem for mem in game.party.members
                                         if mem.state in [State.OK, State.ASLEEP]])
                 regspellp = target.stat_luck * 100/20  # luck
                 if random.randrange(100) >= regspellp:
@@ -2426,9 +2424,9 @@ class Spell:
         """
         Decrease peer(s)' or increase opponent(s)' AC
         """
-        v = self.game.vscr
+        v = game.vscr
         mw = v.meswins[-1]
-        spelldef = self.game.spelldef[spell]
+        spelldef = game.spelldef[spell]
         update = False
         if spelldef.target == 'self':
             if isinstance(invoker, Member):
@@ -2438,11 +2436,11 @@ class Spell:
                 update = True
         elif spelldef.target == 'party':
             if isinstance(invoker, Member):
-                for m in self.game.party.members:
+                for m in game.party.members:
                     m.acplus += int(spelldef.value)
             else:
-                mong = next((mong for mong in self.game.battle.monp
-                             if mong.top_valid()), self.game.battle.monp[0])
+                mong = next((mong for mong in game.battle.monp
+                             if mong.top_valid()), game.battle.monp[0])
                 for m in mong.monsters:
                     m.ac += int(spelldef.value)
                 update = True
@@ -2451,7 +2449,7 @@ class Spell:
                 target.top_valid().ac += int(spelldef.value)
                 update = True
             else:
-                mem = random.choice(self.game.party.members)
+                mem = random.choice(game.party.members)
                 mem.acplus += int(spelldef.value)
         elif spelldef.target == 'group':
             if isinstance(invoker, Member):
@@ -2459,16 +2457,16 @@ class Spell:
                     mon.ac += int(spelldef.value)
                 update = True
             else:
-                for mem in self.game.party.members:
+                for mem in game.party.members:
                     mem.acplus += int(spelldef.value)
         else:  # 'all'
             if isinstance(invoker, Member):
-                for mong in self.game.battle.monp:
+                for mong in game.battle.monp:
                     for mon in mong:
                         mon.ac += int(spelldef.value)
                 update = True
             else:
-                for mem in self.game.party.members:
+                for mem in game.party.members:
                     mem.acplus += int(spelldef.value)
         if update:
             game.battle.update_monp()
@@ -2477,15 +2475,15 @@ class Spell:
         """
         Spells that could put to sleep and silence the target group.
         """
-        v = self.game.vscr
+        v = game.vscr
         mw = v.meswins[-1]
-        spelldef = self.game.spelldef[spell]
+        spelldef = game.spelldef[spell]
         update = False
         if isinstance(invoker, Member):
             if target.identified:
                 disptarget = target.name
             else:  # unidentified
-                disptarget = self.game.mondef[target.name].unident
+                disptarget = game.mondef[target.name].unident
             for mon in target.monsters:
                 if 'sleep' in spelldef.attr and mon.state == State.OK:
                     if mon.mdef.weaksleep:
@@ -2513,7 +2511,7 @@ class Spell:
                         mw.print(f"{disptarget} is not silenced.",
                                  start=' ', bcast=True)
         else:
-            for mem in self.game.party.members:
+            for mem in game.party.members:
                 if 'sleep' in spelldef.attr and mem.state == State.OK:
                     if random.randrange(100) < 35:
                         mem.state = State.ASLEEP
@@ -2540,10 +2538,10 @@ class Spell:
         """
         Spells that cause instant death to a single enemy
         """
-        mw = self.game.vscr.meswins[-1]
+        mw = game.vscr.meswins[-1]
         update = False
         if isinstance(target, Monster):
-            regdeathp = self.game.mondef[target.name].regdeathp
+            regdeathp = game.mondef[target.name].regdeathp
         else:
             # vitality + luck
             regdeathp = (target.stat_vitality + target.stat_luck) * 100//40
@@ -2562,14 +2560,14 @@ class Spell:
         """
         Attack spells to decrease HP
         """
-        v = self.game.vscr
+        v = game.vscr
         mw = v.meswins[-1]
-        spelldef = self.game.spelldef[spell]
+        spelldef = game.spelldef[spell]
         if not isinstance(invoker, Member):
             if spelldef.target == 'enemy':
                 if spell == 'butsumetsu':
                     return
-                targets = [mem for mem in self.game.party.members
+                targets = [mem for mem in game.party.members
                            if mem.state in [State.OK, State.ASLEEP]]
                 mem = random.choice(targets)
                 if spelldef.type == 'death':
@@ -2587,7 +2585,7 @@ class Spell:
                         mw.print(f"{mem.name} is killed.",
                                  start=' ', bcast=True)
             else:  # 'group' or 'all
-                for mem in self.game.party.members:
+                for mem in game.party.members:
                     if mem.state in [State.DEAD, State.ASHED, State.LOST]:
                         continue
                     if spelldef.type == 'death':
@@ -2608,40 +2606,40 @@ class Spell:
             if target.identified:
                 disptarget = target.name
             else:  # unidentified
-                disptarget = self.game.mondef[target.name].unident
+                disptarget = game.mondef[target.name].unident
             if spell == 'shinoroi':  # lakanito
                 for mon in target.monsters:
                     self.death_single(mon, disptarget)
-                    self.game.battle.draw_ew()
+                    game.battle.draw_ew()
             else:
                 for mon in target.monsters:
                     self.attack_single(
                         mon, disptarget,
                         spelldef.value, spelldef.attr, target, invoker)
-                    self.game.battle.draw_ew()
+                    game.battle.draw_ew()
         elif spelldef.target == 'all':
-            for mong in self.game.battle.monp:
+            for mong in game.battle.monp:
                 if mong.identified:
                     disptarget = mong.name
                 else:
-                    disptarget = self.game.mondef[mong.name].unident
+                    disptarget = game.mondef[mong.name].unident
                 for mon in mong.monsters:
                     self.attack_single(mon, disptarget,
                                        spelldef.value, spelldef.attr, mong, invoker)
-                    self.game.battle.draw_ew()
+                    game.battle.draw_ew()
         elif spelldef.target == 'enemy':
             if target.identified:
                 disptarget = target.name
             else:
-                disptarget = self.game.mondef[target.name].unident
+                disptarget = game.mondef[target.name].unident
             if spelldef.type == 'death':
                 self.death_single(target.top_valid(), disptarget)
-                self.game.battle.draw_ew()
+                game.battle.draw_ew()
             elif spell != 'butsumetsu' or \
-                    self.game.mondef[target.name].type != 'undead':
+                    game.mondef[target.name].type != 'undead':
                 self.attack_single(target.top_valid(), disptarget,
                                    spelldef.value, spelldef.attr, target, invoker)
-                self.game.battle.draw_ew()
+                game.battle.draw_ew()
 
     def attack_single(self, mon, dispname, value, attr, mong, invoker):
         """
@@ -2649,10 +2647,10 @@ class Spell:
         """
         if mon.state in [State.DEAD, State.RAN]:
             return
-        v = self.game.vscr
+        v = game.vscr
         mw = v.meswins[-1]
         damage = dice(value)
-        mondef = self.game.mondef[mon.name]
+        mondef = game.mondef[mon.name]
         if mondef.regspellp > random.randrange(100):
             mw.print(f"{dispname} registed.", bcast=True)
             return
@@ -2673,7 +2671,7 @@ class Spell:
         if mon.hp <= 0:
             mw.print(f"{dispname} is killed.", start=' ', bcast=True)
             mon.state = State.DEAD
-            self.game.battle.exp += mondef.exp
+            game.battle.exp += mondef.exp
             invoker.marks += 1
         game.battle.update_monp()
 
@@ -2681,10 +2679,10 @@ class Spell:
         """
         Heal spells to recover HP
         """
-        sdef = self.game.spelldef[spell]
+        sdef = game.spelldef[spell]
         if not isinstance(invoker, Member):
             if sdef.target == 'party':
-                for mon in self.game.battle.monp[0].monsters:
+                for mon in game.battle.monp[0].monsters:
                     self.heal_single(spell, sdef, mon)
                     game.battle.update_monp()
             else:
@@ -2692,7 +2690,7 @@ class Spell:
                 game.battle.update_monp()
             return
         if sdef.target == 'party':
-            for target in self.game.party.members:
+            for target in game.party.members:
                 self.heal_single(spell, sdef, target)
         else:
             self.heal_single(spell, sdef, target)
@@ -2703,7 +2701,7 @@ class Spell:
         """
         plus = dice(sdef.value)
         target.hp = min(target.hp+plus, target.maxhp)
-        mw = self.game.vscr.meswins[-1]
+        mw = game.vscr.meswins[-1]
         if target.hp == target.maxhp:
             mw.print(f"{target.name}'s HP was fully restored.",
                      start=' ', bcast=True)
@@ -2717,8 +2715,7 @@ class Dungeon:
     Represents the dungeon
     """
 
-    def __init__(self, game):
-        self.game = game
+    def __init__(self):
         self.floors = []  # list of floor objects
         self.events = []  # list of events (floor, eventid)
         self.generate_events()
@@ -2768,7 +2765,7 @@ class Dungeon:
         Check if floor_move, generate floors if not generated yet,
         and place party on the upstairs or the downstairs
         """
-        party = self.game.party
+        party = game.party
         if not party.floor_move:
             return
 
@@ -2845,7 +2842,7 @@ class Dungeon:
                 start = (r.y + y)*floor_x_size + r.x
                 floor_obj.floor_view[start:start+r.x_size] = b'.'*r.x_size
         floor_obj.connect_all_rooms(rooms)
-        floor_obj.place_doors(self.game, rooms)
+        floor_obj.place_doors(rooms)
         floor_obj.rooms = rooms
         floor_obj.floor_orig = floor_obj.floor_data
         floor_obj.place_events(self)
@@ -2857,7 +2854,6 @@ class Dungeon:
         Check if move to upper/lower floor.
         Return True if exit, False not.
         """
-        game = self.game
         party = game.party
         vscr = game.vscr
         meswin = vscr.meswins[0]
@@ -2910,7 +2906,7 @@ class Floor:
         s = self.floor_data.decode()
         return f"Floor(size: {self.x_size}x{self.y_size}, floor: {self.floor} - {s})"
 
-    def ending(self, game):
+    def ending(self):
         """
         Show ending messages
         """
@@ -2960,7 +2956,7 @@ class Floor:
         v.disp_scrwin()
         getch(wait=True)
 
-    def boss(self, game):
+    def boss(self):
         """
         Events before fighting with boss mosters
         """
@@ -3028,7 +3024,7 @@ class Floor:
         getch(wait=True)
         mw.cls()
         if game.party.floor == 10:  # The last boss?
-            self.ending(game)
+            self.ending()
         else:
             mw.print("You won the battle, but it was no ordinary monster.")
         mw.print("You see downstairs appearing in front of you.")
@@ -3036,7 +3032,7 @@ class Floor:
         getch(wait=True)
         v.meswins.pop()
 
-    def key(self, game):
+    def key(self):
         """
         Events to find keys
         """
@@ -3071,7 +3067,7 @@ class Floor:
             v.meswins.pop()
             v.disp_scrwin()
 
-    def random_message(self, game):
+    def random_message(self):
         """
         Random message events
         """
@@ -3096,7 +3092,7 @@ class Floor:
         v.meswins.pop()
         v.disp_scrwin()
 
-    def check_event(self, game):
+    def check_event(self):
         """
         Check and process an event.
         Return True if processed an event.
@@ -3107,13 +3103,13 @@ class Floor:
             return False
         evid = self.events[(x, y)][0]
         if evid == Eventid.RNDMSG:
-            self.random_message(game)
+            self.random_message()
             self.events[(x, y)][1] = True  # processed
             return True
         elif evid == Eventid.KEY:
-            self.key(game)
+            self.key()
         elif evid == Eventid.BOSS:
-            self.boss(game)
+            self.boss()
             if game.party.members and not game.battle.ran:
                 self.events[(x, y)][1] = True  # processed
                 return True
@@ -3192,7 +3188,7 @@ class Floor:
             return False
         return True
 
-    def open_door(self, game, mw):
+    def open_door(self, mw):
         """
         Open a door.  If it's a locked door ('*'), unlock and
         open it.  Unlock could fail.
@@ -3216,13 +3212,13 @@ class Floor:
             mw.print("Opened.")
             self.put_tile(x, y, b'.')
         elif tile == b'*':
-            if game.party.can_open(game):
+            if game.party.can_open():
                 mw.print("Unlocked.")
                 self.put_tile(x, y, b'.')
             else:
                 mw.print("No luck.")
         elif tile == b'%':
-            if game.party.can_open(game, ch=b'%'):
+            if game.party.can_open(ch=b'%'):
                 mw.print("Unlocked.")
                 self.put_tile(x, y, b'.')
                 if game.party.floor >= 11:
@@ -3319,7 +3315,7 @@ class Floor:
             if c == b'.' or c == b'+':
                 self.floor_view[pos:pos+1] = dc
 
-    def place_doors(self, game, rooms):
+    def place_doors(self, rooms):
         """
         Place locked or unlocked doors in front of rooms.
         """
@@ -3394,10 +3390,9 @@ class Monster:
     Represents a monster
     """
 
-    def __init__(self, game, name):
-        self.game = game
+    def __init__(self, name):
         self.name = name
-        self.mdef = self.game.mondef[name]
+        self.mdef = game.mondef[name]
         self.hp = self.maxhp = dice(self.mdef.hp)
         self.hpplus = 0
         self.ac = self.mdef.ac
@@ -3424,10 +3419,9 @@ class Monstergrp:
     Represents a monster group
     """
 
-    def __init__(self, game, name):
-        self.game = game
+    def __init__(self, name):
         self.name = name
-        self.mdef = self.game.mondef[name]
+        self.mdef = game.mondef[name]
         self.monsters = []
         self.identified = False
 
@@ -3461,8 +3455,7 @@ class Battle:
     Represents battles
     """
 
-    def __init__(self, game):
-        self.game = game
+    def __init__(self):
         self.boss = False
         self.ran = False  # ran from the battle flag
         v = game.vscr
@@ -3484,7 +3477,7 @@ class Battle:
         self.monp = []  # includes monster group(s)
         self.entities = []  # includes party member or monster
         self.treasure = True  # treasure
-        self.game.party.alarm = False  # alarm flag
+        game.party.alarm = False  # alarm flag
         if random.randrange(100) < 10:
             self.surprised = 1  # you surprised the monsters
         elif random.randrange(100) < 10:
@@ -3492,7 +3485,7 @@ class Battle:
         else:
             self.surprised = 0
         self.ran = False  # ran flag
-        for m in self.game.party.members:
+        for m in game.party.members:
             m.action = '????????????'
             m.drained = False
             m.acplus = 0
@@ -3515,7 +3508,7 @@ class Battle:
                 continue
             i += 1
             active = valid = 0
-            if self.friendly or self.game.party.identify:
+            if self.friendly or game.party.identify:
                 mg.identified = True
             if mg.identified:
                 dispname = mg.name
@@ -3542,9 +3535,9 @@ class Battle:
             sio.emit('get_monp', self.join_user)
             while not self.monp_set:
                 pass
-            self.game.chest.items = list(self.monp[0].mdef.treasure)
+            game.chest.items = list(self.monp[0].mdef.treasure)
             for mong in self.monp:
-                mdef = self.game.mondef[mong.name]
+                mdef = game.mondef[mong.name]
                 self.gold = sum((mdef.level*(random.randrange(15)+10))
                                 for _ in mong.monsters)
             return
@@ -3555,15 +3548,15 @@ class Battle:
                 9: 'atlas',
                 10: 'daemon lord',
             }
-            mname = bosses[self.game.party.floor]
+            mname = bosses[game.party.floor]
         else:
             candidates = []
-            for mname in self.game.mondef:
-                if self.game.party.floor <= 10:
-                    if self.game.party.floor in self.game.mondef[mname].floors:
+            for mname in game.mondef:
+                if game.party.floor <= 10:
+                    if game.party.floor in game.mondef[mname].floors:
                         candidates.append(mname)
                 else:
-                    if 0 in self.game.mondef[mname].floors:
+                    if 0 in game.mondef[mname].floors:
                         candidates.append(mname)
             while True:
                 mname = random.choice(candidates)
@@ -3578,15 +3571,15 @@ class Battle:
         if game.dungeon.expedition:
             maxgrps = 6  # up to 6 groups in a server dungeon
         while len(self.monp) < maxgrps:
-            mdef = self.game.mondef[mname]
+            mdef = game.mondef[mname]
             if len(self.monp) == 0:  # 1st group
                 if mdef.friendly and random.randrange(100) < 10:  # 1/10
                     self.friendly = True
 
-            mong = Monstergrp(self.game, mname)
+            mong = Monstergrp(mname)
             self.monp.append(mong)
             for _ in range(dice(mdef.number)):
-                mon = Monster(self.game, mname)
+                mon = Monster(mname)
                 mong.monsters.append(mon)
                 self.gold += mdef.level * (random.randrange(15) + 10)
             fellowp = mdef.fellowp
@@ -3596,7 +3589,7 @@ class Battle:
                 break
             mname = mdef.fellow
         # top monster defines treasure levels
-        self.game.chest.items = list(self.monp[0].mdef.treasure)
+        game.chest.items = list(self.monp[0].mdef.treasure)
         return
 
     def canrun(self, entity):
@@ -3612,18 +3605,18 @@ class Battle:
         for mg in self.monp:
             for m in mg.monsters:
                 if m.state == State.OK:
-                    el += self.game.mondef[m.name].level
-        for mem in self.game.party.members:
+                    el += game.mondef[m.name].level
+        for mem in game.party.members:
             if mem.state == State.OK:
                 pl += mem.level
         if pl > el:
             success += 20
 
-        if len(self.game.party.members) == 1:
+        if len(game.party.members) == 1:
             success += 15
-        elif len(self.game.party.members) == 2:
+        elif len(game.party.members) == 2:
             success += 10
-        elif len(self.game.party.members) == 3:
+        elif len(game.party.members) == 3:
             success += 5
 
         if success + 75 > random.randrange(100):
@@ -3636,7 +3629,7 @@ class Battle:
         Handle friendly monsters.
         Return True if leave, False if fight
         """
-        v = self.game.vscr
+        v = game.vscr
         if len(self.monp) > 1:
             dispname = 'monsters'
         else:
@@ -3656,11 +3649,11 @@ class Battle:
             if c == 'y':
                 idx = self.room_index
                 if idx >= 0:  # room encounter
-                    self.game.party.floor_obj.battled[idx] = True
+                    game.party.floor_obj.battled[idx] = True
                 return True
         else:
             self.mw.print(f"You encountered {dispname}.")
-            self.game.vscr.disp_scrwin()
+            game.vscr.disp_scrwin()
         return False
 
     def enemy_action(self):
@@ -3669,8 +3662,8 @@ class Battle:
         """
         if self.surprised == 1:  # you surprised the monsters
             return
-        mondef = self.game.mondef
-        party = self.game.party
+        mondef = game.mondef
+        party = game.party
         for mong in self.monp:
             for mon in mong.monsters:
                 if mon.state != State.OK:
@@ -3699,7 +3692,7 @@ class Battle:
                     self.entities.append(
                         Entity(mon, mong.name, mong, agi, action, None))
                 else:
-                    if action in self.game.spelldef:
+                    if action in game.spelldef:
                         self.entities.append(
                             Entity(mon, mong.name, mong, agi, action, None))
                     else:
@@ -3712,14 +3705,14 @@ class Battle:
         return True if ran successfully
         """
         self.entities = []
-        for mem in self.game.party.members:
+        for mem in game.party.members:
             mem.action = '????????????'
         if self.surprised == 2:  # monsters surprised you
             return False
         while True:
             self.cw.print(f"Options - f)ight s)pell u)se")
             self.cw.print(f"d)ispell p)arry r)un t)ake back", start=' ')
-            for idx, mem in enumerate(self.game.party.members, 1):
+            for idx, mem in enumerate(game.party.members, 1):
                 if mem.state not in [State.OK]:
                     continue
                 while True:
@@ -3735,27 +3728,27 @@ class Battle:
                             return False  # failed
                     elif c == 't':
                         self.entities = []
-                        for mem in self.game.party.members:
+                        for mem in game.party.members:
                             mem.action = '????????????'
                         self.cw.print("..taking back")
-                        self.game.vscr.disp_scrwin()
+                        game.vscr.disp_scrwin()
                         break
                     elif c == 'p':
                         mem.action = 'parry'
                         self.entities.append(
                             Entity(mem, mem.name, None, agi, 'parry', None))
-                        self.game.vscr.disp_scrwin()
+                        game.vscr.disp_scrwin()
                         break
                     elif c == 'f':
                         wrange = 'short'
                         for item in mem.items:
-                            idef = self.game.itemdef[item.name]
+                            idef = game.itemdef[item.name]
                             if item.equipped and idef.type.lower() == 'weapon' \
                                and idef.range.lower() == 'long':
                                 wrange = 'long'
                         if idx > 3 and wrange == 'short':
                             self.cw.print("Weapon range too short.")
-                            self.game.vscr.disp_scrwin()
+                            game.vscr.disp_scrwin()
                             continue
                         mong = self.choose_group()
                         if not mong:
@@ -3763,7 +3756,7 @@ class Battle:
                         self.entities.append(
                             Entity(mem, mem.name, None, agi, 'fight', mong))
                         mem.action = 'fight'
-                        self.game.vscr.disp_scrwin()
+                        game.vscr.disp_scrwin()
                         break
                     elif c == 'd':
                         if mem.job not in [Job.PRIEST, Job.BISHOP, Job.LORD]:
@@ -3774,7 +3767,7 @@ class Battle:
                         self.entities.append(
                             Entity(mem, mem.name, None, agi, 'dispell', mong))
                         mem.action = 'dispell'
-                        self.game.vscr.disp_scrwin()
+                        game.vscr.disp_scrwin()
                         break
                     elif c == 's':
                         if self.surprised == 1:  # you surprised the monsters
@@ -3783,7 +3776,7 @@ class Battle:
                         self.entities.append(
                             Entity(mem, mem.name, None, agi, s, target))
                         mem.action = s
-                        self.game.vscr.disp_scrwin()
+                        game.vscr.disp_scrwin()
                         break
                     elif c == 'u':
                         item, target = self.choose_item(mem)
@@ -3792,7 +3785,7 @@ class Battle:
                         self.entities.append(
                             Entity(mem, mem.name, None, agi, item, target))
                         mem.action = item
-                        self.game.vscr.disp_scrwin()
+                        game.vscr.disp_scrwin()
                         break
                     elif c == 'm' and game.dungeon.expedition:
                         send_message()
@@ -3800,11 +3793,11 @@ class Battle:
                     break
             if c != 't':
                 self.cw.print("Press any key or t)ake back >")
-                self.game.vscr.disp_scrwin()
+                game.vscr.disp_scrwin()
                 c = getch(wait=True)
                 if c == 't':
                     self.entities = []
-                    for mem in self.game.party.members:
+                    for mem in game.party.members:
                         mem.action = '????????????'
                     continue
                 break
@@ -3818,13 +3811,13 @@ class Battle:
         while True:
             msg = f"Which group? (#)"
             self.cw.print(msg)
-            self.game.vscr.disp_scrwin()
+            game.vscr.disp_scrwin()
             print(f"\033[{self.cw.y+self.cw.cur_y+1};{self.cw.x+len(msg)+6}H",
                   end='', flush=True)
             n = getch(wait=True)
             l = self.cw.mes_lines.pop()
             self.cw.print(''.join([l, ' ', n])[2:], start=' ')
-            self.game.vscr.disp_scrwin()
+            game.vscr.disp_scrwin()
             try:
                 n = int(n)
             except:
@@ -3847,11 +3840,11 @@ class Battle:
         mw = self.cw
         s = mw.input("What spell to cast?")
         s = s.lower()
-        if s not in self.game.spelldef:  # No such spell
+        if s not in game.spelldef:  # No such spell
             return s, None
         elif s not in list(itertools.chain(mem.mspells, mem.pspells)):
             return s, None  # not mastered yet
-        sdef = self.game.spelldef[s]
+        sdef = game.spelldef[s]
         if sdef.target == 'enemy' or sdef.target == 'group':
             target = self.choose_group()
             if not target:
@@ -3860,11 +3853,11 @@ class Battle:
             while True:
                 ch = mw.input_char(f"To who? (#)")
                 try:
-                    if 0 <= (chid := int(ch)-1) < len(self.game.party.members):
+                    if 0 <= (chid := int(ch)-1) < len(game.party.members):
                         break
                 except:
                     pass
-            target = self.game.party.members[chid]
+            target = game.party.members[chid]
         else:
             target = None
         return s, target
@@ -3878,7 +3871,7 @@ class Battle:
         mw.print("Which item to use?")
         for i, item in enumerate(mem.items, 1):
             if item.unidentified:
-                dispitem = ''.join(['?', self.game.itemdef[item.name].unident])
+                dispitem = ''.join(['?', game.itemdef[item.name].unident])
             else:
                 dispitem = item.name
             mw.print(f"{i}) {dispitem}")
@@ -3888,15 +3881,15 @@ class Battle:
             return False, None
         idef = mem.items[int(idx)-1]
         if idef[3]:
-            iname = ''.join(['?', self.game.itemdef[idef.name].unident])
+            iname = ''.join(['?', game.itemdef[idef.name].unident])
         else:
             iname = idef.name
-        spell = self.game.itemdef[idef.name].use
-        if spell != '' and spell in self.game.spelldef and \
+        spell = game.itemdef[idef.name].use
+        if spell != '' and spell in game.spelldef and \
            iname == idef.name:
-            target = self.game.spelldef[spell].target
+            target = game.spelldef[spell].target
             if target == 'member':
-                m = self.game.party.choose_character(self.game)
+                m = game.party.choose_character()
                 if not m:
                     return False, None
                 return iname, m
@@ -3911,7 +3904,7 @@ class Battle:
         """
         Monster attacks a member
         """
-        mdef = self.game.mondef[e.name]
+        mdef = game.mondef[e.name]
         if e.group.identified:
             dispname = e.name
         else:
@@ -3928,8 +3921,8 @@ class Battle:
         apoint = 19
         if e.target.action == 'parry':
             apoint += 2
-        apoint -= self.game.mondef[e.name].level + 2
-        bpoint = apoint - e.target.ac - e.target.acplus - self.game.party.ac
+        apoint -= game.mondef[e.name].level + 2
+        bpoint = apoint - e.target.ac - e.target.acplus - game.party.ac
 
         if bpoint >= 19:
             val = 19
@@ -3946,17 +3939,17 @@ class Battle:
 
         hitcnt = 0
         damage = 0
-        for _ in range(self.game.mondef[e.name].count):
+        for _ in range(game.mondef[e.name].count):
             if hitp > random.randrange(100):
                 hitcnt += 1
-                damage += dice(self.game.mondef[e.name].attack)
+                damage += dice(game.mondef[e.name].attack)
         e.target.hp -= damage
         if e.target.state != State.OK:
             e.target.hp -= damage  # twice the damage if not status OK
         self.mw.print(f"{dispname} {verb} at {e.target.name}.", bcast=True)
         self.mw.print(
             f"{e.target.name} incurred {damage} damage.", start=' ', bcast=True)
-        self.game.vscr.disp_scrwin()
+        game.vscr.disp_scrwin()
         if e.target.hp <= 0:
             e.target.hp = 0
             e.target.state = State.DEAD
@@ -3969,32 +3962,32 @@ class Battle:
         regist = set()
         for item in e.target.items:
             if item.equipped:  # equipped
-                regist |= set(self.game.itemdef[item.name].regist)
+                regist |= set(game.itemdef[item.name].regist)
 
-        if self.game.mondef[e.name].poison:
+        if game.mondef[e.name].poison:
             if (e.target.stat_luck+1)*100//20 < random.randrange(100):
                 if 'poison' not in regist and not e.target.poisoned:
                     e.target.poisoned = True
                     e.target.hpplus -= 1
                     self.mw.print(f"{e.target.name} is poisoned.", bcast=True)
 
-        if self.game.mondef[e.name].paraly:
+        if game.mondef[e.name].paraly:
             if (e.target.stat_luck+1)*100//20 < random.randrange(100):
                 if 'paraly' not in regist:
                     e.target.state = State.PARALYZED
                     self.mw.print(f"{e.target.name} is paralyzed.", bcast=True)
 
-        if self.game.mondef[e.name].stone:
+        if game.mondef[e.name].stone:
             if (e.target.stat_luck+1)*100//20 < random.randrange(100):
                 if 'stone' not in regist:
                     e.target.state = State.STONED
                     self.mw.print(f"{e.target.name} is petrified.", bcast=True)
 
-        if not e.target.drained and self.game.mondef[e.name].drain > 0:
+        if not e.target.drained and game.mondef[e.name].drain > 0:
             if (e.target.stat_luck+1)*100//20 < random.randrange(100):
                 if 'drain' not in regist:
                     prevlevel = e.target.level
-                    e.target.level -= self.game.mondef[e.name].drain
+                    e.target.level -= game.mondef[e.name].drain
                     if e.target.level-1 < 13:
                         e.target.exp = level_table[e.target.job][e.target.level-2]
                     else:
@@ -4006,7 +3999,7 @@ class Battle:
                         e.target.nextexp = level_table[e.target.job][11] +\
                             level_table[e.target.job][12]*(e.target.level-12)
                     self.mw.print(
-                        f"{e.target.name} is drained by {self.game.mondef[e.name].drain} level.", bcast=True)
+                        f"{e.target.name} is drained by {game.mondef[e.name].drain} level.", bcast=True)
                     if e.target.level < 1:
                         e.target.hp = 0
                         e.target.state = State.LOST
@@ -4014,16 +4007,16 @@ class Battle:
                         return
                     e.target.maxhp = \
                         e.target.maxhp * \
-                        (prevlevel - self.game.mondef[e.name].drain) \
+                        (prevlevel - game.mondef[e.name].drain) \
                         // prevlevel
                     if e.target.hp > e.target.maxhp:
                         e.target.hp = e.target.maxhp
                     e.target.drained = True
 
-        if self.game.mondef[e.name].critical:
+        if game.mondef[e.name].critical:
             if (e.target.stat_lucl+1)*100//20 < random.randrange(100):
                 if 'critical' not in regist:
-                    if (49 - self.game.mondef[e.name].level) * 100 / 50 \
+                    if (49 - game.mondef[e.name].level) * 100 / 50 \
                        < random.randrange(100):
                         e.target.state = State.DEAD
                         e.target.hp = 0
@@ -4035,7 +4028,7 @@ class Battle:
         """
         Party member dispells a monster group
         """
-        mondef = self.game.mondef[e.target.name]
+        mondef = game.mondef[e.target.name]
         if e.target.identified:
             dispname = e.target.name
         else:
@@ -4080,7 +4073,7 @@ class Battle:
         for item in e.entity.items:
             if item.equipped:  # equpped?
                 # (check align)
-                itemdef = self.game.itemdef[item.name]
+                itemdef = game.itemdef[item.name]
                 if not itemdef.align or e.entity.align in itemdef.align:
                     st_bonus += itemdef.st
                 else:
@@ -4092,7 +4085,7 @@ class Battle:
         for idx, g in enumerate(self.monp):
             if g == e.entity:
                 break
-        hitpercent = (self.game.mondef[e.target.name].ac
+        hitpercent = (game.mondef[e.target.name].ac
                       - idx + hitability) * 100 // 20
 
         if e.entity.job == Job.NINJA:
@@ -4111,7 +4104,7 @@ class Battle:
                     damage += dice('2D2')  # w/o weapon
                 else:
                     # twice the damage depending on monster type
-                    if self.game.mondef[e.target.name].type in weapon.twice:
+                    if game.mondef[e.target.name].type in weapon.twice:
                         damage += dice(weapon.dice) * 2
                     else:
                         damage += dice(weapon.dice)
@@ -4119,7 +4112,7 @@ class Battle:
         if e.target.identified:
             dispname = e.target.name
         else:
-            dispname = self.game.mondef[e.target.name].unident
+            dispname = game.mondef[e.target.name].unident
         if e.target.top_valid().state != State.OK:
             damage *= 2
         verb = random.choice(['swings', 'thrusts', 'stabs', 'slashes'])
@@ -4131,7 +4124,7 @@ class Battle:
 
         if e.entity.job == Job.NINJA:
             crit = (e.entity.level -
-                    self.game.mondef[e.target.name].level) + 20
+                    game.mondef[e.target.name].level) + 20
             if crit > 80:
                 crit = 80
             elif crit < 5:
@@ -4145,7 +4138,7 @@ class Battle:
         if e.target.top_valid().hp <= 0:
             e.target.top_valid().state = State.DEAD
             self.mw.print(f"{dispname} is killed.", start=' ', bcast=True)
-            self.exp += self.game.mondef[e.target.name].exp
+            self.exp += game.mondef[e.target.name].exp
             e.entity.marks += 1
             self.draw_ew()
             update = True
@@ -4159,12 +4152,12 @@ class Battle:
         """
         valid = []
         invalid = []
-        for mem in self.game.party.members:
+        for mem in game.party.members:
             if mem.state in [State.OK]:
                 valid.append(mem)
             else:
                 invalid.append(mem)
-        self.game.party.members = valid + invalid
+        game.party.members = valid + invalid
 
     def identify_check(self):
         """
@@ -4179,9 +4172,9 @@ class Battle:
         battle main
         """
         self.new_battle()
-        place = self.game.party.place
-        self.game.party.place = Place.BATTLE
-        v = self.game.vscr
+        place = game.party.place
+        game.party.place = Place.BATTLE
+        v = game.vscr
         v.meswins.append(self.ew)
         v.meswins.append(self.cw)
         v.meswins.append(self.mw)
@@ -4191,7 +4184,7 @@ class Battle:
         self.draw_ew()
 
         if self.handle_friendly(place):
-            party = self.game.party
+            party = game.party
             self.treasure = False
             for idx, room in enumerate(party.floor_obj.rooms):
                 if room.in_room(party.x, party.y):
@@ -4200,24 +4193,24 @@ class Battle:
             v.meswins.pop()
             v.meswins.pop()
             v.meswins.pop()
-            self.game.party.place = place
+            game.party.place = place
             return
 
         if self.surprised == 1:
             self.mw.print("You surprised the monsters.\n - press space bar")
-            self.game.vscr.disp_scrwin()
+            game.vscr.disp_scrwin()
             while getch(wait=True) != ' ':
                 pass
         elif self.surprised == 2:
             self.mw.print("Monsters surprised you.\n - press space bar")
-            self.game.vscr.disp_scrwin()
+            game.vscr.disp_scrwin()
             while getch(wait=True) != ' ':
                 pass
 
-        self.game.party.push_loc()
+        game.party.push_loc()
 
         while True:
-            for m in self.game.party.members:
+            for m in game.party.members:
                 m.action = '????????????'
             self.recover_state()
             self.reorder_party()
@@ -4228,14 +4221,14 @@ class Battle:
                 self.ran = True
                 v.meswins[0].print("Ran away from the battle.", bcast=True)
                 v.disp_scrwin()
-                self.game.party.x, self.game.party.px =\
-                    self.game.party.px, self.game.party.x
-                self.game.party.y, self.game.party.py =\
-                    self.game.party.py, self.game.party.y
-                self.game.party.floor, self.game.party.pfloor =\
-                    self.game.party.pfloor, self.game.party.floor
-                self.game.party.floor_obj =\
-                    self.game.dungeon.floors[self.game.party.floor-1]
+                game.party.x, game.party.px =\
+                    game.party.px, game.party.x
+                game.party.y, game.party.py =\
+                    game.party.py, game.party.y
+                game.party.floor, game.party.pfloor =\
+                    game.party.pfloor, game.party.floor
+                game.party.floor_obj =\
+                    game.dungeon.floors[game.party.floor-1]
                 self.treasure = False
                 break  # ran successfully
             self.enemy_action()
@@ -4255,7 +4248,7 @@ class Battle:
                                          if mong.is_valid()), self.monp[0])
                 if isinstance(e.entity, Monster):
                     if not e.group.identified:
-                        dispname = self.game.mondef[e.name].unident
+                        dispname = game.mondef[e.name].unident
                 if e.entity.state is State.ASLEEP:
                     self.mw.print(f"{dispname} is asleep.", bcast=True)
                     continue
@@ -4269,7 +4262,7 @@ class Battle:
                 elif e.action == 'breath':  # monster only
                     self.mw.print(
                         f"{dispname} breathed on the party.", bcast=True)
-                    for mem in self.game.party.members:
+                    for mem in game.party.members:
                         if mem.state in [State.DEAD, State.ASHED, State.LOST]:
                             continue
                         damage = e.entity.hp // 2
@@ -4305,9 +4298,9 @@ class Battle:
                        random.randrange(100) < 40:  # 40%
                         self.mw.print(
                             f".. and a fellow monster appeared.", start=' ', bcast=True)
-                        mon = Monster(self.game, e.name)
+                        mon = Monster(game, e.name)
                         e.group.monsters.append(mon)
-                        self.gold += self.game.mondef[e.name].level * \
+                        self.gold += game.mondef[e.name].level * \
                             (random.randrange(15) + 10)
                     else:
                         self.mw.print(
@@ -4316,24 +4309,24 @@ class Battle:
                     self.mw.print(f"{dispname} tried to use {e.action}.")
                     self.mw.print(
                         f".. but doesn't know how to use it.", start=' ', bcast=True)
-                elif e.action in self.game.itemdef:  # item
-                    item = self.game.itemdef[e.action]
-                    if item.use and (spell := self.game.spelldef[item.use].battle):
+                elif e.action in game.itemdef:  # item
+                    item = game.itemdef[e.action]
+                    if item.use and (spell := game.spelldef[item.use].battle):
                         self.mw.print(
                             f"{dispname} used {e.action}.", bcast=True)
                         self.mw.print(
                             f".. and invoked {spell}.", start=' ', bcast=True)
                         v.disp_scrwin()
                         getch(wait=True)
-                        self.game.spell.cast_spell_dispatch(
+                        game.spell.cast_spell_dispatch(
                             e.entity, spell, e.target)
                     else:
                         self.mw.print(
                             f"{dispname} tried to use {e.action}.", bcast=True)
                         self.mw.print(f".. but wasn't able to.",
                                       start=' ', bcast=True)
-                elif e.action in self.game.spelldef:  # spell
-                    spelldef = self.game.spelldef[e.action]
+                elif e.action in game.spelldef:  # spell
+                    spelldef = game.spelldef[e.action]
                     if isinstance(e.entity, Member):
                         if (not spelldef.battle) or \
                            e.action not in list(itertools.chain(
@@ -4374,7 +4367,7 @@ class Battle:
                     else:
                         self.mw.print(
                             f"{dispname} casted {e.action}.", bcast=True)
-                        self.game.spell.cast_spell_dispatch(
+                        game.spell.cast_spell_dispatch(
                             e.entity, e.action, e.target)
                 # self.clean_dead()  # clean up dead monsters
                 v.disp_scrwin()
@@ -4383,7 +4376,7 @@ class Battle:
                 getch(wait=True)
 
             # Battle end?
-            party = self.game.party
+            party = game.party
             if not next((True for mong in self.monp if mong.is_valid()), False):
                 for idx, room in enumerate(party.floor_obj.rooms):
                     if room.in_room(party.x, party.y):
@@ -4426,8 +4419,8 @@ class Battle:
         v.meswins.pop()
         v.meswins.pop()
         v.meswins.pop()
-        self.game.party.place = place
-        self.game.party.push_loc()
+        game.party.place = place
+        game.party.push_loc()
         return
 
     def clean_dead(self):
@@ -4453,9 +4446,9 @@ class Battle:
         Every turn, asleep members/monsers might wake up.
         Also, hpplus to members/momsters
         """
-        v = self.game.vscr
+        v = game.vscr
         mw = v.meswins[-1]
-        for mem in self.game.party.members:
+        for mem in game.party.members:
             if mem.state == State.ASLEEP and random.randrange(100) < 50:
                 mem.state = State.OK
             if mem.state in [State.DEAD, State.ASHED, State.LOST]:
@@ -4465,7 +4458,7 @@ class Battle:
             for mon in mong.monsters:
                 mon.hp = min(max(0, mon.hp+mon.hpplus), mon.maxhp)
                 if mon.state == State.ASLEEP:
-                    if self.game.mondef[mon.name].weaksleep:
+                    if game.mondef[mon.name].weaksleep:
                         chance = 15
                     else:
                         chance = 40
@@ -4478,9 +4471,9 @@ class Battle:
         Return 0 if False, 1 if random encounter, 2 if room battle.
         self.join_user is set if joined battle in a server dungeon
         """
-        party = self.game.party
-        if self.game.dungeon.expedition:
-            user = next((k for k, v in self.game.dungeon.party_locs.items()
+        party = game.party
+        if game.dungeon.expedition:
+            user = next((k for k, v in game.dungeon.party_locs.items()
                          if v[0] == party.x and v[1] == party.y and v[2] == party.floor
                          and v[3] == Place.BATTLE.name), None)
             if user:
@@ -4579,8 +4572,7 @@ class Chest:
     Represents a chest
     """
 
-    def __init__(self, game):
-        self.game = game
+    def __init__(self):
         self.mw = Meswin(game.vscr, 14, 3, 44, 10, frame=True)
         self.trap = Trap.TRAPLESS_CHEST
         self.items = None
@@ -4590,7 +4582,6 @@ class Chest:
         Chest main.  Determine the trap, inspect, disarm, activate
         the trap, find items, etc.
         """
-        game = self.game
         v = game.vscr
         mw = self.mw
         v.meswins.append(mw)
@@ -4609,7 +4600,7 @@ class Chest:
                 v.meswins.pop()
                 return
             elif c == 'o':
-                mem = game.party.choose_character(game)
+                mem = game.party.choose_character()
                 if not mem:
                     continue
                 self.trap_activated(mem)
@@ -4617,7 +4608,7 @@ class Chest:
                 v.meswins.pop()
                 return
             elif c == 'd':  # disarm
-                mem = game.party.choose_character(game)
+                mem = game.party.choose_character()
                 if not mem:
                     continue
                 ans = mw.input("Trap name?")
@@ -4645,7 +4636,7 @@ class Chest:
                 v.meswins.pop()
                 return
             elif c == 'k':  # calfo
-                mem = game.party.choose_character(game)
+                mem = game.party.choose_character()
                 if not mem:
                     continue
                 if 'kantei' in mem.pspells and mem.pspell_cnt[1]:
@@ -4662,7 +4653,7 @@ class Chest:
                 v.disp_scrwin()
                 getch(wait=True)
             elif c == 'i':  # inspect
-                mem = game.party.choose_character(game)
+                mem = game.party.choose_character()
                 if not mem:
                     continue
                 if mem.inspected:
@@ -4694,7 +4685,7 @@ class Chest:
         """
         Find and get up to 4 items from the chest.
         """
-        mw = self.game.vscr.meswins[-1]
+        mw = game.vscr.meswins[-1]
         got = False
         if len(self.items) > 0:
             if random.randrange(100) < 80:  # 80%
@@ -4721,7 +4712,7 @@ class Chest:
                 got = True
         if not got:
             mw.print("There was no interesting item.")
-            self.game.vscr.disp_scrwin()
+            game.vscr.disp_scrwin()
             getch(wait=True)
 
     def choose_item(self, item_lvl):
@@ -4729,8 +4720,8 @@ class Chest:
         Randomly pick one item of the specified item level.
         """
         items = []
-        for item in self.game.itemdef:
-            if self.game.itemdef[item].level == item_lvl:
+        for item in game.itemdef:
+            if game.itemdef[item].level == item_lvl:
                 items.append(item)
         item = random.choice(items)
         return item
@@ -4739,19 +4730,19 @@ class Chest:
         """
         Someone in the party get the item found.
         """
-        v = self.game.vscr
+        v = game.vscr
         mw = v.meswins[-1]
-        if sum(len(mem.items) for mem in self.game.party.members) == \
-           8 * len(self.game.party.members):
+        if sum(len(mem.items) for mem in game.party.members) == \
+           8 * len(game.party.members):
             mw.print("Item full.")
             v.disp_scrwin()
             getch(wait=True)
             return
         mem = random.choice(
-            [mem for mem in self.game.party.members if len(mem.items) < 8])
+            [mem for mem in game.party.members if len(mem.items) < 8])
         mem.items.append([item, False, False, True, False])  # unidentified
         mw.print(
-            f"{mem.name} found {self.game.itemdef[item].unident}", start=' ')
+            f"{mem.name} found {game.itemdef[item].unident}", start=' ')
         v.disp_scrwin()
         getch(wait=True)
 
@@ -4759,7 +4750,6 @@ class Chest:
         """
         Trap is activated and do harm to party member(s).
         """
-        game = self.game
         v = game.vscr
         mw = self.mw
         if self.trap == Trap.TRAPLESS_CHEST:
@@ -4864,7 +4854,6 @@ class Chest:
         """
         Decide which trap the chest has.
         """
-        game = self.game
         if game.party.floor <= 2:
             trap = random.choice([Trap.TRAPLESS_CHEST, Trap.POISON_NEEDLE,
                                   Trap.CROSSBOW_BOLT])
@@ -5053,7 +5042,7 @@ def choose_party_character():
     return puser, chid
 
 
-def create_character(game):
+def create_character():
     """
     Create a character (a training grounds menu item)
     """
@@ -5096,10 +5085,10 @@ def create_character(game):
     vscr.disp_scrwin()
 
     ch = Member(name, align, race)
-    ch.distribute_bonus(game)
+    ch.distribute_bonus()
 
 
-def inspect_characters(game):
+def inspect_characters():
     """
     Inspect characters (a training grounds menu item)
     Can delete a character from here, too.
@@ -5137,7 +5126,7 @@ def inspect_characters(game):
             cnum -= 1
         elif c == 'i' and len(chlist) > 0:
             while True:
-                rtn = chlist[cnum].inspect_character(game)
+                rtn = chlist[cnum].inspect_character()
                 if rtn == 0:
                     break
                 cnum += rtn
@@ -5165,7 +5154,7 @@ def inspect_characters(game):
     vscr.cls()
 
 
-def training(game):
+def training():
     """
     Training grounds main (an edge of town menu item)
     """
@@ -5182,12 +5171,12 @@ def training(game):
         if c == 'l':
             break
         elif c == 'c':
-            create_character(game)
+            create_character()
         elif c == 'i':
-            inspect_characters(game)
+            inspect_characters()
 
 
-def tavern_add(game):
+def tavern_add():
     """
     Add members to the party (a tavern item)
     """
@@ -5243,7 +5232,7 @@ def tavern_add(game):
     vscr.disp_scrwin()
 
 
-def tavern(game):
+def tavern():
     """
     tavern (a castle item)
     add/remove members to the party, inspect, divide golds, etc.
@@ -5281,7 +5270,7 @@ def tavern(game):
             mem.gold += total  # remaining
         elif ch == 'a':
             if len(game.party.members) < len(game.characters):
-                tavern_add(game)
+                tavern_add()
             else:
                 mw.print("No characters to add")
         elif ch == 'i':
@@ -5290,7 +5279,7 @@ def tavern(game):
             idx = 0
             while True:
                 mem = game.party.members[idx]
-                rtn = mem.inspect_character(game)
+                rtn = mem.inspect_character()
                 if rtn == 0:
                     break
                 idx += rtn
@@ -5299,7 +5288,7 @@ def tavern(game):
                 elif idx >= len(game.party.members):
                     idx = 0
         elif ch == 'r':
-            game.party.remove_character(game)
+            game.party.remove_character()
     if newwin:
         vscr.meswins.pop()
         vscr.cls()
@@ -5488,7 +5477,7 @@ def trader_sell(game, mem, op):
     getch()
 
 
-def trader(game):
+def trader():
     """
     shop (a castle item)
     choose a member and he/she buys, sells items, etc.
@@ -5501,7 +5490,7 @@ def trader(game):
     while True:
         mw.print("\n*** Trader Jay's ***", start=' ')
         vscr.disp_scrwin()
-        mem = game.party.choose_character(game)
+        mem = game.party.choose_character()
         if not mem:
             break
         while True:
@@ -5767,7 +5756,7 @@ def sleep(game, m, healhp):
         getch(wait=True)
 
 
-def inn(game):
+def inn():
     if not game.party.members:
         return
     v = game.vscr
@@ -5821,7 +5810,7 @@ def inn(game):
         sleep(game, mem, uprice*2)
 
 
-def hospital(game):
+def hospital():
     if not game.party.members:
         return
     v = game.vscr
@@ -5872,7 +5861,7 @@ def hospital(game):
     getch(wait=True)
 
 
-def castle(game):
+def castle():
     """
     castle main
     dispatch to tavern, shop, inn or temple
@@ -5891,19 +5880,19 @@ def castle(game):
         vscr.disp_scrwin()
         ch = mw.input_char("Command?", values=['h', 'e', 't', 'i', 'm'])
         if ch == 'h':
-            tavern(game)
+            tavern()
         elif ch == 'e':
             game.party.place = Place.EDGE_OF_TOWN
             break
         elif ch == 't':
-            trader(game)
+            trader()
         elif ch == 'i':
-            inn(game)
+            inn()
         elif ch == 'm':
-            hospital(game)
+            hospital()
 
 
-def edge_town(game):
+def edge_town():
     """
     edge of town main
     dispatch to training grounds
@@ -5924,7 +5913,7 @@ def edge_town(game):
         vscr.disp_scrwin()
         ch = mw.input_char("Command? ", values=['t', 'S', 'm', 'c', 'R', 'x'])
         if ch == 't':
-            training(game)
+            training()
         elif ch == 'c':
             game.party.place = Place.CASTLE
             break
@@ -5935,7 +5924,7 @@ def edge_town(game):
                 mw.print("No party members.")
             break
         elif ch == 'S':
-            save(game)
+            save()
             mw.print("Thank you for playing.")
             mw.print("See you soon.")
             vscr.disp_scrwin()
@@ -6063,14 +6052,14 @@ def camp(game, floor_obj):
         if c == 'l':
             break
         elif c == 'r':
-            game.party.reorder(game)
+            game.party.reorder()
         elif c == 'h':
-            game.party.heal(game)
+            game.party.heal()
         elif c == 'p':
-            game.party.prep(game)
+            game.party.prep()
         elif c == 'S':
             game.party.place = Place.MAZE
-            save(game)
+            save()
             mw.print("Thank you for playing.")
             mw.print("See you again soon.")
             v.disp_scrwin()
@@ -6086,7 +6075,7 @@ def camp(game, floor_obj):
                 else:
                     p = game.party
                 mem = p.members[idx-1]
-                rtn = mem.inspect_character(game)
+                rtn = mem.inspect_character()
                 if rtn == 0:
                     break
                 idx += rtn
@@ -6112,7 +6101,7 @@ def camp(game, floor_obj):
     game.party.push_loc()
 
 
-def maze(game):
+def maze():
     """
     Maze (dungeon) main
     """
@@ -6152,7 +6141,7 @@ def maze(game):
             if party.light_cnt > 0:  # milwa/lomilwa counter
                 party.light_cnt -= 1
 
-            party.calc_hpplus(game)
+            party.calc_hpplus()
             for mem in party.members:
                 if mem.state not in [State.DEAD, State.ASHED, State.LOST]:
                     mem.hp = min(max(1, mem.hp+mem.hpplus), mem.maxhp)
@@ -6166,7 +6155,7 @@ def maze(game):
             vscr.disp_scrwin()
 
             game.battle.join_user = None  # initialize
-            rt = floor_obj.check_event(game)
+            rt = floor_obj.check_event()
             if party.defeated():  # Defeated by boss monster?
                 break
             if not rt:  # event processed
@@ -6271,7 +6260,7 @@ def maze(game):
             elif c == '<' and config['debug']:
                 party.floor_move = 2  # go up
             elif c == 'S':
-                save(game)
+                save()
             elif c == '#' and config['debug']:
                 for y in range(party.y-10, party.y+10+1):
                     for x in range(party.x-32, party.x+32+1):
@@ -6305,21 +6294,21 @@ def maze(game):
     vscr.disp_scrwin()
 
 
-def dispatch(game):
+def dispatch():
     """
     dispatch either to edge of town, castle or maze
     """
     while game.party.place != Place.LEAVE_GAME:
         pl = game.party.place
         if pl == Place.EDGE_OF_TOWN:
-            edge_town(game)
+            edge_town()
         elif pl == Place.CASTLE:
-            castle(game)
+            castle()
         elif pl == Place.MAZE:
-            maze(game)
+            maze()
 
 
-def save(game):
+def save():
     """
     Dispatch a game.save thread to start save
     """
@@ -6571,18 +6560,17 @@ def main():
     vscr = Vscr(w, h-1)  # singleton
     # vscr = Vscr(78, 24)  # +++++++++++++++
     game.vscr = vscr
-    vscr.game = game
     # meswin for scrollwin
     vscr.meswins.append(Meswin(vscr, 43, vscr.height-7, vscr.width-42, 7))
     # meswin for castle/edge of town
     vscr.meswins.append(Meswin(vscr, 10, vscr.height//5, vscr.width-20,
                                (vscr.height-8)*2//3, frame=True))
-    game.spell = Spell(game)  # singleton
-    game.dungeon = Dungeon(game)  # singleton
-    game.battle = Battle(game)  # singleton
-    game.chest = Chest(game)  # singleton
+    game.spell = Spell()  # singleton
+    game.dungeon = Dungeon()  # singleton
+    game.battle = Battle()  # singleton
+    game.chest = Chest()  # singleton
 
-    dispatch(game)
+    dispatch()
 
 
 if __name__ == "__main__":
