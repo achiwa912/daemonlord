@@ -6247,7 +6247,7 @@ def maze():
                     meswin.print("east")
             elif c == 'o':  # open or unlock door
                 vscr.disp_scrwin(floor_obj)
-                floor_obj.open_door(game, meswin)
+                floor_obj.open_door(meswin)
             elif c == '*' and config['debug']:
                 breakpoint()
             elif c == '.':
